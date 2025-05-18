@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "MyDeliveryApp"
 include(":app")
- 
+include(":appmodule")

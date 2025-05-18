@@ -13,6 +13,10 @@
         android:theme="@style/Theme.MyDeliveryApp"
         tools:targetApi="31">
         <activity
+            android:name=".OrderHistoryActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MyDeliveryApp" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
