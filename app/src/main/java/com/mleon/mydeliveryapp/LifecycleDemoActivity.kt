@@ -42,10 +42,14 @@ class LifecycleDemoActivity : AppCompatActivity() {
             Log.d("MainActivity", "onCreate: Contador incrementado a $counter")
         }
 
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.fragment_container, AFragment.newInstance("Hola", "Mundo"))
-            .commit()
+        if (savedInstanceState == null) {
+            supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.fragment_container, AFragment.newInstance("Hola", "Mundo"))
+                .commit()
+            isAFragmentVisible = true
+        }
+
         isAFragmentVisible = true
 
         val btnChangeFg = findViewById<Button>(R.id.btnChangeFragment)
