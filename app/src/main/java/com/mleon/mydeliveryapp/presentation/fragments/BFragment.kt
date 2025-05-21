@@ -15,8 +15,6 @@ import com.mleon.mydeliveryapp.R
  */
 class BFragment : Fragment() {
     private val TAG = "BFragment"
-    private var param1: String? = null
-    private var param2: String? = null
 
     override fun onAttach(context: android.content.Context) {
         super.onAttach(context)

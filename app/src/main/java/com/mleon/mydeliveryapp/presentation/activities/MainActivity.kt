@@ -7,6 +7,8 @@ import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.mleon.mydeliveryapp.R
+import com.mleon.mydeliveryapp.presentation.fragments.AFragment
+import com.mleon.mydeliveryapp.presentation.fragments.ProductListFragment
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
@@ -17,11 +19,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         Log.d(TAG, "onCreate")
 
-        val btnNavigate = findViewById<Button>(R.id.btnNavigateToDemo)
-        btnNavigate.setOnClickListener {
-            val intent = Intent(this, LifecycleDemoActivity::class.java)
-            startActivity(intent)
-        }
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragmentcontainer, ProductListFragment.newInstance("Hola", "Mundo"))
+            .commit()
     }
 
     override fun onStart() {
