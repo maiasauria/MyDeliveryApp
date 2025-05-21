@@ -1,14 +1,16 @@
-package com.mleon.mydeliveryapp
+package com.mleon.mydeliveryapp.presentation.activities
 
 import android.os.Bundle
 import android.text.Editable
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import android.text.TextWatcher
+import com.mleon.mydeliveryapp.presentation.fragments.AFragment
+import com.mleon.mydeliveryapp.presentation.fragments.BFragment
+import com.mleon.mydeliveryapp.R
 
 class LifecycleDemoActivity : AppCompatActivity() {
 

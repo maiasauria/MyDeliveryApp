@@ -88,7 +88,7 @@ dependencies {
 
     // Hilt (DI)
     implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
 
     implementation(libs.androidx.appcompat)
 
