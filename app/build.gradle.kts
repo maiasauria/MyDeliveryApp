@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("com.google.dagger.hilt.android")
     id("org.jetbrains.kotlin.kapt")
+    id("com.google.devtools.ksp") version "2.0.21-1.0.27"
 }
 
 android {
@@ -30,11 +31,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -43,8 +44,10 @@ android {
 }
 
 dependencies {
-
+    // Kotlin Stdlib & Core KTX
+    implementation(libs.kotlin.stdlib)
     implementation(libs.androidx.core.ktx)
+
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -57,15 +60,41 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
 
-    // Hilt
-    implementation("com.google.dagger:hilt-android:2.48")
+    // Room (runtime, compiler, ktx)
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+
+    // ViewModel & LiveData (ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+
+    // Navigation (fragment & ui)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+
+    // Material Components
     implementation(libs.material)
-    implementation(libs.androidx.appcompat)
+
+    // RecyclerView
+    implementation(libs.androidx.recyclerview)
+
+    // ConstraintLayout
     implementation(libs.androidx.constraintlayout)
+
+    // Glide (image loading)
+    implementation(libs.glide)
+    ksp(libs.compiler)
+
+    // Hilt (DI)
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+
+    implementation(libs.androidx.appcompat)
+
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.activity)
-    kapt("com.google.dagger:hilt-android-compiler:2.48")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
