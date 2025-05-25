@@ -1,4 +1,4 @@
-package com.mleon.mydeliveryapp.presentation.fragments
+package com.mleon.mydeliveryapp.view.ui.fragments
 
 import android.os.Bundle
 import android.util.Log
@@ -6,15 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+
 import com.mleon.mydeliveryapp.R
 
 /**
  * A simple [Fragment] subclass.
- * Use the [BFragment.newInstance] factory method to
+ * Use the [AFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class BFragment : Fragment() {
-    private val TAG = "BFragment"
+class AFragment : Fragment() {
+    private val TAG = "AFragment"
 
     override fun onAttach(context: android.content.Context) {
         super.onAttach(context)
@@ -24,7 +25,6 @@ class BFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate")
-
         arguments?.let {
         }
     }
@@ -35,8 +35,7 @@ class BFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         Log.d(TAG, "onCreateView")
-
-        return inflater.inflate(R.layout.fragment_b, container, false)
+        return inflater.inflate(R.layout.fragment_a, container, false)
     }
 
 
@@ -87,12 +86,12 @@ class BFragment : Fragment() {
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment BFragment.
+         * @return A new instance of fragment AFragment.
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            BFragment().apply {
+            AFragment().apply {
                 arguments = Bundle().apply {
                 }
             }

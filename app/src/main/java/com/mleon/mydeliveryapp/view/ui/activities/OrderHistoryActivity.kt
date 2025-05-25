@@ -1,4 +1,4 @@
-package com.mleon.mydeliveryapp.presentation.activities
+package com.mleon.mydeliveryapp.view.ui.activities
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge

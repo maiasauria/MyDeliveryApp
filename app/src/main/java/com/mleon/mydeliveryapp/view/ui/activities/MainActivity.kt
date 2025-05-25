@@ -1,14 +1,11 @@
-package com.mleon.mydeliveryapp.presentation.activities
+package com.mleon.mydeliveryapp.view.ui.activities
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.mleon.mydeliveryapp.R
-import com.mleon.mydeliveryapp.presentation.fragments.AFragment
-import com.mleon.mydeliveryapp.presentation.fragments.ProductListFragment
+import com.mleon.mydeliveryapp.view.ui.fragments.ProductListFragment
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
@@ -21,7 +18,7 @@ class MainActivity : AppCompatActivity() {
 
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragmentcontainer, ProductListFragment.newInstance("Hola", "Mundo"))
+            .replace(R.id.fragmentcontainer, ProductListFragment.newInstance())
             .commit()
     }
 
