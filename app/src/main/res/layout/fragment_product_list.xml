@@ -7,36 +7,34 @@
     android:padding="20dp"
     tools:context=".view.ui.fragments.ProductListFragment">
 
-
-    <LinearLayout
+    <TextView
+        android:id="@+id/tvUserName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="fill_horizontal"
-        android:orientation="horizontal">
+        android:text="Hola, Usuario"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginTop="12sp"
+        android:layout_marginBottom="20dp" />
 
         <EditText
             android:id="@+id/etSearch"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:autofillHints="@string/search"
             android:hint="@string/search"
-            android:layout_weight="1"
             android:inputType="text"
-            android:textSize="24sp" />
+            android:textSize="24sp"
+            android:padding="8dp"/>
 
-        <Button
-            android:id="@+id/btnBuscar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/search" />
-    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvProducts"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="2"
         tools:ignore="SpeakableTextPresentCheck" />
 
 </LinearLayout>

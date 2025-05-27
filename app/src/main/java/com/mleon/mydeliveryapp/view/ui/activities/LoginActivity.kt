@@ -35,6 +35,7 @@ class LoginActivity : AppCompatActivity() {
         binding.btnLogin.setOnClickListener {
             sharedPref.edit() {
                 putString("usuariologueado", "true")
+                putString("email", binding.etEmailAddress.text.toString())
             }
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)

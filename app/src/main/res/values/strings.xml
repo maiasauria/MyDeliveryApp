@@ -48,4 +48,5 @@
     <string name="iniciar_sesion">Iniciar Sesión</string>
     <string name="password">Contraseña</string>
     <string name="email">E-mail</string>
+    <string name="search">Buscar</string>
 </resources>
