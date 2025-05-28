@@ -1,4 +1,4 @@
-package com.mleon.mydeliveryapp.data.model
+package com.mleon.core.model
 
 data class Product(
     val id: Int,

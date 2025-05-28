@@ -1,10 +1,10 @@
-package com.mleon.mydeliveryapp.view.ui.viewmodels
+package com.mleon.mydeliveryapp.view.ui.viewmodel
 
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mleon.mydeliveryapp.data.model.Product
+import com.mleon.core.model.Product
 import com.mleon.mydeliveryapp.data.repository.ProductRepositoryImpl
 import androidx.lifecycle.viewModelScope
 import com.mleon.mydeliveryapp.data.repository.ProductRepository

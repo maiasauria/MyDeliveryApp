@@ -7,11 +7,11 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mleon.mydeliveryapp.R
-import com.mleon.mydeliveryapp.data.model.Product
+import com.mleon.core.model.Product
 
 class ProductAdapter(
-    private var products: List<Product>,
-    private val onAddToCart: (Product, Int) -> Unit
+    private var products: List<com.mleon.core.model.Product>,
+    private val onAddToCart: (com.mleon.core.model.Product, Int) -> Unit
 ) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
 
     // Store quantity per item position
@@ -51,7 +51,7 @@ class ProductAdapter(
         }
     }
 
-    fun updateList(newProducts: List<Product>) {
+    fun updateList(newProducts: List<com.mleon.core.model.Product>) {
         products = newProducts
         quantities.clear()
         notifyDataSetChanged()
@@ -66,7 +66,7 @@ class ProductAdapter(
         val btnDecrease: Button = itemView.findViewById(R.id.btnDecrease)
         val btnAddToCart: Button = itemView.findViewById(R.id.btnAddToCart)
 
-        fun bind(product: Product, quantity: Int) {
+        fun bind(product: com.mleon.core.model.Product, quantity: Int) {
             tvName.text = product.name
             tvDescription.text = product.description
             tvPrice.text = "$${product.price}"

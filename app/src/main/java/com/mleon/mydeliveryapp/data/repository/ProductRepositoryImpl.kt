@@ -1,11 +1,11 @@
 package com.mleon.mydeliveryapp.data.repository
 
-import com.mleon.mydeliveryapp.data.model.Product
+import com.mleon.core.model.Product
 
 class ProductRepositoryImpl : ProductRepository {
 
     private val products = listOf(
-        Product(
+        com.mleon.core.model.Product(
             id = 1,
             name = "Hamburguesa con Papas",
             description = "Hamburguesa de res con papas fritas y bebida.",
@@ -14,7 +14,7 @@ class ProductRepositoryImpl : ProductRepository {
             imageUrl = "",
             category = "Hamburguesas"
         ),
-        Product(
+        com.mleon.core.model.Product(
             id = 2,
             name = "Pizza de Muzzarella",
             description = "Pizza de muzzarella con masa fina y crujiente.",
@@ -23,7 +23,7 @@ class ProductRepositoryImpl : ProductRepository {
             imageUrl = "",
             category = "Pizza"
         ),
-        Product(
+        com.mleon.core.model.Product(
             id = 3,
             name = "Fideos con Pesto y Pollo",
             description = "Fideos caseros de espinaca, con pesto de albahaca y pollo grillé",
@@ -32,7 +32,7 @@ class ProductRepositoryImpl : ProductRepository {
             imageUrl = "",
             category = "Pastas"
         ),
-        Product(
+        com.mleon.core.model.Product(
             id = 4,
             name = "Sorrentinos de Jamón y Queso",
             description = "Sorrentinos rellenos de jamón y queso con salsa de tomate.",
@@ -41,7 +41,7 @@ class ProductRepositoryImpl : ProductRepository {
             imageUrl = "",
             category = "Pastas"
         ),
-        Product(
+        com.mleon.core.model.Product(
             id = 5,
             name = "Ensalada César con Pollo",
             description = "Ensalada César con pollo, lechuga, crutones y aderezo.",
@@ -50,7 +50,7 @@ class ProductRepositoryImpl : ProductRepository {
             imageUrl = "",
             category = "Ensaladas"
         ),
-        Product(
+        com.mleon.core.model.Product(
             id = 6,
             name = "Falafel con Hummus",
             description = "Falafel con hummus, ensalada y pan pita.",
@@ -59,7 +59,7 @@ class ProductRepositoryImpl : ProductRepository {
             imageUrl = "",
             category = "Vegana"
         ),
-        Product(
+        com.mleon.core.model.Product(
             id = 7,
             name = "Tacos de Pollo",
             description = "Tacos de pollo con guacamole, cebolla y morrón.",
@@ -70,9 +70,9 @@ class ProductRepositoryImpl : ProductRepository {
         )
     )
 
-    override fun getProducts(): List<Product> = products
+    override fun getProducts(): List<com.mleon.core.model.Product> = products
 
-    override fun filterProducts(nombre: String): List<Product> {
+    override fun filterProducts(nombre: String): List<com.mleon.core.model.Product> {
         return products.filter {
             it.name.contains(nombre, ignoreCase = true) ||
                     it.description.contains(nombre, ignoreCase = true)
