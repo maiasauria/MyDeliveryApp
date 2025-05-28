@@ -10,12 +10,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="E-mail"
+        android:textSize="@dimen/edit_text_text_size"
         android:inputType="textEmailAddress" />
 
     <EditText
         android:id="@+id/etName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="@dimen/edit_text_text_size"
         android:hint="Nombre" />
 
     <EditText
@@ -23,6 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Contraseña"
+        android:textSize="@dimen/edit_text_text_size"
         android:inputType="textPassword" />
 
     <EditText
@@ -30,6 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Confirma tu Contraseña"
+        android:textSize="@dimen/edit_text_text_size"
         android:inputType="textPassword" />
 
     <Button
@@ -37,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-
+        android:textSize="@dimen/edit_text_text_size"
         android:text="Registrate" />
 
 
