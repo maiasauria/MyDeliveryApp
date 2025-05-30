@@ -3,29 +3,32 @@ package com.mleon.mydeliveryapp.view.ui.fragments
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mleon.mydeliveryapp.R
 import com.mleon.mydeliveryapp.view.ui.adapters.ProductAdapter
 import com.mleon.core.model.Product
+import com.mleon.feature.cart.view.ui.fragments.CartFragment
+import com.mleon.feature.cart.view.ui.fragments.CartViewModel
 import com.mleon.mydeliveryapp.databinding.FragmentProductListBinding
-import com.mleon.mydeliveryapp.view.ui.viewmodels.ProductListViewModel
+import com.mleon.mydeliveryapp.view.ui.viewmodel.ProductListViewModel
 
 
 class ProductListFragment : Fragment() {
-
-
 
     private lateinit var adapter: ProductAdapter
 
     private var _binding: FragmentProductListBinding? = null
     private val binding get() = _binding!!
+    private val cartViewModel: CartViewModel by activityViewModels() // Shared across fragments
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,8 +54,12 @@ class ProductListFragment : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.rvProducts)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        adapter = ProductAdapter(emptyList()) { product: com.mleon.core.model.Product, quantity: Int ->
-            //
+        adapter = ProductAdapter(emptyList()) { product: Product, quantity: Int ->
+            cartViewModel.addToCart(product)
+            Log.d("PRODUCTLISTFRAGMENT","Producto agregado al carrito: ${product.name}, Cantidad: $quantity")
+            Log.d("PRODUCTLISTFRAGMENT","Carrito actual: ${cartViewModel.cartItems.value} productos")
+            Toast.makeText(requireContext(), "${product.name} agregado al carrito", Toast.LENGTH_SHORT).show()
+
         }
         recyclerView.adapter = adapter
 
@@ -80,8 +87,15 @@ class ProductListFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
-    }
+        binding.btnGoToCart.setOnClickListener {
+            val fragment = CartFragment()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragmentcontainer, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
 
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

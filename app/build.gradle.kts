@@ -5,6 +5,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("org.jetbrains.kotlin.kapt")
     id("com.google.devtools.ksp") version "2.0.21-1.0.27"
+
 }
 
 android {
@@ -41,6 +42,12 @@ android {
         compose = true
         viewBinding = true
     }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.10"
+    }
+
+
 }
 
 dependencies {
@@ -106,4 +113,7 @@ dependencies {
 
     implementation(project(":core:model"))
     implementation(project(":data"))
+    implementation(project(":feature:cart"))
+
+
 }
