@@ -2,53 +2,44 @@ package com.mleon.mydeliveryapp.view.ui.activities
 
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import com.mleon.mydeliveryapp.R
-import com.mleon.mydeliveryapp.view.ui.fragments.ProductListFragment
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.material3.Text
+import com.mleon.mydeliveryapp.view.ui.views.ProductListView
+import androidx.compose.runtime.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mleon.feature.cart.view.ui.fragments.CartViewModel
+import com.mleon.mydeliveryapp.view.ui.viewmodel.ProductListViewModel
 
-class MainActivity : AppCompatActivity() {
-    private val TAG = "MainActivity"
+class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        Log.d(TAG, "onCreate")
+        setContent {
+            // Initialize ViewModels
+            val viewModel: ProductListViewModel = viewModel()
+            val cartViewModel: CartViewModel = viewModel()
 
-        supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.fragmentcontainer, ProductListFragment.newInstance())
-            .commit()
-    }
+            // Load products when the view is created
+            val uiState = viewModel.uiState.collectAsState()
 
-    override fun onStart() {
-        super.onStart()
-        Log.d(TAG, "onStart")
-    }
+            when (val state = uiState.value) {
+                is ProductListViewModel.ProductListUiState.Success -> {
+                    ProductListView(
+                        products = state.products,
+                        onAddToCart = { product, quantity ->
+                            repeat(quantity) { cartViewModel.addToCart(product) }
+                        })
+                }
 
-    override fun onResume() {
-        super.onResume()
-        Log.d(TAG, "onResume")
-    }
+                is ProductListViewModel.ProductListUiState.Loading -> {
+                    Text("Loading products...")
+                }
 
-    override fun onPause() {
-        super.onPause()
-        Log.d(TAG, "onPause")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d(TAG, "onStop")
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        Log.d(TAG, "onRestart")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(TAG, "onDestroy")
+                is ProductListViewModel.ProductListUiState.Error -> {
+                    Text("Error loading products: ${state.message}")
+                }
+            }
+        }
     }
 }

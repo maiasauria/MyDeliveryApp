@@ -1,4 +1,5 @@
 [versions]
+activityComposeVersion = "1.7.2"
 agp = "8.9.2"
 glide = "4.16.0"
 kotlin = "2.0.21"
