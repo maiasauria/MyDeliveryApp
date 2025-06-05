@@ -2,10 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("com.google.dagger.hilt.android")
-    id("org.jetbrains.kotlin.kapt")
-    id("com.google.devtools.ksp") version "2.0.21-1.0.27"
-
+    id("com.google.dagger.hilt.android") version "2.56.2"
+    id("com.google.devtools.ksp") version "2.1.10-1.0.31"
 }
 
 android {
@@ -64,9 +62,9 @@ dependencies {
     implementation(libs.androidx.material3)
 
     //Compose
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0")
-    implementation("androidx.compose.ui:ui:1.8.2")
-    implementation("androidx.compose.material3:material3:1.3.2")
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.ui)
+    implementation(libs.material3)
 
     // Retrofit
     implementation(libs.retrofit)
@@ -74,6 +72,7 @@ dependencies {
 
     // Room (runtime, compiler, ktx)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.navigation.compose.android)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
@@ -101,6 +100,8 @@ dependencies {
     // Hilt (DI)
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.navigation.runtime.android)
 
     implementation(libs.androidx.appcompat)
 

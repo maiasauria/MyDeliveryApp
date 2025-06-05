@@ -10,30 +10,17 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:name=".MyDeliveryApp"
         android:theme="@style/Theme.MyDeliveryApp"
         tools:targetApi="31">
         <activity
-            android:name=".view.ui.activities.LoginActivity"
+            android:name=".view.ui.activities.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.MyDeliveryApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".view.ui.activities.LifecycleDemoActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.ui.activities.OrderHistoryActivity"
-            android:exported="false"
-            android:theme="@style/Theme.MyDeliveryApp" />
-        <activity
-            android:name=".view.ui.activities.MainActivity"
-            android:exported="false"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.MyDeliveryApp">
-
         </activity>
     </application>
 

@@ -15,7 +15,7 @@ import com.mleon.core.model.Product
 fun ProductCard(
     product: Product,
     showQuantitySelector: Boolean = true,
-    onActionClick: (Product, Int) -> Unit,
+ //  onActionClick: (Product, Int) -> Unit,
     actionButtonText: String,
     modifier: Modifier = Modifier
 ) {
@@ -62,7 +62,8 @@ fun ProductCard(
                     Button(onClick = { quantity++ }) { Text("+") }
                 }
                 Button(
-                    onClick = { onActionClick(product, quantity) },
+        //            onClick = { onActionClick(product, quantity) },
+                    onClick = { /* Handle action click */ },
                     modifier = Modifier
                         .padding(start = 8.dp)
                         .weight(1f)
