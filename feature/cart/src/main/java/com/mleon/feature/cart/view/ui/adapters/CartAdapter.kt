@@ -68,7 +68,7 @@ class CartAdapter(
         val btnDecrease: Button = itemView.findViewById(R.id.btnDecrease)
         val btnAddToCart: Button = itemView.findViewById(R.id.btnAddToCart)
 
-        fun bind(product: com.mleon.core.model.Product, quantity: Int) {
+        fun bind(product: Product, quantity: Int) {
             tvName.text = product.name
             tvDescription.text = product.description
             tvPrice.text = "$${product.price}"

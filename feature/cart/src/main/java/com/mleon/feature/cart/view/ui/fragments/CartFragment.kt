@@ -45,7 +45,7 @@ class CartFragment : Fragment() {
 
         _binding?.rvCart?.layoutManager = LinearLayoutManager(requireContext())
 
-        val adapter = CartAdapter(
+        adapter = CartAdapter(
             emptyList(),
             onAddToCart = { product, qty -> viewModel.addToCart(product) },
             onEditQuantity = { product, qty -> viewModel.editQuantity(product, qty) },

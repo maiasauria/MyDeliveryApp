@@ -59,6 +59,7 @@ fun LoginScreen(navController: NavHostController, loginViewModel: LoginViewModel
             }
             Button(
                 onClick = {
+                    loginViewModel.onLoginClicked()
                     navController.navigate("products") {
                         popUpTo("login") { inclusive = true }
                     }

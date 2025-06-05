@@ -12,7 +12,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mleon.core.model.Product
 import com.mleon.mydeliveryapp.data.repository.ProductRepositoryImpl
 import com.mleon.mydeliveryapp.view.viewmodel.ProductListState
 
@@ -22,16 +21,22 @@ fun ProductListView(
     state: ProductListState,
     innerPadding: PaddingValues,
     //onAddToCart: (Product, Int) -> Unit,
+    onSearchTextChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var searchQuery by remember { mutableStateOf(state.searchQuery) }
+
     Column(
         modifier = modifier
             .background(Color.White)
             .padding(16.dp)
     ) {
         TextField(
-            value = "",
-            onValueChange = {},
+            value = searchQuery,
+            onValueChange = {
+                searchQuery = it
+                onSearchTextChanged(it)
+            },// Aquí puedes manejar el cambio de búsqueda},
             label = { Text("Buscar") },
             placeholder = { Text("Buscar productos...") },
             modifier = Modifier
@@ -54,21 +59,29 @@ fun ProductListView(
             item {
                 Spacer(modifier = Modifier.height(16.dp)) // Espacio al final de la lista
             }
-            item {
-                Text(
-                    text = "Total: \$${state.products.sumOf { it.price }}",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
+//            item {  //TODO pasar esto al cart, no va aca
+//                Text(
+//                    text = "Total: \$${state.products.sumOf { it.price }}",
+//                    style = MaterialTheme.typography.titleMedium,
+//                    modifier = Modifier.padding(16.dp)
+//                )
+//            }
             items(state.products) { product ->
                 ProductCard(
                     product = product,
                     showQuantitySelector = false,
-         //           onActionClick = Unit,
+                    //           onActionClick = Unit,
                     actionButtonText = "Agregar al carrito"
                 )
             }
+        }
+        Button(
+            onClick = {  },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+        ) {
+            Text("Ver mi carrito")
         }
         state.error?.let { error ->
             // Aquí puedes mostrar un mensaje de error, por ejemplo, con un SnackBar o un Toast
@@ -97,6 +110,7 @@ fun ProductListViewPreview() {
 //        onAddToCart = { product, quantity ->
 //            // Handle add to cart action
 //        },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        onSearchTextChanged = { /* Handle search text change */ }
     )
 }
