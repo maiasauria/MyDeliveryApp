@@ -27,7 +27,7 @@ fun LoginScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Column(
             modifier = Modifier
@@ -89,7 +89,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(24.dp))
             TextButton(
                 onClick = {
-                    navController.navigate("register")
+                    navController.navigate("signup")
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {

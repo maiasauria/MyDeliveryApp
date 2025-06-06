@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import com.mleon.mydeliveryapp.view.viewmodel.ProductListViewModel
 import com.mleon.mydeliveryapp.view.ui.views.LoginScreen
 import com.mleon.mydeliveryapp.view.ui.views.ProductListView
+import com.mleon.mydeliveryapp.view.ui.views.SignupScreen
 
 @Composable
 fun AppNavigation( ) {
@@ -25,7 +26,7 @@ fun AppNavigation( ) {
             LoginScreen(navController) // Pasamos el navController a LoginScreen
         }
         composable(route = "signup") { //a que archivo apuntamos
-            LoginScreen(navController) // Pasamos el navController a LoginScreen
+            SignupScreen(navController) // Pasamos el navController a LoginScreen
         }
         composable(route = "products") { //a que archivo apuntamos
             val productsViewModel : ProductListViewModel = hiltViewModel() // Obtenemos el ViewModel

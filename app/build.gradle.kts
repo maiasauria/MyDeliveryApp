@@ -120,6 +120,7 @@ dependencies {
 
     implementation(project(":core:model"))
     implementation(project(":data"))
+    implementation(project(":utils"))
     implementation(project(":feature:cart"))
 
 
