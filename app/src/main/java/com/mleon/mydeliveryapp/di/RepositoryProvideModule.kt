@@ -6,6 +6,7 @@ import com.mleon.mydeliveryapp.data.repository.ProductRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -19,6 +20,6 @@ object RepositoryProvideModule {
 
     @Provides
     @Singleton
-    fun provideSharedPreferences(appContext: Context): SharedPreferences =
+    fun provideSharedPreferences(@ApplicationContext appContext: Context): SharedPreferences =
         appContext.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
 }
