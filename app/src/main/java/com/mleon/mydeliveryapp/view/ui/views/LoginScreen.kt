@@ -1,11 +1,15 @@
 package com.mleon.mydeliveryapp.view.ui.views
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -14,8 +18,10 @@ import com.mleon.mydeliveryapp.view.viewmodel.LoginViewModel
 @Composable
 fun LoginScreen(
     navController: NavHostController,
-    loginViewModel: LoginViewModel = hiltViewModel()) {
+    loginViewModel: LoginViewModel = hiltViewModel()
+) {
     val uiState by loginViewModel.uiState.collectAsState()
+    var passwordVisible by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -33,13 +39,13 @@ fun LoginScreen(
             OutlinedTextField(
                 value = uiState.email,
                 onValueChange = { loginViewModel.onEmailChanged(it) },
-                label = { Text(text = "Email") },
+                label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth(),
                 isError = !uiState.isEmailValid && uiState.email.isNotEmpty()
             )
             if (!uiState.isEmailValid && uiState.email.isNotEmpty()) {
                 Text(
-                    text = "Invalid email format",
+                    text = uiState.errorMessageEmail ?: "",
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -48,17 +54,25 @@ fun LoginScreen(
                 value = uiState.password,
                 onValueChange = { loginViewModel.onPasswordChanged(it) },
                 label = { Text(text = "Password") },
-                visualTransformation = PasswordVisualTransformation(),
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
-                isError = !uiState.isPasswordValid && uiState.password.isNotEmpty()
+                isError = !uiState.isPasswordValid && uiState.password.isNotEmpty(),
+                trailingIcon = {
+                    val image =
+                        if (passwordVisible) Icons.Filled.VisibilityOff else Icons.Filled.Visibility
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(imageVector = image, contentDescription = null)
+                    }
+                }
             )
             if (!uiState.isPasswordValid && uiState.password.isNotEmpty()) {
                 Text(
-                    text = "Password must be 8-12 characters",
+                    text = uiState.errorMessagePassword ?: "",
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall
                 )
             }
+            Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
                     loginViewModel.onLoginClicked()
@@ -68,11 +82,20 @@ fun LoginScreen(
                 },
                 enabled = uiState.isFormValid,
                 modifier = Modifier
-                    .fillMaxWidth()
                     .height(48.dp)
             ) {
-                Text("Login")
+                Text("Iniciar Sesión")
             }
+            Spacer(modifier = Modifier.height(24.dp))
+            TextButton(
+                onClick = {
+                    navController.navigate("register")
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "¿No tenes una cuenta? Registrate acá")
+            }
+
         }
     }
 }

@@ -14,8 +14,8 @@ import androidx.core.content.edit
 class LoginViewModel @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(LoginUiState()
-
+    private val _uiState = MutableStateFlow(
+        LoginUiState()
     )
     val uiState: StateFlow<LoginUiState> = _uiState
 
@@ -25,7 +25,8 @@ class LoginViewModel @Inject constructor(
             state.copy(
                 email = email,
                 isEmailValid = isEmailValid,
-                isFormValid = isEmailValid && state.isPasswordValid
+                isFormValid = isEmailValid && state.isPasswordValid,
+                errorMessageEmail = if (!isEmailValid) "El email no es válido" else null
             )
         }
     }
@@ -36,19 +37,19 @@ class LoginViewModel @Inject constructor(
             state.copy(
                 password = password,
                 isPasswordValid = isPasswordValid,
-                isFormValid = isPasswordValid && state.isEmailValid
+                isFormValid = isPasswordValid && state.isEmailValid,
+                errorMessagePassword = if (!isPasswordValid) "La contraseña debe tener entre 8 y 12 caracteres" else null
             )
         }
     }
 
     fun onLoginClicked() {
-        // Handle login logic here, e.g., authenticate user
         if (_uiState.value.isFormValid) {
             sharedPreferences.edit {
                 putString("email", _uiState.value.email)
             }
         } else {
-            // Show error or feedback
+
         }
     }
 }
