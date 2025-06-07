@@ -68,7 +68,7 @@ class ProductListViewModel
 
     fun onCategorySelection(category: Categories?) {
         _productState.update { state ->
-            val newState = state.copy(selectedCategory = category?.name ?: "")
+            val newState = state.copy(selectedCategory = category)
             newState.copy(products = filterProducts(newState))
         }
     }
@@ -89,8 +89,8 @@ class ProductListViewModel
 
     private fun filterProducts(state: ProductListState): List<Product> {
         return allProducts.filter { product ->
-            val matchesCategory = state.selectedCategory.isBlank() ||
-                    product.category.any { it.name == state.selectedCategory }
+            val matchesCategory = state.selectedCategory == null ||
+                    product.category.any { it == state.selectedCategory }
             val matchesQuery = state.searchQuery.isBlank() ||
                     product.name.contains(state.searchQuery, ignoreCase = true) ||
                     product.description.contains(state.searchQuery, ignoreCase = true)
@@ -115,11 +115,4 @@ class ProductListViewModel
         }
     }
 
-    fun onGoToCartButtonClick() {
-        // Handle the action when the "Ver mi carrito" button is clicked
-        // This could involve navigating to a cart screen or showing a cart summary
-        println("Go to cart clicked")
-    }
 }
-
-

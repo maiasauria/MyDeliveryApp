@@ -1,5 +1,6 @@
 package com.mleon.mydeliveryapp.view.viewmodel
 
+import com.mleon.core.model.Categories
 import com.mleon.core.model.Product
 
 data class ProductListState (
@@ -7,6 +8,6 @@ data class ProductListState (
     val products: List<Product> = emptyList(),
     val error: Exception? = null,
     val searchQuery: String = "",
-    val selectedCategory: String = "",
+    var selectedCategory: Categories? = null,
     val cartMessage: String = "",
 )

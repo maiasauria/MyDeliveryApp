@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mleon.mydeliveryapp.view.viewmodel.ProductListViewModel
 import com.mleon.mydeliveryapp.view.ui.views.LoginScreen
+import com.mleon.mydeliveryapp.view.ui.views.ProductListScreen
 import com.mleon.mydeliveryapp.view.ui.views.ProductListView
 import com.mleon.mydeliveryapp.view.ui.views.SignupScreen
 
@@ -30,12 +31,7 @@ fun AppNavigation( ) {
             SignupScreen(navController) // Pasamos el navController a LoginScreen
         }
         composable(route = "products") { //a que archivo apuntamos
-            val productsViewModel : ProductListViewModel = hiltViewModel() // Obtenemos el ViewModel
-            val state = productsViewModel.productState.collectAsState() // Obtenemos el estado del ViewModel
-            ProductListView(
-                state = state.value,
-                innerPadding = PaddingValues(0.dp),
-                navController = navController) // Pasamos el navController a ProductsScreen
+            ProductListScreen(navController) // Pasamos el navController a ProductsScreen
         }
         composable(route = "cart") {
 //            val productsViewModel : ProductListViewModel = hiltViewModel() // Obtenemos el ViewModel

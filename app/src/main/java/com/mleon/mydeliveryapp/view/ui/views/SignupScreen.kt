@@ -18,7 +18,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
-import com.mleon.mydeliveryapp.R
 import com.mleon.utils.ui.ValidatePasswordField
 import com.mleon.utils.ui.ValidateTextField
 
