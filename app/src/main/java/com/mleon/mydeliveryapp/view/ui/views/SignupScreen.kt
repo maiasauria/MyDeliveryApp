@@ -47,7 +47,7 @@ fun SignupScreen(
         ) {
 
             Image(
-                painter = painterResource(id = R.drawable.main_logo), // Replace with your logo resource
+                painter = painterResource(id = com.mleon.utils.R.drawable.main_logo), // Replace with your logo resource
                 contentDescription = "Logo",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -56,7 +56,7 @@ fun SignupScreen(
 
             ValidateTextField(
                 value = uiState.name,
-                onValueChange = { signupViewModel.onNameChanged(it) },
+                onValueChange = { signupViewModel.onNameChange(it) },
                 label = "Nombre Completo",
                 isError = uiState.errorMessageName != null,
                 errorMessage = uiState.errorMessageName,
@@ -64,7 +64,7 @@ fun SignupScreen(
             )
             ValidateTextField(
                 value = uiState.email,
-                onValueChange = { signupViewModel.onEmailChanged(it) },
+                onValueChange = { signupViewModel.onEmailChange(it) },
                 label = "Email",
                 isError = uiState.errorMessageEmail != null,
                 errorMessage = uiState.errorMessageEmail,
@@ -72,7 +72,7 @@ fun SignupScreen(
             )
             ValidatePasswordField(
                 value = uiState.password,
-                onValueChange = { signupViewModel.onPasswordChanged(it) },
+                onValueChange = { signupViewModel.onPasswordChange(it) },
                 label = "Contraseña",
                 isError = uiState.errorMessagePassword != null,
                 errorMessage = uiState.errorMessagePassword,
@@ -82,7 +82,7 @@ fun SignupScreen(
             )
             ValidatePasswordField(
                 value = uiState.passwordConfirm,
-                onValueChange = { signupViewModel.onConfirmPasswordChanged(it) },
+                onValueChange = { signupViewModel.onConfirmPasswordChange(it) },
                 label = "Confirma tu contraseña",
                 isError = uiState.errorMessageConfirmPassword != null,
                 errorMessage = uiState.errorMessageConfirmPassword,

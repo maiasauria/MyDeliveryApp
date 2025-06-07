@@ -14,12 +14,10 @@ import androidx.core.content.edit
 class LoginViewModel @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(
-        LoginUiState()
-    )
+    private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
 
-    fun onEmailChanged(email: String) {
+    fun onEmailChange(email: String) {
         _uiState.update { state ->
             val isEmailValid = Patterns.EMAIL_ADDRESS.matcher(email).matches()
             state.copy(
@@ -31,7 +29,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun onPasswordChanged(password: String) {
+    fun onPasswordChange(password: String) {
         _uiState.update { state ->
             val isPasswordValid = password.length in 8..12
             state.copy(
@@ -43,13 +41,17 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun onLoginClicked() {
+    fun onLoginClick() {
         if (_uiState.value.isFormValid) {
             sharedPreferences.edit {
                 putString("email", _uiState.value.email)
             }
         } else {
-
+            _uiState.update { state ->
+                state.copy(
+                    errorMessageLogin = "Por favor, completa todos los campos correctamente."
+                )
+            }
         }
     }
 }

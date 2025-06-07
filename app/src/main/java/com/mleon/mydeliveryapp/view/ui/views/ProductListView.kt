@@ -2,7 +2,6 @@ package com.mleon.mydeliveryapp.view.ui.views
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -23,6 +22,7 @@ import com.mleon.mydeliveryapp.data.repository.ProductRepositoryImpl
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavHostController
 import com.mleon.mydeliveryapp.R
 import com.mleon.mydeliveryapp.view.viewmodel.ProductListState
 import com.mleon.mydeliveryapp.view.viewmodel.ProductListViewModel
@@ -34,6 +34,7 @@ fun ProductListView(
     state: ProductListState,
     innerPadding: PaddingValues,
     modifier: Modifier = Modifier,
+    navController: NavHostController,
     productListViewModel: ProductListViewModel = hiltViewModel()
 ) {
     val searchQuery by remember { mutableStateOf(state.searchQuery) }
@@ -57,7 +58,7 @@ fun ProductListView(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.icon1),
+                    painter = painterResource(id = com.mleon.utils.R.drawable.icon1),
                     contentDescription = "Logo",
                     modifier = Modifier
                         .size(30.dp)
@@ -65,7 +66,7 @@ fun ProductListView(
                 )
                 TextField(
                     value = uiState.searchQuery,
-                    onValueChange = { productListViewModel.onSearchTextChanged(it) },
+                    onValueChange = { productListViewModel.onSearchTextChange(it) },
                     label = { Text("Buscar") },
                     placeholder = { Text("Buscar productos...") },
                     modifier = Modifier
@@ -73,7 +74,7 @@ fun ProductListView(
                         .defaultMinSize(minHeight = 48.dp),
                     trailingIcon = {
                         if (uiState.searchQuery.isNotEmpty()) {
-                            IconButton(onClick = { productListViewModel.onSearchTextChanged("") }) {
+                            IconButton(onClick = { productListViewModel.onSearchTextChange("") }) {
                                 Icon(
                                     imageVector = Icons.Filled.Close,
                                     contentDescription = "Limpiar la búsqueda",
@@ -95,7 +96,7 @@ fun ProductListView(
                     Button(
                         onClick = {
                             selectedCategory = if (selectedCategory == category) null else category
-                            productListViewModel.onCategorySelected(selectedCategory)
+                            productListViewModel.onCategorySelection(selectedCategory)
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray
@@ -114,7 +115,7 @@ fun ProductListView(
             ) {
 
                 OutlinedButton(
-                    onClick = { productListViewModel.orderByPriceDescending() },
+                    onClick = { productListViewModel.onOrderByPriceDescending() },
                 ) {
                     Text(
                         text = "Precio"
@@ -125,7 +126,7 @@ fun ProductListView(
                     )
                 }
                 OutlinedButton(
-                    onClick = { productListViewModel.orderByPriceAscending() },
+                    onClick = { productListViewModel.onOrderByPriceAscending() },
                 ) {
                     Text(
                         text = "Precio"
@@ -163,15 +164,15 @@ fun ProductListView(
                 items(state.products) { product ->
                     ProductCard(
                         product = product,
-                        showQuantitySelector = false,
-                        //           onActionClick = Unit,
-                        actionButtonText = "Agregar al carrito"
+                        onAddToCart = {
+                            productListViewModel.onAddToCartButtonClick(product)
+                        },
                     )
                 }
             }
         }
         FloatingActionButton(
-            onClick = { },
+            onClick = { navController.navigate("cart") },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
@@ -185,6 +186,15 @@ fun ProductListView(
                 "Error: ${error.message}",
                 Toast.LENGTH_LONG
             ).show()
+        }
+        val context = LocalContext.current
+        val cartMessage = uiState.cartMessage
+        LaunchedEffect(cartMessage) {
+            if (cartMessage.isNotEmpty()) {
+                Toast.makeText(context, cartMessage, Toast.LENGTH_SHORT).show()
+                // Optionally clear the message after showing
+                productListViewModel.clearCartMessage()
+            }
         }
 
     }
@@ -203,9 +213,7 @@ fun ProductListViewPreview() {
     ProductListView(
         state = sampleState,
         innerPadding = PaddingValues(0.dp),
-//        onAddToCart = { product, quantity ->
-//            // Handle add to cart action
-//        },
+        navController = NavHostController(LocalContext.current),
         modifier = Modifier.fillMaxWidth()
     )
 }

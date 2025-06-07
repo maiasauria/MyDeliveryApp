@@ -7,5 +7,6 @@ data class ProductListState (
     val products: List<Product> = emptyList(),
     val error: Exception? = null,
     val searchQuery: String = "",
-    val selectedCategory: String = ""
+    val selectedCategory: String = "",
+    val cartMessage: String = "",
 )

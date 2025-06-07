@@ -1,6 +1,5 @@
 package com.mleon.mydeliveryapp.view.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.mleon.core.model.Product
 import androidx.lifecycle.viewModelScope
@@ -9,6 +8,7 @@ import com.mleon.mydeliveryapp.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -24,9 +24,8 @@ class ProductListViewModel
 
     private val _productState = MutableStateFlow(
         ProductListState(
-            //en caso de q no haya internet
             products = listOf(
-                Product(1, "Name 1", "Description 1", 10.0, true, "", listOf(Categories.PIZZA)),
+                Product(1, "", "", 0.0, true, "", listOf()),
             )
         )
     )
@@ -37,17 +36,18 @@ class ProductListViewModel
     }
 
     init {
+        _productState.update { it.copy(isLoading = true) }
+
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             try {
+                delay(2000) // Simulate network delay
                 val nuevaLista = productRepository.getProducts()
                 allProducts = nuevaLista // Store the fetched products
-                Log.d("ProductListViewModel", "Fetched products: $nuevaLista")
                 _productState.update {
                     it.copy(
                         products = nuevaLista, isLoading = false
                     )
                 }
-
             } catch (e: Exception) {
                 _productState.update {
                     it.copy(
@@ -59,29 +59,28 @@ class ProductListViewModel
         }
     }
 
-
-    fun onSearchTextChanged(query: String) {
+    fun onSearchTextChange(query: String) {
         _productState.update { state ->
             val newState = state.copy(searchQuery = query)
             newState.copy(products = filterProducts(newState))
         }
     }
 
-    fun onCategorySelected(category: Categories?) {
+    fun onCategorySelection(category: Categories?) {
         _productState.update { state ->
             val newState = state.copy(selectedCategory = category?.name ?: "")
             newState.copy(products = filterProducts(newState))
         }
     }
 
-    fun orderByPriceAscending() {
+    fun onOrderByPriceAscending() {
         _productState.update { state ->
             val sortedProducts = state.products.sortedBy { it.price }
             state.copy(products = sortedProducts)
         }
     }
 
-    fun orderByPriceDescending() {
+    fun onOrderByPriceDescending() {
         _productState.update { state ->
             val sortedProducts = state.products.sortedByDescending { it.price }
             state.copy(products = sortedProducts)
@@ -97,6 +96,29 @@ class ProductListViewModel
                     product.description.contains(state.searchQuery, ignoreCase = true)
             matchesCategory && matchesQuery
         }
+    }
+
+    fun onAddToCartButtonClick(product: Product) {
+        // Handle the action when the "Agregar al carrito" button is clicked
+        // This could involve adding the product to a cart or showing a confirmation message
+        println("Product added to cart: ${product.name}")
+        _productState.update { state ->
+            state.copy(
+                cartMessage = "Producto ${product.name} agregado al carrito"
+            )
+        }
+    }
+
+    fun clearCartMessage() {
+        _productState.update { state ->
+            state.copy(cartMessage = "")
+        }
+    }
+
+    fun onGoToCartButtonClick() {
+        // Handle the action when the "Ver mi carrito" button is clicked
+        // This could involve navigating to a cart screen or showing a cart summary
+        println("Go to cart clicked")
     }
 }
 

@@ -34,7 +34,8 @@ fun AppNavigation( ) {
             val state = productsViewModel.productState.collectAsState() // Obtenemos el estado del ViewModel
             ProductListView(
                 state = state.value,
-                innerPadding = PaddingValues(0.dp)) // Pasamos el navController a ProductsScreen
+                innerPadding = PaddingValues(0.dp),
+                navController = navController) // Pasamos el navController a ProductsScreen
         }
         composable(route = "cart") {
 //            val productsViewModel : ProductListViewModel = hiltViewModel() // Obtenemos el ViewModel

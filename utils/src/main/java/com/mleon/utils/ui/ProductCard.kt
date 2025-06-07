@@ -31,11 +31,8 @@ import com.mleon.utils.toCurrencyFormat
 fun ProductCard(
     modifier: Modifier = Modifier,
     product: Product,
-    showQuantitySelector: Boolean = true,
-    //  onActionClick: (Product, Int) -> Unit,
-    actionButtonText: String
+    onAddToCart: (Product) -> Unit = { }
 ) {
-    var quantity by remember { mutableIntStateOf(1) }
 
     Card(
         modifier = modifier
@@ -98,7 +95,7 @@ fun ProductCard(
                         style = MaterialTheme.typography.bodyMedium
                     )
 
-                    IconButton(onClick = { /* Handle click */ }) {
+                    IconButton(onClick = { onAddToCart(product) }) {
                         Box(
                             modifier = Modifier
                                 .size(40.dp)
@@ -130,8 +127,6 @@ fun ProductCardPreview() {
             imageUrl = "",
             includesDrink = false,
             category = listOf(Categories.VEGAN)
-        ),
-        showQuantitySelector = false,
-        actionButtonText = "Agregar al carrito"
+        )
     )
 }

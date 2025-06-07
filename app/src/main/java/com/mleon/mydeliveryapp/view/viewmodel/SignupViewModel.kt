@@ -17,7 +17,7 @@ class SignupViewModel @Inject constructor() : ViewModel() {
     val uiState: StateFlow<SignupUiState> = _uiState
     val users = mutableListOf<User>()
 
-    fun onEmailChanged(email: String) {
+    fun onEmailChange(email: String) {
         _uiState.update { state ->
             val isEmailValid = Patterns.EMAIL_ADDRESS.matcher(email).matches()
             state.copy(
@@ -29,7 +29,7 @@ class SignupViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun onPasswordChanged(password: String) {
+    fun onPasswordChange(password: String) {
         _uiState.update { state ->
             val isPasswordValid = password.length in 8..12
             state.copy(
@@ -41,19 +41,19 @@ class SignupViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun onConfirmPasswordChanged(confirmPassword: String) {
+    fun onConfirmPasswordChange(confirmPassword: String) {
         _uiState.update { state ->
             val doPasswordsMatch = confirmPassword == state.password
             state.copy(
                 passwordConfirm = confirmPassword,
                 doPasswordsMatch = doPasswordsMatch,
-                isFormValid = state.isEmailValid && state.isPasswordValid && doPasswordsMatch,
+                isFormValid = state.isEmailValid && state.isPasswordValid && state.isNameValid && doPasswordsMatch,
                 errorMessageConfirmPassword = if (!doPasswordsMatch) "Las contraseñas no coinciden" else null
             )
         }
     }
 
-    fun onNameChanged(name: String) {
+    fun onNameChange(name: String) {
         _uiState.update { state ->
             val isNameValid = name.trim().length in 6..50
             state.copy(

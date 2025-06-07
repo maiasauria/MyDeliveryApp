@@ -43,7 +43,7 @@ fun LoginScreen(
         ) {
 
             Image(
-                painter = painterResource(id = R.drawable.main_logo), // Replace with your logo resource
+                painter = painterResource(id = com.mleon.utils.R.drawable.main_logo), // Replace with your logo resource
                 contentDescription = "Logo",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -52,7 +52,7 @@ fun LoginScreen(
 
             OutlinedTextField(
                 value = uiState.email,
-                onValueChange = { loginViewModel.onEmailChanged(it) },
+                onValueChange = { loginViewModel.onEmailChange(it) },
                 label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth(),
                 isError = !uiState.isEmailValid && uiState.email.isNotEmpty()
@@ -66,7 +66,7 @@ fun LoginScreen(
             }
             OutlinedTextField(
                 value = uiState.password,
-                onValueChange = { loginViewModel.onPasswordChanged(it) },
+                onValueChange = { loginViewModel.onPasswordChange(it) },
                 label = { Text(text = "Password") },
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
@@ -89,7 +89,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    loginViewModel.onLoginClicked()
+                    loginViewModel.onLoginClick()
                     navController.navigate("products") {
                         popUpTo("login") { inclusive = true }
                     }
