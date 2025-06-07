@@ -1,5 +1,6 @@
 package com.mleon.mydeliveryapp.view.ui.views
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -8,11 +9,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.mleon.mydeliveryapp.R
 import com.mleon.mydeliveryapp.view.viewmodel.LoginViewModel
 
 @Composable
@@ -29,6 +32,8 @@ fun LoginScreen(
             .padding(16.dp),
         contentAlignment = Alignment.Center,
     ) {
+
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -36,6 +41,15 @@ fun LoginScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            Image(
+                painter = painterResource(id = R.drawable.main_logo), // Replace with your logo resource
+                contentDescription = "Logo",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
+
             OutlinedTextField(
                 value = uiState.email,
                 onValueChange = { loginViewModel.onEmailChanged(it) },

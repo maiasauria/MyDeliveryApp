@@ -8,4 +8,10 @@ data class Product(
     val includesDrink: Boolean,
     val imageUrl: String? = "",
     val category: List<Categories> = emptyList() ,
-)
+
+
+) {
+    fun formatPrice(): String {
+        return "$${"%.2f".format(price)}"
+    }
+}

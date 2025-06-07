@@ -1,6 +1,7 @@
 package com.mleon.mydeliveryapp.view.ui.views
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,6 +21,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.mleon.core.model.Categories
 import com.mleon.mydeliveryapp.data.repository.ProductRepositoryImpl
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.painterResource
+import com.mleon.mydeliveryapp.R
 import com.mleon.mydeliveryapp.view.viewmodel.ProductListState
 import com.mleon.mydeliveryapp.view.viewmodel.ProductListViewModel
 import com.mleon.utils.ui.ProductCard
@@ -36,105 +40,119 @@ fun ProductListView(
     var selectedCategory by remember { mutableStateOf<Categories?>(null) }
     val uiState by productListViewModel.productState.collectAsState()
 
-    Column(
-        modifier = modifier
-            .background(Color.White)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
             .padding(16.dp)
     ) {
-        TextField(
-            value = uiState.searchQuery,
-            onValueChange = { productListViewModel.onSearchTextChanged(it) },
-            label = { Text("Buscar") },
-            placeholder = { Text("Buscar productos...") },
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .defaultMinSize(minHeight = 48.dp)
-                .padding(bottom = 16.dp),
-            trailingIcon = {
-                if (uiState.searchQuery.isNotEmpty()) {
-                    IconButton(onClick = { productListViewModel.onSearchTextChanged("") }) {
-                        Icon(
-                            imageVector = Icons.Filled.Close,
-                            contentDescription = "Limpiar la búsqueda",
+                .fillMaxSize(),
+        )
+        {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.icon1),
+                    contentDescription = "Logo",
+                    modifier = Modifier
+                        .size(30.dp)
+                        .padding(end = 8.dp)
+                )
+                TextField(
+                    value = uiState.searchQuery,
+                    onValueChange = { productListViewModel.onSearchTextChanged(it) },
+                    label = { Text("Buscar") },
+                    placeholder = { Text("Buscar productos...") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .defaultMinSize(minHeight = 48.dp),
+                    trailingIcon = {
+                        if (uiState.searchQuery.isNotEmpty()) {
+                            IconButton(onClick = { productListViewModel.onSearchTextChanged("") }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Close,
+                                    contentDescription = "Limpiar la búsqueda",
+                                )
+                            }
+                        }
+                    },
+                )
+            }
+
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                items(Categories.entries) { category ->
+                    val isSelected = selectedCategory == category
+                    Button(
+                        onClick = {
+                            selectedCategory = if (selectedCategory == category) null else category
+                            productListViewModel.onCategorySelected(selectedCategory)
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray
+                        )
+                    ) {
+                        Text(category.getCategoryName())
+                    }
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+            ) {
+
+                OutlinedButton(
+                    onClick = { productListViewModel.orderByPriceDescending() },
+                ) {
+                    Text(
+                        text = "Precio"
+                    )
+                    Icon(
+                        imageVector = Icons.Filled.ArrowDownward,
+                        contentDescription = "Precio descendente"
+                    )
+                }
+                OutlinedButton(
+                    onClick = { productListViewModel.orderByPriceAscending() },
+                ) {
+                    Text(
+                        text = "Precio"
+                    )
+                    Icon(
+                        imageVector = Icons.Filled.ArrowUpward,
+                        contentDescription = "Precio ascendente"
+                    )
+                }
+            }
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(0.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                item {
+                    if (state.isLoading) {
+                        LinearProgressIndicator(
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
-            },
-        )
-
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-
-        ) {
-            items(Categories.entries) { category ->
-                val isSelected = selectedCategory == category
-                Button(
-                    onClick = {
-                        selectedCategory = if (selectedCategory == category) null else category
-                        productListViewModel.onCategorySelected(selectedCategory)
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray
-                    )
-                ) {
-                    Text(category.getCategoryName())
-                }
-            }
-
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            horizontalArrangement = Arrangement.Center
-        ) {
-
-            OutlinedButton (
-                onClick = { productListViewModel.orderByPriceDescending() },
-                modifier = Modifier.padding(8.dp)
-            ) {
-                Text(
-                    text = "Precio"
-                )
-                Icon(
-                    imageVector = Icons.Filled.ArrowDownward,
-                    contentDescription = "Precio descendente"
-                )
-            }
-            OutlinedButton(
-                onClick = { productListViewModel.orderByPriceAscending() },
-                modifier = Modifier.padding(8.dp)
-            ) {
-                Text(
-                    text = "Precio"
-                )
-                Icon(
-                    imageVector = Icons.Filled.ArrowUpward,
-                    contentDescription = "Precio ascendente"
-                )
-            }
-        }
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            item {
-                if (state.isLoading) {
-                    LinearProgressIndicator(
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
-            item {
-                Spacer(modifier = Modifier.height(16.dp)) // Espacio al final de la lista
-            }
+//                item {
+//                    Spacer(modifier = Modifier.height(24.dp)) // Espacio al final de la lista
+//                }
 //            item {  //TODO pasar esto al cart, no va aca
 //                Text(
 //                    text = "Total: \$${state.products.sumOf { it.price }}",
@@ -142,20 +160,22 @@ fun ProductListView(
 //                    modifier = Modifier.padding(16.dp)
 //                )
 //            }
-            items(state.products) { product ->
-                ProductCard(
-                    product = product,
-                    showQuantitySelector = false,
-                    //           onActionClick = Unit,
-                    actionButtonText = "Agregar al carrito"
-                )
+                items(state.products) { product ->
+                    ProductCard(
+                        product = product,
+                        showQuantitySelector = false,
+                        //           onActionClick = Unit,
+                        actionButtonText = "Agregar al carrito"
+                    )
+                }
             }
         }
-        Button(
-            onClick = {  },
+        FloatingActionButton(
+            onClick = { },
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+                .width(150.dp)
         ) {
             Text("Ver mi carrito")
         }
@@ -166,6 +186,7 @@ fun ProductListView(
                 Toast.LENGTH_LONG
             ).show()
         }
+
     }
 }
 

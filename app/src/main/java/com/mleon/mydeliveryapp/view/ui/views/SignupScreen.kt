@@ -1,5 +1,6 @@
 package com.mleon.mydeliveryapp.view.ui.views
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +14,11 @@ import com.mleon.mydeliveryapp.view.viewmodel.SignupViewModel
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
+import com.mleon.mydeliveryapp.R
 import com.mleon.utils.ui.ValidatePasswordField
 import com.mleon.utils.ui.ValidateTextField
 
@@ -29,18 +34,26 @@ fun SignupScreen(
 
     Scaffold(
         modifier = Modifier
-            .fillMaxSize()
             .padding(16.dp)
             .fillMaxSize(),
 
         ) { innerPadding ->
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .padding(innerPadding),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            Image(
+                painter = painterResource(id = R.drawable.main_logo), // Replace with your logo resource
+                contentDescription = "Logo",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
+
             ValidateTextField(
                 value = uiState.name,
                 onValueChange = { signupViewModel.onNameChanged(it) },
@@ -90,6 +103,21 @@ fun SignupScreen(
             ) {
                 Text("Registrarse")
             }
+            Spacer(modifier = Modifier.height(24.dp))
+            TextButton(
+                onClick = {
+                    navController.navigate("login")
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "¿Ya tenes una cuenta? Inicia sesion aca")
+            }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SignupScreenPreview() {
+    SignupScreen(navController = NavHostController(LocalContext.current))
 }
