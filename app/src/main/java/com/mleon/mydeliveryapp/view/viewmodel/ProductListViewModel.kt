@@ -1,8 +1,10 @@
 package com.mleon.mydeliveryapp.view.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.mleon.core.model.Product
 import androidx.lifecycle.viewModelScope
+import com.mleon.core.model.Categories
 import com.mleon.mydeliveryapp.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -24,7 +26,7 @@ class ProductListViewModel
         ProductListState(
             //en caso de q no haya internet
             products = listOf(
-                Product(1, "Name 1", "Description 1", 10.0, true, "", "Category 1"),
+                Product(1, "Name 1", "Description 1", 10.0, true, "", listOf(Categories.PIZZA)),
             )
         )
     )
@@ -39,6 +41,7 @@ class ProductListViewModel
             try {
                 val nuevaLista = productRepository.getProducts()
                 allProducts = nuevaLista // Store the fetched products
+                Log.d("ProductListViewModel", "Fetched products: $nuevaLista")
                 _productState.update {
                     it.copy(
                         products = nuevaLista, isLoading = false
@@ -59,14 +62,26 @@ class ProductListViewModel
 
     fun onSearchTextChanged(query: String) {
         _productState.update { state ->
-            state.copy(
-                searchQuery = query,
-                products = if (query.isBlank()) {
-                    allProducts
-                } else {
-                    allProducts.filter { it.name.contains(query, ignoreCase = true) || it.description.contains(query, ignoreCase = true) } //TODO este filtrado va aca o en el repositorio?
-                }
-            )
+            val newState = state.copy(searchQuery = query)
+            newState.copy(products = filterProducts(newState))
+        }
+    }
+
+    fun onCategorySelected(category: Categories?) {
+        _productState.update { state ->
+            val newState = state.copy(selectedCategory = category?.name ?: "")
+            newState.copy(products = filterProducts(newState))
+        }
+    }
+
+    private fun filterProducts(state: ProductListState): List<Product> {
+        return allProducts.filter { product ->
+            val matchesCategory = state.selectedCategory.isBlank() ||
+                    product.category.any { it.name == state.selectedCategory }
+            val matchesQuery = state.searchQuery.isBlank() ||
+                    product.name.contains(state.searchQuery, ignoreCase = true) ||
+                    product.description.contains(state.searchQuery, ignoreCase = true)
+            matchesCategory && matchesQuery
         }
     }
 }

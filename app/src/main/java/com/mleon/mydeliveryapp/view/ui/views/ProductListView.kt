@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -12,19 +13,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.mleon.core.model.Categories
 import com.mleon.mydeliveryapp.data.repository.ProductRepositoryImpl
+import androidx.compose.material.icons.filled.Close
 import com.mleon.mydeliveryapp.view.viewmodel.ProductListState
+import com.mleon.mydeliveryapp.view.viewmodel.ProductListViewModel
+import com.mleon.utils.ui.ProductCard
 
 
 @Composable
 fun ProductListView(
     state: ProductListState,
     innerPadding: PaddingValues,
-    //onAddToCart: (Product, Int) -> Unit,
-    onSearchTextChanged: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    productListViewModel: ProductListViewModel = hiltViewModel()
 ) {
-    var searchQuery by remember { mutableStateOf(state.searchQuery) }
+    val searchQuery by remember { mutableStateOf(state.searchQuery) }
+    var selectedCategory by remember { mutableStateOf<Categories?>(null) }
+    val uiState by productListViewModel.productState.collectAsState()
 
     Column(
         modifier = modifier
@@ -32,17 +39,47 @@ fun ProductListView(
             .padding(16.dp)
     ) {
         TextField(
-            value = searchQuery,
-            onValueChange = {
-                searchQuery = it
-                onSearchTextChanged(it)
-            },// Aquí puedes manejar el cambio de búsqueda},
+            value = uiState.searchQuery,
+            onValueChange = { productListViewModel.onSearchTextChanged(it) },
             label = { Text("Buscar") },
             placeholder = { Text("Buscar productos...") },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
+                .defaultMinSize(minHeight = 48.dp)
+                .padding(bottom = 16.dp),
+            trailingIcon = {
+                if (searchQuery.isNotEmpty()) {
+                    IconButton(onClick = { productListViewModel.onSearchTextChanged("") }) {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Limpiar la búsqueda",
+                        )
+                    }
+                }
+            },
         )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
+            .height(48.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Categories.entries.forEach { category ->
+                val isSelected = selectedCategory == category
+                Button(
+                    onClick = {
+                        selectedCategory = if (selectedCategory == category) null else category
+                        productListViewModel.onCategorySelected(selectedCategory)
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray
+                    )
+                ) {
+                    Text(category.getCategoryName())
+                }
+            }
+        }
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -84,7 +121,6 @@ fun ProductListView(
             Text("Ver mi carrito")
         }
         state.error?.let { error ->
-            // Aquí puedes mostrar un mensaje de error, por ejemplo, con un SnackBar o un Toast
             Toast.makeText(
                 LocalContext.current,
                 "Error: ${error.message}",
@@ -110,7 +146,6 @@ fun ProductListViewPreview() {
 //        onAddToCart = { product, quantity ->
 //            // Handle add to cart action
 //        },
-        modifier = Modifier.fillMaxWidth(),
-        onSearchTextChanged = { /* Handle search text change */ }
+        modifier = Modifier.fillMaxWidth()
     )
 }

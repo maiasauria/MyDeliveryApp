@@ -6,5 +6,6 @@ data class ProductListState (
     val isLoading: Boolean = false,
     val products: List<Product> = emptyList(),
     val error: Exception? = null,
-    val searchQuery: String = ""
+    val searchQuery: String = "",
+    val selectedCategory: String = ""
 )

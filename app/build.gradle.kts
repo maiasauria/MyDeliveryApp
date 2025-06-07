@@ -42,7 +42,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.10"
+        kotlinCompilerExtensionVersion = "1.5.13"
     }
 
 
@@ -64,8 +64,6 @@ dependencies {
 
     //Compose
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.ui)
-    implementation(libs.material3)
 
     // Retrofit
     implementation(libs.retrofit)
@@ -88,15 +86,8 @@ dependencies {
     // Material Components
     implementation(libs.material)
 
-    // RecyclerView
-    implementation(libs.androidx.recyclerview)
-
     // ConstraintLayout
     implementation(libs.androidx.constraintlayout)
-
-    // Glide (image loading)
-    implementation(libs.glide)
-    ksp(libs.compiler)
 
     // Hilt (DI)
     implementation(libs.hilt.android)
@@ -105,7 +96,7 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.android)
 
     implementation(libs.androidx.appcompat)
-
+    implementation(libs.coil.compose)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.activity)

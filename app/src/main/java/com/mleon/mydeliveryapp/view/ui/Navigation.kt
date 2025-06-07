@@ -19,7 +19,8 @@ fun AppNavigation( ) {
     val navController : NavHostController = rememberNavController() //remember para almacenar el estado de la variable
     NavHost(
         navController = navController,
-        startDestination = "login" // Define la ruta inicial
+        //startDestination = "login" // Define la ruta inicial
+        startDestination = "products" //TODO Cambiar a "login" cuando se implemente la autenticación
     ) {
         // Aquí definimos las rutas de navegación
         composable(route = "login") { //a que archivo apuntamos
@@ -33,16 +34,14 @@ fun AppNavigation( ) {
             val state = productsViewModel.productState.collectAsState() // Obtenemos el estado del ViewModel
             ProductListView(
                 state = state.value,
-                innerPadding = PaddingValues(0.dp),
-                onSearchTextChanged = productsViewModel::onSearchTextChanged) // Pasamos el navController a ProductsScreen
+                innerPadding = PaddingValues(0.dp)) // Pasamos el navController a ProductsScreen
         }
         composable(route = "cart") {
-            val productsViewModel : ProductListViewModel = hiltViewModel() // Obtenemos el ViewModel
-            val state = productsViewModel.productState.collectAsState() // Obtenemos el estado del ViewModel
-            ProductListView(
-                state = state.value,
-                innerPadding = PaddingValues(0.dp),
-                onSearchTextChanged = productsViewModel::onSearchTextChanged) // Pasamos el navController a ProductsScreen
+//            val productsViewModel : ProductListViewModel = hiltViewModel() // Obtenemos el ViewModel
+//            val state = productsViewModel.productState.collectAsState() // Obtenemos el estado del ViewModel
+//            ProductListView(
+//                state = state.value,
+//                innerPadding = PaddingValues(0.dp)) // Pasamos el navController a ProductsScreen
         }
     }
 }
