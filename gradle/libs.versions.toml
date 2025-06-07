@@ -26,6 +26,7 @@ navigationRuntimeAndroid = "2.9.0"
 hiltNavigationCompose = "1.2.0"
 runtimeAndroid = "1.8.2"
 uiTextAndroid = "1.8.2"
+uiTextGoogleFonts = "1.8.2"
 
 
 [libraries]
@@ -72,6 +73,7 @@ androidx-media3-common-ktx = { group = "androidx.media3", name = "media3-common-
 androidx-navigation-compose-android = { group = "androidx.navigation", name = "navigation-compose-android", version.ref = "navigationComposeAndroid" }
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
 androidx-ui-text-android = { group = "androidx.compose.ui", name = "ui-text-android", version.ref = "uiTextAndroid" }
+androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 
 
 [plugins]

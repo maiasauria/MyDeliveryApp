@@ -4,8 +4,11 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -48,7 +51,7 @@ fun ProductListView(
                 .defaultMinSize(minHeight = 48.dp)
                 .padding(bottom = 16.dp),
             trailingIcon = {
-                if (searchQuery.isNotEmpty()) {
+                if (uiState.searchQuery.isNotEmpty()) {
                     IconButton(onClick = { productListViewModel.onSearchTextChanged("") }) {
                         Icon(
                             imageVector = Icons.Filled.Close,
@@ -58,14 +61,15 @@ fun ProductListView(
                 }
             },
         )
-        Row(
+
+        LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp)
-            .height(48.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+
         ) {
-            Categories.entries.forEach { category ->
+            items(Categories.entries) { category ->
                 val isSelected = selectedCategory == category
                 Button(
                     onClick = {
@@ -79,7 +83,42 @@ fun ProductListView(
                     Text(category.getCategoryName())
                 }
             }
+
         }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+
+            OutlinedButton (
+                onClick = { productListViewModel.orderByPriceDescending() },
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text(
+                    text = "Precio"
+                )
+                Icon(
+                    imageVector = Icons.Filled.ArrowDownward,
+                    contentDescription = "Precio descendente"
+                )
+            }
+            OutlinedButton(
+                onClick = { productListViewModel.orderByPriceAscending() },
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text(
+                    text = "Precio"
+                )
+                Icon(
+                    imageVector = Icons.Filled.ArrowUpward,
+                    contentDescription = "Precio ascendente"
+                )
+            }
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()

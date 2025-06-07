@@ -74,6 +74,20 @@ class ProductListViewModel
         }
     }
 
+    fun orderByPriceAscending() {
+        _productState.update { state ->
+            val sortedProducts = state.products.sortedBy { it.price }
+            state.copy(products = sortedProducts)
+        }
+    }
+
+    fun orderByPriceDescending() {
+        _productState.update { state ->
+            val sortedProducts = state.products.sortedByDescending { it.price }
+            state.copy(products = sortedProducts)
+        }
+    }
+
     private fun filterProducts(state: ProductListState): List<Product> {
         return allProducts.filter { product ->
             val matchesCategory = state.selectedCategory.isBlank() ||

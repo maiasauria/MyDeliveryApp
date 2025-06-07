@@ -11,12 +11,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:name=".MyDeliveryApp"
-        android:theme="@style/Theme.MyDeliveryApp"
+        android:theme="@style/Theme.MyDeliveryApp.NoActionBar"
         tools:targetApi="31">
         <activity
             android:name=".view.ui.activities.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.MyDeliveryApp">
+            android:theme="@style/Theme.MyDeliveryApp.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
