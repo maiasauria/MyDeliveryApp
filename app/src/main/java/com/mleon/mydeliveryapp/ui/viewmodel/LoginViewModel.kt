@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 import androidx.core.content.edit
+import kotlinx.coroutines.delay
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
@@ -41,14 +42,16 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun onLoginClick() {
+    suspend fun onLoginClick() {
         if (_uiState.value.isFormValid) {
             sharedPreferences.edit {
                 putString("email", _uiState.value.email)
             }
+            _uiState.update { it.copy(isLoading = true) }
+            delay(1000)
+            _uiState.update { it.copy(isLoading = false) }
         } else {
-            _uiState.update { state ->
-                state.copy(
+            _uiState.update { it.copy(
                     errorMessageLogin = "Por favor, completa todos los campos correctamente."
                 )
             }

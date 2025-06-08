@@ -8,5 +8,6 @@ data class LoginUiState(
     val isFormValid: Boolean = false,
     val errorMessageEmail: String? = null,
     val errorMessagePassword: String? = null,
-    val errorMessageLogin: String? = null
+    val errorMessageLogin: String? = null,
+    val isLoading: Boolean = false
 )

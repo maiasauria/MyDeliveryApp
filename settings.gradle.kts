@@ -21,7 +21,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "MyDeliveryApp"
 include(":app")
-include(":appmodule")
 include(":feature:cart")
 include(":core:model")
 include(":data")

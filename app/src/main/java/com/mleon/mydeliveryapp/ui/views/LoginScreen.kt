@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mleon.mydeliveryapp.ui.viewmodel.LoginViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
@@ -12,6 +13,7 @@ fun LoginScreen(
 ) {
     val uiState by loginViewModel.uiState.collectAsState()
     var passwordVisible by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     LoginView(
         navController = navController,
@@ -27,13 +29,16 @@ fun LoginScreen(
         errorMessagePassword = uiState.errorMessagePassword,
         isFormValid = uiState.isFormValid,
         onLoginClick = {
-            loginViewModel.onLoginClick()
-            navController.navigate("products") {
-                popUpTo("login") { inclusive = true }
+            coroutineScope.launch {
+                loginViewModel.onLoginClick()
+                navController.navigate("products") {
+                    popUpTo("login") { inclusive = true }
+                }
             }
         },
         onSignupClick = {
             navController.navigate("signup")
-        }
+        },
+        isLoading = uiState.isLoading
     )
 }

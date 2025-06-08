@@ -1,6 +1,7 @@
 package com.mleon.mydeliveryapp.ui.views
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -34,7 +35,8 @@ fun LoginView(
     errorMessagePassword: String?,
     isFormValid: Boolean,
     onLoginClick: () -> Unit,
-    onSignupClick: () -> Unit
+    onSignupClick: () -> Unit,
+    isLoading: Boolean
 ) {
     Box(
         modifier = Modifier
@@ -78,7 +80,19 @@ fun LoginView(
             }
         }
     }
+    if (isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f)),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    }
+
 }
+
 @Composable
 fun LoginButton(
     onClick: () -> Unit,
