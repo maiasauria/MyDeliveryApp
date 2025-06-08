@@ -1,19 +1,13 @@
 package com.mleon.mydeliveryapp.view.ui
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.mleon.mydeliveryapp.view.viewmodel.ProductListViewModel
-import com.mleon.mydeliveryapp.view.ui.views.LoginScreen
-import com.mleon.mydeliveryapp.view.ui.views.ProductListScreen
-import com.mleon.mydeliveryapp.view.ui.views.ProductListView
-import com.mleon.mydeliveryapp.view.ui.views.SignupScreen
+import com.mleon.mydeliveryapp.ui.views.LoginScreen
+import com.mleon.mydeliveryapp.ui.views.ProductListScreen
+import com.mleon.mydeliveryapp.ui.views.SignupScreen
 
 @Composable
 fun AppNavigation( ) {

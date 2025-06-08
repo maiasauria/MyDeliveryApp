@@ -1,10 +1,10 @@
-package com.mleon.mydeliveryapp.view.ui.views
+package com.mleon.mydeliveryapp.ui.views
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
-import com.mleon.mydeliveryapp.view.viewmodel.ProductListViewModel
+import com.mleon.mydeliveryapp.ui.viewmodel.ProductListViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable

@@ -1,4 +1,4 @@
-package com.mleon.mydeliveryapp.view.ui.views
+package com.mleon.mydeliveryapp.ui.views
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.mleon.mydeliveryapp.view.viewmodel.SignupViewModel
+import com.mleon.mydeliveryapp.ui.viewmodel.SignupViewModel
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*

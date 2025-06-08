@@ -1,4 +1,4 @@
-package com.mleon.mydeliveryapp.view.ui.views
+package com.mleon.mydeliveryapp.ui.views
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -21,9 +21,8 @@ import com.mleon.mydeliveryapp.data.repository.ProductRepositoryImpl
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
-import androidx.navigation.NavHostController
 import com.mleon.core.model.Product
-import com.mleon.mydeliveryapp.view.viewmodel.ProductListState
+import com.mleon.mydeliveryapp.ui.viewmodel.ProductListState
 import com.mleon.utils.ui.ProductCard
 
 

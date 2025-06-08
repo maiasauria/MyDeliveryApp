@@ -1,4 +1,4 @@
-package com.mleon.mydeliveryapp.view.ui.views
+package com.mleon.mydeliveryapp.ui.views
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -15,8 +15,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.mleon.mydeliveryapp.R
-import com.mleon.mydeliveryapp.view.viewmodel.LoginViewModel
+import com.mleon.mydeliveryapp.ui.viewmodel.LoginViewModel
 
 @Composable
 fun LoginScreen(
