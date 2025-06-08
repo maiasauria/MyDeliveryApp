@@ -1,4 +1,4 @@
-package com.mleon.mydeliveryapp.view.ui
+package com.mleon.mydeliveryapp.ui
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -15,7 +15,7 @@ fun AppNavigation( ) {
     NavHost(
         navController = navController,
         //startDestination = "login" // Define la ruta inicial
-        startDestination = "products" //TODO Cambiar a "login" cuando se implemente la autenticación
+        startDestination = "login" //TODO Cambiar a "login" cuando se implemente la autenticación
     ) {
         // Aquí definimos las rutas de navegación
         composable(route = "login") { //a que archivo apuntamos
