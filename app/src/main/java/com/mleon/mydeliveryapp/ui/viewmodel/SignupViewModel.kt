@@ -1,9 +1,11 @@
 package com.mleon.mydeliveryapp.ui.viewmodel
 
 import android.util.Patterns
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import com.mleon.core.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -69,6 +71,22 @@ class SignupViewModel @Inject constructor() : ViewModel() {
         val state = _uiState.value
         if (state.isFormValid) {
             users.add(User(state.name, state.email, state.password))
+        }
+    }
+
+    suspend fun onLoginClick() {
+        val state = _uiState.value
+        if (state.isFormValid) {
+            users.add(User(state.name, state.email, state.password))
+
+            _uiState.update { it.copy(isLoading = true) }
+            delay(1000)
+            _uiState.update { it.copy(isLoading = false) }
+        } else {
+            _uiState.update { it.copy(
+                errorMessageSignup = "Por favor, completa todos los campos correctamente."
+            )
+            }
         }
     }
 }
