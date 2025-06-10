@@ -167,7 +167,7 @@ fun ProductListView(
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
                 .width(150.dp)
-        ) {
+        ) { 
             Text("Ver mi carrito")
         }
         uiState.error?.let { error ->

@@ -36,6 +36,7 @@ fun ProductCard(
 
     Card(
         modifier = modifier
+            .padding(horizontal = 8.dp, vertical = 5.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(CornerSize(10.dp)),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),

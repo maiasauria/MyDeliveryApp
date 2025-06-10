@@ -6,11 +6,13 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import com.mleon.mydeliveryapp.ui.viewmodel.ProductListViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.mleon.feature.cart.view.viewmodel.CartViewModel
 
 @Composable
 fun ProductListScreen(
     navController: NavHostController,
-    productListViewModel: ProductListViewModel = hiltViewModel()
+    productListViewModel: ProductListViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel = hiltViewModel()
 ) {
     val uiState by productListViewModel.productState.collectAsState()
 
@@ -20,7 +22,8 @@ fun ProductListScreen(
         onCategorySelection = { productListViewModel.onCategorySelection(it) },
         onOrderByPriceDescending = { productListViewModel.onOrderByPriceDescending() },
         onOrderByPriceAscending = { productListViewModel.onOrderByPriceAscending() },
-        onAddToCart = { productListViewModel.onAddToCartButtonClick(it) },
+        onAddToCart = { cartViewModel.addToCart(it)
+            productListViewModel.onAddToCartButtonClick(it) },
         onCartClick = { navController.navigate("cart") },
         clearCartMessage = { productListViewModel.clearCartMessage() }
     )
