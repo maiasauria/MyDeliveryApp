@@ -22,9 +22,12 @@ fun ProductListScreen(
         onCategorySelection = { productListViewModel.onCategorySelection(it) },
         onOrderByPriceDescending = { productListViewModel.onOrderByPriceDescending() },
         onOrderByPriceAscending = { productListViewModel.onOrderByPriceAscending() },
-        onAddToCart = { cartViewModel.addToCart(it)
-            productListViewModel.onAddToCartButtonClick(it) },
+        onAddToCart = {
+            cartViewModel.addToCart(it)
+            productListViewModel.onAddToCartButtonClick(it)
+        },
         onCartClick = { navController.navigate("cart") },
-        clearCartMessage = { productListViewModel.clearCartMessage() }
+        clearCartMessage = { productListViewModel.clearCartMessage() },
+        onProfileClick = { navController.navigate("profile") },
     )
 }

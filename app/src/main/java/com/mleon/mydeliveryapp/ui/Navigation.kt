@@ -11,6 +11,7 @@ import com.mleon.feature.cart.view.ui.views.CartScreen
 import com.mleon.feature.cart.view.viewmodel.CartViewModel
 import com.mleon.mydeliveryapp.ui.views.LoginScreen
 import com.mleon.mydeliveryapp.ui.views.ProductListScreen
+import com.mleon.mydeliveryapp.ui.views.ProfileScreen
 import com.mleon.mydeliveryapp.ui.views.SignupScreen
 
 @Composable
@@ -44,6 +45,10 @@ fun AppNavigation( ) {
             }
             val cartViewModel: CartViewModel = hiltViewModel(parentEntry)
             CartScreen(navController, cartViewModel = cartViewModel)
+        }
+
+        composable(route = "profile") {
+            ProfileScreen() // Llama a la función que muestra la pantalla de perfil
         }
     }
 }

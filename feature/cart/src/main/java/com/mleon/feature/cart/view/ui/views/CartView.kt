@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.mleon.core.model.Product
 import com.mleon.feature.cart.view.viewmodel.CartState
 import com.mleon.utils.toCurrencyFormat
+
 @Composable
 fun CartView(
     state: CartState,
@@ -58,7 +59,8 @@ fun CartView(
                     onQuantityChange = { product, quantity ->
                         onQuantityChange(product, quantity)
                     },
-                    onRemoveFromCart = { onRemoveFromCart(cartItem.product) }
+                    onRemoveFromCart = { onRemoveFromCart(cartItem.product) },
+                    isLoading = state.isLoading
                 )
             }
             item {
@@ -96,7 +98,8 @@ fun CartView(
             )
             Button(
                 onClick = { onCheckoutClick() },
-                modifier = Modifier.padding(start = 8.dp)
+                modifier = Modifier.padding(start = 8.dp),
+                enabled = state.cartItems.isNotEmpty() && !state.isLoading
             ) {
                 Text("Ir a Pagar")
             }

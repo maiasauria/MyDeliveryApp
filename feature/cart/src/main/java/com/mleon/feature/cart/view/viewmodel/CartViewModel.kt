@@ -35,6 +35,7 @@ class CartViewModel @Inject constructor() : ViewModel() {
 
     fun addToCart(product: Product) {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) { //creamos una funcion suspendida. Dispatchers especifica que esta rutina esta ehcha para procesode IO.
+            _cartState.update { it.copy(isLoading = true) }
             try {
                 delay(500) // Simula acceso a base de datos
                 _cartState.update { state ->
@@ -50,17 +51,20 @@ class CartViewModel @Inject constructor() : ViewModel() {
                     state.copy(cartItems = updatedList, totalPrice = totalPrice)
                 }
             } catch (e: Exception) {
-                _cartState.update {
-                    it.copy(isLoading = false, errorMessage = e.message)
-                }
+                _cartState.update { it.copy(errorMessage = e.message) }
+            } finally {
+                _cartState.update { it.copy(isLoading = false) }
             }
         }
     }
 
     fun editQuantity(product: Product, quantity: Int) {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) { //creamos una funcion suspendida. Dispatchers especifica que esta rutina esta ehcha para procesode IO.
+            _cartState.update { it.copy(isLoading = true) }
+
             try {
-                delay(500) // Simula acceso a base de datos
+
+                delay(1000) // Simula acceso a base de datos
                 _cartState.update { state ->
                     val updatedList = state.cartItems.map {
                         if (it.product == product) it.copy(quantity = quantity) else it
@@ -69,9 +73,9 @@ class CartViewModel @Inject constructor() : ViewModel() {
                     state.copy(cartItems = updatedList, totalPrice = totalPrice)
                 }
             } catch (e: Exception) {
-                _cartState.update {
-                    it.copy(isLoading = false, errorMessage = e.message)
-                }
+                _cartState.update { it.copy(errorMessage = e.message) }
+            } finally {
+                _cartState.update { it.copy(isLoading = false) }
             }
         }
     }

@@ -39,6 +39,7 @@ import com.mleon.utils.toCurrencyFormat
 fun CartProductCard(
     modifier: Modifier = Modifier,
     product: Product,
+    isLoading: Boolean,
     quantity: Int,
     showQuantitySelector: Boolean = true,
     onQuantityChange: (product: Product, quantity: Int) -> Unit = { _, _ -> },
@@ -97,7 +98,8 @@ fun CartProductCard(
                                     onQuantityChange(product, quantity - 1)
                                 }
 
-                            }, enabled = quantity > 1
+                            },
+                            enabled = quantity > 1 && !isLoading,
                         ) { Text("-") }
                         Text(
                             text = quantity.toString(),
@@ -105,10 +107,12 @@ fun CartProductCard(
                         )
                         Button(onClick = {
                             onQuantityChange(product, quantity + 1)
-                        }) { Text("+") }
+                        }, enabled = !isLoading) { Text("+") }
                     }
                     IconButton(
-                        onClick = { onRemoveFromCart() }, modifier = Modifier.padding(start = 8.dp)
+                        onClick = { onRemoveFromCart() },
+                        modifier = Modifier.padding(start = 8.dp),
+                        enabled = !isLoading
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,

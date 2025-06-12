@@ -36,6 +36,7 @@ fun ProductListView(
     onAddToCart: (Product) -> Unit,
     onCartClick: () -> Unit,
     clearCartMessage: () -> Unit,
+    onProfileClick: () -> Unit ,
     modifier: Modifier = Modifier
 ) {
 
@@ -55,13 +56,17 @@ fun ProductListView(
                     .padding(bottom = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Image(
-                    painter = painterResource(id = com.mleon.utils.R.drawable.icon1),
-                    contentDescription = "Logo",
+                IconButton(
+                    onClick = { onProfileClick() },
                     modifier = Modifier
                         .size(30.dp)
                         .padding(end = 8.dp)
-                )
+                ) {
+                    Icon(
+                        painter = painterResource(id = com.mleon.utils.R.drawable.icon1),
+                        contentDescription = "Logo"
+                    )
+                }
                 TextField(
                     value = uiState.searchQuery,
                     onValueChange = { onSearchQueryChange(it) },
@@ -167,7 +172,7 @@ fun ProductListView(
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
                 .width(150.dp)
-        ) { 
+        ) {
             Text("Ver mi carrito")
         }
         uiState.error?.let { error ->
