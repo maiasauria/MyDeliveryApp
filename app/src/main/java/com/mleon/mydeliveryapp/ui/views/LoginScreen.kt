@@ -16,7 +16,6 @@ fun LoginScreen(
     val coroutineScope = rememberCoroutineScope()
 
     LoginView(
-        navController = navController,
         email = uiState.email,
         onEmailChange = { loginViewModel.onEmailChange(it) },
         isEmailValid = uiState.isEmailValid,
@@ -31,14 +30,17 @@ fun LoginScreen(
         onLoginClick = {
             coroutineScope.launch {
                 loginViewModel.onLoginClick()
-                navController.navigate("products") {
-                    popUpTo("login") { inclusive = true }
+                if (loginViewModel.uiState.value.errorMessageLogin == null) {
+                    navController.navigate("products") {
+                        popUpTo("login") { inclusive = true }
+                    }
                 }
             }
         },
         onSignupClick = {
             navController.navigate("signup")
         },
-        isLoading = uiState.isLoading
+        isLoading = uiState.isLoading,
+        errorMessageLogin = uiState.errorMessageLogin
     )
 }

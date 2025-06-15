@@ -1,6 +1,5 @@
 package com.mleon.mydeliveryapp.ui.views
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,15 +8,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.mleon.mydeliveryapp.ui.viewmodel.SignupViewModel
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
+import com.mleon.utils.ui.LoadingIndicator
+import com.mleon.utils.ui.LogoImage
+import com.mleon.utils.ui.ValidateEmailField
 import com.mleon.utils.ui.ValidatePasswordField
 import com.mleon.utils.ui.ValidateTextField
 
@@ -42,52 +41,48 @@ fun SignupView(
     confirmPasswordVisible: Boolean,
     isFormValid: Boolean,
     onSignupClick: () -> Unit,
-    isLoading: Boolean //TODO implement
+    errorMessageSignup: String? = null,
+    isLoading: Boolean
 ) {
-    Scaffold(
+    Box(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxSize(),
-        ) { innerPadding ->
+        contentAlignment = Alignment.Center,
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
-            verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                .padding(),
+            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(id = com.mleon.utils.R.drawable.main_logo), // Replace with your logo resource
-                contentDescription = "Logo",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-            )
+            LogoImage()
             ValidateTextField(
                 value = name,
                 onValueChange = { onNameChange(it) },
                 label = "Nombre Completo",
                 isError = errorMessageName != null,
                 errorMessage = errorMessageName,
-                modifier = Modifier.fillMaxWidth()
+                enabled = !isLoading
             )
-            ValidateTextField(
+            ValidateEmailField(
                 value = email,
-                onValueChange = { onEmailChange(it) },
+                onValueChange = onEmailChange,
                 label = "Email",
                 isError = errorMessageEmail != null,
                 errorMessage = errorMessageEmail,
-                modifier = Modifier.fillMaxWidth()
+                enabled = !isLoading
             )
             ValidatePasswordField(
                 value = password,
-                onValueChange = { onPasswordChange(it) },
+                onValueChange = onPasswordChange,
                 label = "Contraseña",
                 isError = errorMessagePassword != null,
                 errorMessage = errorMessagePassword,
                 passwordVisible = passwordVisible,
                 onPasswordVisibilityChange = { onVisibilityChange(!passwordVisible) },
-                modifier = Modifier.fillMaxWidth()
+                enabled = !isLoading
             )
             ValidatePasswordField(
                 value = passwordConfirm,
@@ -97,14 +92,22 @@ fun SignupView(
                 errorMessage = errorMessagePasswordConfirm,
                 passwordVisible = confirmPasswordVisible,
                 onPasswordVisibilityChange = { onConfirmVisibilityChange(!confirmPasswordVisible) },
-                modifier = Modifier.fillMaxWidth()
+                enabled = !isLoading
             )
             Spacer(modifier = Modifier.height(16.dp))
+            if (errorMessageSignup != null) {
+                Text(
+                    text = errorMessageSignup,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+            }
             Button(
                 onClick = {
                     onSignupClick()
                 },
-                enabled = isFormValid,
+                enabled = isFormValid && !isLoading,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Registrarse")
@@ -114,11 +117,15 @@ fun SignupView(
                 onClick = {
                     navController.navigate("login")
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !isLoading
             ) {
-                Text(text = "¿Ya tenes una cuenta? Inicia sesion aca")
+                Text(text = "¿Ya tenes una cuenta? Inicia sesion acá")
             }
         }
+    }
+    if (isLoading) {
+        LoadingIndicator()
     }
 }
 

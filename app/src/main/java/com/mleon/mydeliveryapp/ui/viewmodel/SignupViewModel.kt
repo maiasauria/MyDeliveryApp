@@ -1,9 +1,9 @@
 package com.mleon.mydeliveryapp.ui.viewmodel
 
 import android.util.Patterns
-import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
-import com.mleon.core.model.User
+import com.mleon.core.model.UserDto
+import com.mleon.mydeliveryapp.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,12 +12,11 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
-class SignupViewModel @Inject constructor() : ViewModel() {
-    private val _uiState = MutableStateFlow(
-        SignupUiState()
-    )
+class SignupViewModel @Inject constructor(
+    private val userRepository: UserRepository
+) : ViewModel() {
+    private val _uiState = MutableStateFlow(SignupUiState())
     val uiState: StateFlow<SignupUiState> = _uiState
-    val users = mutableListOf<User>()
 
     fun onEmailChange(email: String) {
         _uiState.update { state ->
@@ -26,7 +25,8 @@ class SignupViewModel @Inject constructor() : ViewModel() {
                 email = email,
                 isEmailValid = isEmailValid,
                 isFormValid = isEmailValid && state.isPasswordValid && state.isNameValid && state.doPasswordsMatch,
-                errorMessageEmail = if (!isEmailValid) "El email no es válido" else null
+                errorMessageEmail = if (!isEmailValid) "El email no es válido" else null,
+                errorMessageSignup = null
             )
         }
     }
@@ -38,7 +38,8 @@ class SignupViewModel @Inject constructor() : ViewModel() {
                 password = password,
                 isPasswordValid = isPasswordValid,
                 isFormValid = isPasswordValid && state.isEmailValid && state.isNameValid && state.doPasswordsMatch,
-                errorMessagePassword = if (!isPasswordValid) "La contraseña debe tener entre 8 y 12 caracteres" else null
+                errorMessagePassword = if (!isPasswordValid) "La contraseña debe tener entre 8 y 12 caracteres" else null,
+                errorMessageSignup = null
             )
         }
     }
@@ -50,7 +51,8 @@ class SignupViewModel @Inject constructor() : ViewModel() {
                 passwordConfirm = confirmPassword,
                 doPasswordsMatch = doPasswordsMatch,
                 isFormValid = state.isEmailValid && state.isPasswordValid && state.isNameValid && doPasswordsMatch,
-                errorMessageConfirmPassword = if (!doPasswordsMatch) "Las contraseñas no coinciden" else null
+                errorMessageConfirmPassword = if (!doPasswordsMatch) "Las contraseñas no coinciden" else null,
+                errorMessageSignup = null
             )
         }
     }
@@ -60,33 +62,60 @@ class SignupViewModel @Inject constructor() : ViewModel() {
             val isNameValid = name.trim().length in 6..50
             state.copy(
                 name = name,
+                isNameValid = isNameValid,
                 isFormValid = isNameValid && state.isEmailValid && state.isPasswordValid && state.doPasswordsMatch,
                 errorMessageName = if (!isNameValid) "El nombre debe tener entre 6 y 50 caracteres" else null,
+                errorMessageSignup = null
             )
         }
     }
 
-
-    fun registerUser() {
+    suspend fun onSignupButtonClick() {
         val state = _uiState.value
         if (state.isFormValid) {
-            users.add(User(state.name, state.email, state.password))
-        }
-    }
-
-    suspend fun onLoginClick() {
-        val state = _uiState.value
-        if (state.isFormValid) {
-            users.add(User(state.name, state.email, state.password))
-
-            _uiState.update { it.copy(isLoading = true) }
-            delay(1000)
-            _uiState.update { it.copy(isLoading = false) }
-        } else {
-            _uiState.update { it.copy(
-                errorMessageSignup = "Por favor, completa todos los campos correctamente."
-            )
+            _uiState.update { it.copy(isLoading = true, errorMessageSignup = null) }
+            try {
+                val result = userRepository.registerUser(
+                    UserDto(
+                        name = state.name,
+                        email = state.email,
+                        password = state.password
+                    )
+                )
+                delay(1000)
+                if (result != null) {
+                    _uiState.update {
+                        it.copy(
+                            errorMessageSignup = null,
+                            password = "", // Clear sensitive data
+                            passwordConfirm = ""
+                        )
+                    }
+                } else {
+                    _uiState.update {
+                        it.copy(
+                            errorMessageSignup = "El correo ya está registrado.",
+                            isFormValid = false
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        errorMessageSignup = "Error: ${e.message}",
+                        isFormValid = false
+                    )
+                }
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
             }
+        } else {
+            _uiState.update {
+                it.copy(
+                    errorMessageSignup = "Por favor, completa todos los campos correctamente."
+                )
+            }
+
         }
     }
 }
