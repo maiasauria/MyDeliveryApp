@@ -1,14 +1,28 @@
 package com.mleon.utils.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -16,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,7 +51,6 @@ fun ProductCard(
 
     Card(
         modifier = modifier
-            .padding(horizontal = 8.dp, vertical = 5.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(CornerSize(10.dp)),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
@@ -54,14 +68,14 @@ fun ProductCard(
                     .data(product.imageUrl)
                     .crossfade(true)
                     .build(),
+                placeholder = painterResource(R.drawable.ic_launcher_background),
                 contentDescription = product.name,
                 modifier = Modifier
                     .height(140.dp)
                     .width(120.dp)
                     .clip(RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp)),
                 contentScale = ContentScale.Crop,
-                error = painterResource(R.drawable.ic_launcher_background),
-                placeholder = painterResource(R.drawable.ic_launcher_background)
+                error = painterResource(R.drawable.ic_launcher_background)
             )
 
             Column(
@@ -74,7 +88,7 @@ fun ProductCard(
                 Text(
                     text = product.name,
                     modifier = Modifier.padding(bottom = 4.dp),
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 )
                 Text(
                     text = product.description,
@@ -125,7 +139,7 @@ fun ProductCardPreview() {
             name = "Producto de Ejemplo",
             description = "Descripción del producto de ejemplo.",
             price = 19.99,
-            imageUrl = "",
+            imageUrl = "https://img.freepik.com/free-photo/front-view-burger-stand_141793-15542.jpg",
             includesDrink = false,
             category = listOf(Categories.VEGAN)
         )

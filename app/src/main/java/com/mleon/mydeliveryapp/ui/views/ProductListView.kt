@@ -1,30 +1,57 @@
 package com.mleon.mydeliveryapp.ui.views
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ImportExport
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mleon.core.model.Categories
-import com.mleon.mydeliveryapp.data.repository.ProductRepositoryImpl
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.res.painterResource
 import com.mleon.core.model.Product
+import com.mleon.mydeliveryapp.data.repository.ProductRepositoryImpl
 import com.mleon.mydeliveryapp.ui.viewmodel.ProductListState
 import com.mleon.utils.ui.ProductCard
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductListView(
     uiState: ProductListState,
@@ -33,15 +60,15 @@ fun ProductListView(
     onOrderByPriceDescending: () -> Unit,
     onOrderByPriceAscending: () -> Unit,
     onAddToCart: (Product) -> Unit,
-    onCartClick: () -> Unit,
-    clearCartMessage: () -> Unit,
-    onProfileClick: () -> Unit ,
-    modifier: Modifier = Modifier
+    clearCartMessage: () -> Unit
 ) {
+    val sheetState = rememberModalBottomSheetState()
+
+    var showSheet by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(16.dp)
     ) {
         Column(
@@ -49,43 +76,13 @@ fun ProductListView(
                 .fillMaxSize(),
         )
         {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                IconButton(
-                    onClick = { onProfileClick() },
-                    modifier = Modifier
-                        .size(30.dp)
-                        .padding(end = 8.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(id = com.mleon.utils.R.drawable.icon1),
-                        contentDescription = "Logo"
-                    )
-                }
-                TextField(
-                    value = uiState.searchQuery,
-                    onValueChange = { onSearchQueryChange(it) },
-                    label = { Text("Buscar") },
-                    placeholder = { Text("Buscar productos...") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .defaultMinSize(minHeight = 48.dp),
-                    trailingIcon = {
-                        if (uiState.searchQuery.isNotEmpty()) {
-                            IconButton(onClick = { onSearchQueryChange("") }) {
-                                Icon(
-                                    imageVector = Icons.Filled.Close,
-                                    contentDescription = "Limpiar la búsqueda",
-                                )
-                            }
-                        }
-                    },
-                )
-            }
+            SearchAndFiltersBar(
+                uiState = uiState,
+                onSearchQueryChange = onSearchQueryChange,
+                onOpenFilters = {
+                    showSheet = true
+                },
+            )
 
             LazyRow(
                 modifier = Modifier
@@ -95,48 +92,19 @@ fun ProductListView(
             ) {
                 items(Categories.entries) { category ->
                     val isSelected = uiState.selectedCategory == category
-                    Button(
+                    FilterChip(
+                        selected = isSelected,
                         onClick = {
                             val newCategory =
                                 if (uiState.selectedCategory == category) null else category
                             onCategorySelection(newCategory)
                         },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray
-                        )
-                    ) {
-                        Text(category.getCategoryName())
-                    }
-                }
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-            ) {
-
-                OutlinedButton(
-                    onClick = { onOrderByPriceDescending() },
-                ) {
-                    Text(
-                        text = "Precio"
-                    )
-                    Icon(
-                        imageVector = Icons.Filled.ArrowDownward,
-                        contentDescription = "Precio descendente"
-                    )
-                }
-                OutlinedButton(
-                    onClick = { onOrderByPriceAscending() },
-                ) {
-                    Text(
-                        text = "Precio"
-                    )
-                    Icon(
-                        imageVector = Icons.Filled.ArrowUpward,
-                        contentDescription = "Precio ascendente"
+                        label = { Text(category.getCategoryName()) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                            selectedContainerColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray,
+                        ),
+                        modifier = Modifier.padding(4.dp)
                     )
                 }
             }
@@ -145,7 +113,7 @@ fun ProductListView(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(0.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 item {
                     if (uiState.isLoading) {
@@ -164,16 +132,18 @@ fun ProductListView(
                     )
                 }
             }
+
+            if (showSheet) {
+                ProductsBottomSheet(
+                    sheetState = sheetState,
+                    showSheet = showSheet,
+                    onDismissRequest = { showSheet = false },
+                    onOrderByPriceDescending = onOrderByPriceDescending,
+                    onOrderByPriceAscending = onOrderByPriceAscending
+                )
+            }
         }
-        FloatingActionButton(
-            onClick = { onCartClick() },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp)
-                .width(150.dp)
-        ) {
-            Text("Ver mi carrito")
-        }
+
         uiState.error?.let { error ->
             Toast.makeText(
                 LocalContext.current,
@@ -189,19 +159,155 @@ fun ProductListView(
                 clearCartMessage()
             }
         }
-
     }
+}
+
+
+@Composable
+fun ListDivider(
+    modifier: Modifier = Modifier,
+    thickness: Dp = 1.dp,
+) {
+    HorizontalDivider(
+        modifier = modifier,
+        thickness = thickness
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProductsBottomSheet(
+    sheetState: SheetState,
+    showSheet: Boolean,
+    onDismissRequest: () -> Unit,
+    onOrderByPriceDescending: () -> Unit,
+    onOrderByPriceAscending: () -> Unit
+) {
+    if (showSheet) {
+        ModalBottomSheet(
+            onDismissRequest = onDismissRequest,
+            sheetState = sheetState
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text("Ordenar por precio", style = MaterialTheme.typography.titleLarge)
+                ListDivider()
+                OutlinedButton(
+                    onClick = {
+                        onOrderByPriceAscending()
+                        onDismissRequest()
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Precio Ascendente")
+                        Icon(Icons.Filled.ArrowUpward, contentDescription = "Orden Ascendente")
+                    }
+                }
+                OutlinedButton(
+                    onClick = {
+                        onOrderByPriceDescending()
+                        onDismissRequest()
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Precio Descendente")
+                        Icon(Icons.Filled.ArrowDownward, contentDescription = "Orden Descendente")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SearchAndFiltersBar(
+    uiState: ProductListState,
+    onSearchQueryChange: (String) -> Unit,
+    onOpenFilters: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        TextField(
+            value = uiState.searchQuery,
+            onValueChange = onSearchQueryChange,
+            label = { Text("Buscar") },
+            placeholder = { Text("Buscar productos...") },
+            modifier = Modifier.defaultMinSize(minHeight = 48.dp)
+                .weight(1f)
+                ,
+            trailingIcon = {
+                if (uiState.searchQuery.isNotEmpty()) {
+                    IconButton(onClick = { onSearchQueryChange("") }) {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Limpiar la búsqueda",
+                        )
+                    }
+                }
+            }
+        )
+        IconButton(onClick = onOpenFilters) {
+            Icon(Icons.Filled.ImportExport,
+                contentDescription = "Filtrar productos",
+            modifier = Modifier
+                )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SearchBarPreview() {
+    SearchAndFiltersBar(
+        uiState = ProductListState(
+            isLoading = false,
+            products = emptyList(),
+            searchQuery = "",
+            selectedCategory = null,
+            error = null,
+            cartMessage = ""
+        ),
+        onSearchQueryChange = {},
+        onOpenFilters = {},
+    )
 }
 
 
 @Preview(showBackground = true)
 @Composable
 fun ProductListViewPreview() {
-    val sampleProducts = ProductRepositoryImpl().getProducts().take(10)
-    val sampleState = ProductListState(
-        products = sampleProducts,
-        isLoading = false,
-        error = null
+    ProductListView(
+        uiState = ProductListState(
+            isLoading = false,
+            products = ProductRepositoryImpl().getProducts().take(10),
+            searchQuery = "",
+            selectedCategory = null,
+            error = null,
+            cartMessage = ""
+        ),
+        onSearchQueryChange = {},
+        onCategorySelection = {},
+        onOrderByPriceDescending = {},
+        onOrderByPriceAscending = {},
+        onAddToCart = {},
+        clearCartMessage = {}
     )
-
 }

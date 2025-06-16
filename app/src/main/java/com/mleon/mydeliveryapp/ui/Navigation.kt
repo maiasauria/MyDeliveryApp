@@ -6,7 +6,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.mleon.feature.cart.view.ui.views.CartScreen
 import com.mleon.feature.cart.view.viewmodel.CartViewModel
 import com.mleon.mydeliveryapp.ui.views.LoginScreen
@@ -15,13 +14,12 @@ import com.mleon.mydeliveryapp.ui.views.ProfileScreen
 import com.mleon.mydeliveryapp.ui.views.SignupScreen
 
 @Composable
-fun AppNavigation( ) {
-    val navController : NavHostController = rememberNavController() //remember para almacenar el estado de la variable
+fun AppNavigation(navController: NavHostController ) {
 
     NavHost(
         navController = navController,
         //startDestination = "login" // Define la ruta inicial
-        startDestination = "login" //TODO Cambiar a "login" cuando se implemente la autenticación
+        startDestination = "products" //TODO Cambiar a "login" cuando se implemente la autenticación
     ) {
 
         // Aquí definimos las rutas de navegación
@@ -37,7 +35,7 @@ fun AppNavigation( ) {
                 navController.getBackStackEntry("products")
             }
             val cartViewModel: CartViewModel = hiltViewModel(parentEntry)
-            ProductListScreen(navController, cartViewModel = cartViewModel)
+            ProductListScreen(cartViewModel = cartViewModel)
         }
         composable(route = "cart") { backStackEntry ->
             val parentEntry = remember(backStackEntry) {
@@ -48,7 +46,12 @@ fun AppNavigation( ) {
         }
 
         composable(route = "profile") {
-            ProfileScreen() // Llama a la función que muestra la pantalla de perfil
+            ProfileScreen()
+        }
+        composable(route = "orders") {
+        }
+
+        composable(route = "payment") {
         }
     }
 }

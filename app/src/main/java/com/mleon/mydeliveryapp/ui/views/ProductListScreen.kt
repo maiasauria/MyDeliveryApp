@@ -3,14 +3,12 @@ package com.mleon.mydeliveryapp.ui.views
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.navigation.NavHostController
-import com.mleon.mydeliveryapp.ui.viewmodel.ProductListViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mleon.feature.cart.view.viewmodel.CartViewModel
+import com.mleon.mydeliveryapp.ui.viewmodel.ProductListViewModel
 
 @Composable
 fun ProductListScreen(
-    navController: NavHostController,
     productListViewModel: ProductListViewModel = hiltViewModel(),
     cartViewModel: CartViewModel = hiltViewModel()
 ) {
@@ -26,8 +24,6 @@ fun ProductListScreen(
             cartViewModel.addToCart(it)
             productListViewModel.onAddToCartButtonClick(it)
         },
-        onCartClick = { navController.navigate("cart") },
-        clearCartMessage = { productListViewModel.clearCartMessage() },
-        onProfileClick = { navController.navigate("profile") },
+        clearCartMessage = { productListViewModel.clearCartMessage() }
     )
 }
