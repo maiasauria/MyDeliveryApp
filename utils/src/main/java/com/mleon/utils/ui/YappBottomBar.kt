@@ -19,7 +19,7 @@ fun YappBottomBar(
     currentRoute: String?,
     onItemClick: (String) -> Unit
 ) {
-    NavigationBar {
+    NavigationBar() {
         BottomBarDestination.items.forEach { item ->
             NavigationBarItem(
                 selected = currentRoute == item.route,
@@ -31,10 +31,10 @@ fun YappBottomBar(
     }
 }
 sealed class BottomBarDestination(val route: String, val icon: ImageVector, val label: String) {
-    object Cart : BottomBarDestination("cart", Icons.Filled.ShoppingCart, "Cart")
-    object Home : BottomBarDestination("products", Icons.Filled.Home, "Home")
-    object Orders : BottomBarDestination("orders", Icons.Filled.Receipt, "Orders")
-    object Profile : BottomBarDestination("profile", Icons.Filled.Person, "Profile")
+    object Cart : BottomBarDestination("cart", Icons.Filled.ShoppingCart, "Carrito")
+    object Home : BottomBarDestination("products", Icons.Filled.Home, "Productos")
+    object Orders : BottomBarDestination("orders", Icons.Filled.Receipt, "Pedidos")
+    object Profile : BottomBarDestination("profile", Icons.Filled.Person, "Perfil")
     companion object {
         val items = listOf( Home, Cart, Orders, Profile)
     }

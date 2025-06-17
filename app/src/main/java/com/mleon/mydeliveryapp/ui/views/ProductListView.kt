@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -71,10 +72,7 @@ fun ProductListView(
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-        )
+        Column(modifier = Modifier.fillMaxSize())
         {
             SearchAndFiltersBar(
                 uiState = uiState,
@@ -83,45 +81,17 @@ fun ProductListView(
                     showSheet = true
                 },
             )
-
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(Categories.entries) { category ->
-                    val isSelected = uiState.selectedCategory == category
-                    FilterChip(
-                        selected = isSelected,
-                        onClick = {
-                            val newCategory =
-                                if (uiState.selectedCategory == category) null else category
-                            onCategorySelection(newCategory)
-                        },
-                        label = { Text(category.getCategoryName()) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                            selectedContainerColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray,
-                        ),
-                        modifier = Modifier.padding(4.dp)
-                    )
-                }
-            }
-
+            FiltersRow(
+                selectedCategory = uiState.selectedCategory,
+                onCategorySelection = onCategorySelection
+            )
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(0.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                item {
-                    if (uiState.isLoading) {
-                        LinearProgressIndicator(
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                }
+                item { if (uiState.isLoading) { LinearProgressIndicator(modifier = Modifier.fillMaxWidth()) } }
 
                 items(uiState.products) { product ->
                     ProductCard(
@@ -129,6 +99,11 @@ fun ProductListView(
                         onAddToCart = {
                             onAddToCart(product)
                         },
+                    )
+                    Spacer(modifier = Modifier.padding(vertical = 4.dp))
+                    ListDivider(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        thickness = 1.dp
                     )
                 }
             }
@@ -172,6 +147,37 @@ fun ListDivider(
         modifier = modifier,
         thickness = thickness
     )
+}
+
+@Composable
+fun FiltersRow(
+    selectedCategory: Categories? = null,
+    onCategorySelection: (Categories?) -> Unit,
+){
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        items(Categories.entries) { category ->
+            val isSelected = selectedCategory == category
+            FilterChip(
+                selected = isSelected,
+                onClick = {
+                    val newCategory =
+                        if (selectedCategory == category) null else category
+                    onCategorySelection(newCategory)
+                },
+                label = { Text(category.getCategoryName()) },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                    selectedContainerColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray,
+                ),
+                modifier = Modifier.padding(4.dp)
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

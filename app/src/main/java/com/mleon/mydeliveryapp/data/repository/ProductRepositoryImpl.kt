@@ -35,7 +35,7 @@ class ProductRepositoryImpl : ProductRepository {
         ),
         Product(
             id = 4,
-            name = "Sorrentinos de Jamón y Queso",
+            name = "Sorrentinos de Jamón y 4 Quesos",
             description = "Sorrentinos rellenos de jamón y queso con salsa de tomate.",
             price = 12000.0,
             includesDrink = true,
