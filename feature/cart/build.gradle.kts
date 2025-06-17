@@ -67,7 +67,7 @@ dependencies {
     implementation(libs.androidx.material3.android) // Biblioteca principal de Hilt para la inyección de dependencias en Android, que simplifica el proceso de configuración y uso de Dagger.
     ksp(libs.hilt.android.compiler) // Procesador de anotaciones para Hilt, que genera el código necesario para la inyección de dependencias en tiempo de compilación.
     implementation(libs.androidx.hilt.navigation.compose) // Integración de Hilt con Jetpack Compose para la inyección de dependencias en composables.
-
+    implementation (libs.material.icons.extended)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

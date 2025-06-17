@@ -1,17 +1,24 @@
 package com.mleon.feature.cart.view.ui.views
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -26,6 +33,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
@@ -41,23 +51,19 @@ fun CartProductCard(
     product: Product,
     isLoading: Boolean,
     quantity: Int,
-    showQuantitySelector: Boolean = true,
     onQuantityChange: (product: Product, quantity: Int) -> Unit = { _, _ -> },
     onRemoveFromCart: () -> Unit = {}
 ) {
     Card(
         modifier = modifier
-            .padding(horizontal = 8.dp, vertical = 5.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(CornerSize(10.dp)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = CardDefaults.outlinedCardBorder()
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(140.dp),
+                .height(110.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             AsyncImage(
@@ -65,9 +71,9 @@ fun CartProductCard(
                     .crossfade(true).build(),
                 contentDescription = product.name,
                 modifier = Modifier
-                    .height(140.dp)
-                    .width(120.dp)
-                    .clip(RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp)),
+                    .height(100.dp)
+                    .width(100.dp)
+                    .clip(RoundedCornerShape(10.dp)),
                 contentScale = ContentScale.Crop,
                 error = painterResource(R.drawable.ic_launcher_background),
                 placeholder = painterResource(R.drawable.ic_launcher_background)
@@ -81,43 +87,199 @@ fun CartProductCard(
                 Text(
                     text = product.name,
                     modifier = Modifier.padding(bottom = 4.dp),
-                    style = MaterialTheme.typography.titleMedium
+
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
-                Text(
-                    text = "\$${product.price.toCurrencyFormat()}",
+
+                Spacer(modifier = Modifier.weight(1f)) // Pushes the row to the bottom
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    //align to bottom
+
                     modifier = Modifier
-                        .padding(bottom = 8.dp)
-                        .align(Alignment.End),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (showQuantitySelector) {
-                        Button(
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        text = "\$${product.price.toCurrencyFormat()}",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
                             onClick = {
                                 if (quantity > 1) {
                                     onQuantityChange(product, quantity - 1)
                                 }
-
                             },
                             enabled = quantity > 1 && !isLoading,
-                        ) { Text("-") }
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(35.dp)
+                                    .background(
+                                        MaterialTheme.colorScheme.primary,
+                                        shape = CircleShape
+                                    )
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Remove,
+                                    contentDescription = "Remove",
+                                    tint = Color.White,
+                                    modifier = Modifier.align(Alignment.Center)
+                                )
+                            }
+                        }
                         Text(
                             text = quantity.toString(),
                             modifier = Modifier.padding(horizontal = 8.dp)
                         )
-                        Button(onClick = {
-                            onQuantityChange(product, quantity + 1)
-                        }, enabled = !isLoading) { Text("+") }
+                        IconButton(
+                            onClick = { onQuantityChange(product, quantity + 1) },
+                            enabled = !isLoading
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(35.dp)
+                                    .background(
+                                        MaterialTheme.colorScheme.primary,
+                                        shape = CircleShape
+                                    )
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Add",
+                                    tint = Color.White,
+                                    modifier = Modifier.align(Alignment.Center)
+                                )
+                            }
+                        }
                     }
-                    IconButton(
-                        onClick = { onRemoveFromCart() },
+                    RemoveFromCartButton(
                         modifier = Modifier.padding(start = 8.dp),
-                        enabled = !isLoading
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Remove from cart"
-                        )
+                        isLoading = isLoading,
+                        onRemoveFromCart = onRemoveFromCart
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RemoveFromCartButton(
+    modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
+    onRemoveFromCart: () -> Unit = {}
+) {
+    IconButton(
+        onClick = onRemoveFromCart,
+        modifier = Modifier
+            .padding(start = 8.dp)
+            .width(30.dp),
+        enabled = !isLoading
+    ) {
+        if (isLoading) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Removing",
+                tint = Color.Gray
+            )
+        } else {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Remove from cart",
+            )
+        }
+    }
+}
+
+@Composable
+fun ProductCardCart(
+    modifier: Modifier = Modifier,
+    product: Product,
+    onAddToCart: (Product) -> Unit = { }
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(CornerSize(10.dp)),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(120.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(product.imageUrl)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(R.drawable.ic_launcher_background),
+                contentDescription = product.name,
+                modifier = Modifier
+                    .height(110.dp)
+                    .width(110.dp)
+                    .padding(end = 8.dp)
+                    .clip(RoundedCornerShape(10.dp)),
+                contentScale = ContentScale.Crop,
+                error = painterResource(R.drawable.ic_launcher_background)
+            )
+
+            Column(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+            ) {
+                Text(
+                    text = product.name,
+                    modifier = Modifier.padding(bottom = 4.dp),
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = product.description,
+                    modifier = Modifier.padding(bottom = 4.dp),
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+
+                    Text(
+                        text = "\$${product.price.toCurrencyFormat()}",
+                        modifier = Modifier
+                            .padding(bottom = 8.dp),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+
+                    IconButton(onClick = { onAddToCart(product) }) {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .background(MaterialTheme.colorScheme.primary, shape = CircleShape)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Add",
+                                tint = Color.White,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
                     }
                 }
             }
@@ -125,4 +287,34 @@ fun CartProductCard(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun CartProductCardPreview() {
+    CartProductCard(
+        product = Product(
+            id = 1,
+            name = "Producto de prueba con un nombre largo",
+            description = "Description del producto de prueba con un nombre largo",
+            price = 19.99,
+            imageUrl = "https://via.placeholder.com/150",
+            includesDrink = true,
+        ),
+        isLoading = false,
+        quantity = 2
+    )
+}
 
+@Preview(showBackground = true)
+@Composable
+fun ProductCardCartPreview() {
+    ProductCardCart(
+        product = Product(
+            id = 1,
+            name = "Producto de prueba con un nombre largo",
+            description = "Description del producto de prueba con un nombre largo",
+            price = 19.99,
+            imageUrl = "https://via.placeholder.com/150",
+            includesDrink = true,
+        )
+    )
+}
