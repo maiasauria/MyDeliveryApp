@@ -87,23 +87,19 @@ fun CartProductCard(
                 Text(
                     text = product.name,
                     modifier = Modifier.padding(bottom = 4.dp),
-
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
 
-                Spacer(modifier = Modifier.weight(1f)) // Pushes the row to the bottom
+                Spacer(modifier = Modifier.weight(1f))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    //align to bottom
-
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
+                    modifier = Modifier.fillMaxWidth()) {
                     Text(
+                        modifier = Modifier.width(64.dp),
                         text = "\$${product.price.toCurrencyFormat()}",
                         style = MaterialTheme.typography.bodyMedium
                     )

@@ -1,12 +1,14 @@
 package com.mleon.feature.cart.view.ui.views
 
 
-import androidx.compose.runtime.*
-
+import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mleon.feature.cart.view.viewmodel.CartViewModel
-import android.util.Log
+
 @Composable
 fun CartScreen(
     navController: NavHostController,
@@ -23,7 +25,6 @@ fun CartScreen(
             cartViewModel.removeFromCart(product)
         },
         onCheckoutClick = {
-            // Navigate to checkout or show a message
             navController.navigate("checkout")
         }
     )

@@ -95,9 +95,8 @@ fun ProductListView(
                 items(uiState.products) { product ->
                     ProductCard(
                         product = product,
-                        onAddToCart = {
-                            onAddToCart(product)
-                        },
+                        onAddToCart = { onAddToCart(product) },
+                        isLoading = uiState.isLoading,
                     )
                     Spacer(modifier = Modifier.padding(vertical = 4.dp))
                     ListDivider()
