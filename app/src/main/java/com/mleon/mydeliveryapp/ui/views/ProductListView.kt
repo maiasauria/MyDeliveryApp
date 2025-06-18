@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.ImportExport
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -43,12 +42,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mleon.core.model.Categories
 import com.mleon.core.model.Product
 import com.mleon.mydeliveryapp.data.repository.ProductRepositoryImpl
 import com.mleon.mydeliveryapp.ui.viewmodel.ProductListState
+import com.mleon.utils.ui.ListDivider
 import com.mleon.utils.ui.ProductCard
 
 
@@ -96,15 +95,11 @@ fun ProductListView(
                 items(uiState.products) { product ->
                     ProductCard(
                         product = product,
-                        onAddToCart = {
-                            onAddToCart(product)
-                        },
+                        onAddToCart = { onAddToCart(product) },
+                        isLoading = uiState.isLoading,
                     )
                     Spacer(modifier = Modifier.padding(vertical = 4.dp))
-                    ListDivider(
-                        modifier = Modifier.padding(horizontal = 8.dp),
-                        thickness = 1.dp
-                    )
+                    ListDivider()
                 }
             }
 
@@ -138,16 +133,6 @@ fun ProductListView(
 }
 
 
-@Composable
-fun ListDivider(
-    modifier: Modifier = Modifier,
-    thickness: Dp = 1.dp,
-) {
-    HorizontalDivider(
-        modifier = modifier,
-        thickness = thickness
-    )
-}
 
 @Composable
 fun FiltersRow(

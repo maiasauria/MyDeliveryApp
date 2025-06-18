@@ -6,13 +6,13 @@ import com.mleon.core.model.CartItem
 import com.mleon.core.model.Product
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 
 @HiltViewModel
 class CartViewModel @Inject constructor() : ViewModel() {
@@ -22,16 +22,6 @@ class CartViewModel @Inject constructor() : ViewModel() {
     val exceptionHandler = CoroutineExceptionHandler { _, exception ->
         println("Error occurred: ${exception.message}")
     }
-
-//    init {
-//        // Se actualiza siempre que cambien los elementos del carrito
-//        viewModelScope.launch {
-//            _cartState.collect { items ->
-//                _totalPrice.value =
-//                    items.totalPrice
-//            }
-//        }
-//    }
 
     fun addToCart(product: Product) {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) { //creamos una funcion suspendida. Dispatchers especifica que esta rutina esta ehcha para procesode IO.
@@ -61,9 +51,7 @@ class CartViewModel @Inject constructor() : ViewModel() {
     fun editQuantity(product: Product, quantity: Int) {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) { //creamos una funcion suspendida. Dispatchers especifica que esta rutina esta ehcha para procesode IO.
             _cartState.update { it.copy(isLoading = true) }
-
             try {
-
                 delay(1000) // Simula acceso a base de datos
                 _cartState.update { state ->
                     val updatedList = state.cartItems.map {
@@ -83,6 +71,7 @@ class CartViewModel @Inject constructor() : ViewModel() {
     fun removeFromCart(product: Product) {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) { //creamos una funcion suspendida. Dispatchers especifica que esta rutina esta ehcha para procesode IO.
             try {
+                _cartState.update { it.copy(isLoading = true) }
                 delay(500) // Simula acceso a base de datos
                 _cartState.update { state ->
                     val updatedList = state.cartItems.filter { it.product != product }
@@ -93,6 +82,22 @@ class CartViewModel @Inject constructor() : ViewModel() {
                 _cartState.update {
                     it.copy(isLoading = false, errorMessage = e.message)
                 }
+            } finally {
+                _cartState.update { it.copy(isLoading = false) }
+            }
+        }
+    }
+
+    fun checkout() {
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+            _cartState.update { it.copy(isLoading = true) }
+            try {
+                delay(1000) // Simula proceso de pago
+                _cartState.update { it.copy(cartItems = emptyList(), totalPrice = 0.0) }
+            } catch (e: Exception) {
+                _cartState.update { it.copy(errorMessage = e.message) }
+            } finally {
+                _cartState.update { it.copy(isLoading = false) }
             }
         }
     }

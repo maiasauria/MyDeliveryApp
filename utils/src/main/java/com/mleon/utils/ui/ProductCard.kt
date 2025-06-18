@@ -133,6 +133,7 @@ fun ProductCard2(
 @Composable
 fun ProductCard(
     modifier: Modifier = Modifier,
+    isLoading: Boolean,
     product: Product,
     onAddToCart: (Product) -> Unit = { }
 ) {
@@ -198,7 +199,7 @@ fun ProductCard(
                         style = MaterialTheme.typography.bodyMedium
                     )
 
-                    IconButton(onClick = { onAddToCart(product) }) {
+                    IconButton(onClick = { onAddToCart(product) }, enabled = !isLoading) {
                         Box(
                             modifier = Modifier
                                 .size(40.dp)
@@ -230,6 +231,6 @@ fun ProductCardPreview() {
             imageUrl = "https://img.freepik.com/free-photo/front-view-burger-stand_141793-15542.jpg",
             includesDrink = false,
             category = listOf(Categories.VEGAN)
-        )
+        ), isLoading = false, onAddToCart = { }
     )
 }
