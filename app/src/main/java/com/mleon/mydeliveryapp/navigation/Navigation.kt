@@ -1,4 +1,4 @@
-package com.mleon.mydeliveryapp.ui
+package com.mleon.mydeliveryapp.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -50,7 +50,6 @@ fun AppNavigation(navController: NavHostController ) {
         }
         composable(route = "orders") {
         }
-
         composable(route = "payment") {
         }
     }

@@ -1,4 +1,4 @@
-package com.mleon.mydeliveryapp.ui
+package com.mleon.mydeliveryapp
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.mleon.mydeliveryapp.navigation.AppNavigation
 import com.mleon.mydeliveryapp.ui.theme.MyDeliveryAppTheme
 import com.mleon.utils.ui.YappBottomBar
 import dagger.hilt.android.AndroidEntryPoint

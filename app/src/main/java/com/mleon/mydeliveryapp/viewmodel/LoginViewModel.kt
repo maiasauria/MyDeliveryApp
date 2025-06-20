@@ -1,17 +1,17 @@
-package com.mleon.mydeliveryapp.ui.viewmodel
+package com.mleon.mydeliveryapp.viewmodel
 
 import android.content.SharedPreferences
 import android.util.Log
-import androidx.lifecycle.ViewModel
 import android.util.Patterns
+import androidx.core.content.edit
+import androidx.lifecycle.ViewModel
+import com.mleon.mydeliveryapp.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
-import androidx.core.content.edit
-import com.mleon.mydeliveryapp.data.repository.UserRepository
-import kotlinx.coroutines.delay
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(

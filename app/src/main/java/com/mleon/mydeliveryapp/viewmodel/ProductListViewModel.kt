@@ -1,4 +1,4 @@
-package com.mleon.mydeliveryapp.ui.viewmodel
+package com.mleon.mydeliveryapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.mleon.core.model.Product

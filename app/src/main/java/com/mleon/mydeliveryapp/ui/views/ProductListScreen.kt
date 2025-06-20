@@ -5,7 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mleon.feature.cart.view.viewmodel.CartViewModel
-import com.mleon.mydeliveryapp.ui.viewmodel.ProductListViewModel
+import com.mleon.mydeliveryapp.viewmodel.ProductListViewModel
 
 @Composable
 fun ProductListScreen(

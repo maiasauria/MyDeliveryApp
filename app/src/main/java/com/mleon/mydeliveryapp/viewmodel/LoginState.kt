@@ -1,8 +1,8 @@
-package com.mleon.mydeliveryapp.ui.viewmodel
+package com.mleon.mydeliveryapp.viewmodel
 
 data class LoginUiState(
     val email: String = "a@a.com",
-    val password: String = "asdfghhkjtyg",
+    val password: String = "password456",
     val isEmailValid: Boolean = false,
     val isPasswordValid: Boolean = false,
     val isFormValid: Boolean = false,

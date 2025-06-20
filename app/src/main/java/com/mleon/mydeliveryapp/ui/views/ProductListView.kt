@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.dp
 import com.mleon.core.model.Categories
 import com.mleon.core.model.Product
 import com.mleon.mydeliveryapp.data.repository.ProductRepositoryImpl
-import com.mleon.mydeliveryapp.ui.viewmodel.ProductListState
+import com.mleon.mydeliveryapp.viewmodel.ProductListState
 import com.mleon.utils.ui.ListDivider
 import com.mleon.utils.ui.ProductCard
 

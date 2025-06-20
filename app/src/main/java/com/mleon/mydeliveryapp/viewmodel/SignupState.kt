@@ -1,4 +1,4 @@
-package com.mleon.mydeliveryapp.ui.viewmodel
+package com.mleon.mydeliveryapp.viewmodel
 
 data class SignupUiState(
     val email: String = "",
