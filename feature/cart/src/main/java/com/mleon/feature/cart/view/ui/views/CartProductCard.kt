@@ -58,7 +58,7 @@ fun CartProductCard(
         modifier = modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(CornerSize(10.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
     ) {
         Row(
             modifier = Modifier

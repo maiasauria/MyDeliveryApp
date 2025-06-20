@@ -142,7 +142,6 @@ fun ProductCard(
         modifier = modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(CornerSize(10.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
     ) {
         Row(
             modifier = Modifier
@@ -208,7 +207,7 @@ fun ProductCard(
                             Icon(
                                 imageVector = Icons.Default.Add,
                                 contentDescription = "Add",
-                                tint = Color.White,
+                                tint = MaterialTheme.colorScheme.onPrimary,
                                 modifier = Modifier.align(Alignment.Center)
                             )
                         }
