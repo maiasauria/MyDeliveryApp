@@ -28,9 +28,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -281,6 +283,29 @@ fun SearchBarPreview() {
     )
 }
 
+@Preview(showBackground = true)
+@Composable
+fun FiltersRowPreview() {
+    FiltersRow(
+        selectedCategory = Categories.PIZZA,
+        onCategorySelection = {}
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview()
+@Composable
+fun ProductsBottomSheetPreview() {
+    ProductsBottomSheet(
+        sheetState = rememberStandardBottomSheetState(
+                initialValue = SheetValue.Expanded
+                ),
+        showSheet = true,
+        onDismissRequest = {},
+        onOrderByPriceDescending = {},
+        onOrderByPriceAscending = {}
+    )
+}
 
 @Preview(showBackground = true)
 @Composable

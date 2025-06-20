@@ -1,12 +1,24 @@
 package com.mleon.mydeliveryapp.ui.views
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.mleon.utils.ui.LoadingIndicator
 import com.mleon.utils.ui.LogoImage
 import com.mleon.utils.ui.ValidatePasswordField
@@ -14,21 +26,21 @@ import com.mleon.utils.ui.ValidateTextField
 
 @Composable
 fun LoginView(
-    email: String,
-    onEmailChange: (String) -> Unit,
-    isEmailValid: Boolean,
-    errorMessageEmail: String?,
-    password: String,
-    onPasswordChange: (String) -> Unit,
-    passwordVisible: Boolean,
-    onPasswordVisibilityChange: (Boolean) -> Unit,
-    isPasswordValid: Boolean,
-    errorMessagePassword: String?,
-    isFormValid: Boolean,
-    onLoginClick: () -> Unit,
-    onSignupClick: () -> Unit,
+    email: String = "",
+    onEmailChange: (String) -> Unit  = {},
+    isEmailValid: Boolean = true,
+    errorMessageEmail: String? = "",
+    password: String= "",
+    onPasswordChange: (String) -> Unit = {},
+    passwordVisible: Boolean = false,
+    onPasswordVisibilityChange: (Boolean) -> Unit = {},
+    isPasswordValid: Boolean = true,
+    errorMessagePassword: String? = "",
+    isFormValid: Boolean = false,
+    onLoginClick: () -> Unit = {},
+    onSignupClick: () -> Unit = {},
     errorMessageLogin: String? = null,
-    isLoading: Boolean
+    isLoading: Boolean = false,
 ) {
     Box(
         modifier = Modifier
@@ -111,3 +123,8 @@ fun LoginButton(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun LoginViewPreview() {
+    LoginView()
+}

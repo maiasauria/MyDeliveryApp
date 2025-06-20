@@ -1,18 +1,23 @@
 package com.mleon.mydeliveryapp.ui.views
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mleon.utils.ui.LoadingIndicator
 import com.mleon.utils.ui.LogoImage
@@ -23,26 +28,26 @@ import com.mleon.utils.ui.ValidateTextField
 @Composable
 fun SignupView(
     navController: NavHostController,
-    name: String,
-    onNameChange: (String) -> Unit,
-    errorMessageName: String?,
-    email: String,
-    onEmailChange: (String) -> Unit,
-    errorMessageEmail: String?,
-    password: String,
-    onPasswordChange: (String) -> Unit,
-    errorMessagePassword: String?,
-    passwordVisible: Boolean,
-    onVisibilityChange: (Boolean) -> Unit,
-    passwordConfirm: String,
-    onPasswordConfirmChange: (String) -> Unit,
-    onConfirmVisibilityChange: (Boolean) -> Unit,
-    errorMessagePasswordConfirm: String?,
-    confirmPasswordVisible: Boolean,
-    isFormValid: Boolean,
-    onSignupClick: () -> Unit,
+    name: String = "",
+    onNameChange: (String) -> Unit = {},
+    errorMessageName: String? = null,
+    email: String = "",
+    onEmailChange: (String) -> Unit  = {},
+    errorMessageEmail: String? = null,
+    password: String = "",
+    onPasswordChange: (String) -> Unit  = {},
+    errorMessagePassword: String? = null,
+    passwordVisible: Boolean = false,
+    onVisibilityChange: (Boolean) -> Unit  = {},
+    passwordConfirm: String = "",
+    onPasswordConfirmChange: (String) -> Unit = {},
+    onConfirmVisibilityChange: (Boolean) -> Unit  = {},
+    errorMessagePasswordConfirm: String? = null,
+    confirmPasswordVisible: Boolean = false,
+    isFormValid: Boolean = false,
+    onSignupClick: () -> Unit  = {},
     errorMessageSignup: String? = null,
-    isLoading: Boolean
+    isLoading: Boolean = false
 ) {
     Box(
         modifier = Modifier
@@ -131,6 +136,6 @@ fun SignupView(
 
 @Preview(showBackground = true)
 @Composable
-fun SignupScreenPreview() {
-    SignupScreen(navController = NavHostController(LocalContext.current))
+fun SignupViewPreview() {
+    SignupView(navController = NavHostController(LocalContext.current))
 }
