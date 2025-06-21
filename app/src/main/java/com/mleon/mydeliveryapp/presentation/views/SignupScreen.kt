@@ -1,6 +1,12 @@
 package com.mleon.mydeliveryapp.presentation.views
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mleon.mydeliveryapp.presentation.viewmodel.SignupViewModel
@@ -29,9 +35,9 @@ fun SignupScreen(
         errorMessagePassword = uiState.errorMessagePassword,
         passwordVisible = passwordVisible,
         onVisibilityChange = { passwordVisible = it },
-        passwordConfirm = uiState.password,
+        passwordConfirm = uiState.passwordConfirm,
         onPasswordConfirmChange = { signupViewModel.onConfirmPasswordChange(it) },
-        errorMessagePasswordConfirm = uiState.errorMessagePassword,
+        errorMessagePasswordConfirm = uiState.errorMessageConfirmPassword,
         confirmPasswordVisible = confirmPasswordVisible,
         onConfirmVisibilityChange = { confirmPasswordVisible = it },
         isFormValid = uiState.isFormValid,

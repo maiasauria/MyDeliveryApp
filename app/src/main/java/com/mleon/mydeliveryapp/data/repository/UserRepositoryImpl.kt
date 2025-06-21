@@ -1,5 +1,6 @@
 package com.mleon.mydeliveryapp.data.repository
 
+import android.util.Log
 import com.mleon.core.model.DatabaseUser
 import com.mleon.core.model.User
 import com.mleon.core.model.UserDto
@@ -27,7 +28,7 @@ class UserRepositoryImpl @Inject constructor() : UserRepository  {
         users.removeIf { it.email == user.email }
     }
 
-    override fun registerUser(user: UserDto): User? {
+    override suspend fun registerUser(user: UserDto): User? {
         if (users.any { it.email == user.email }) return null // Email already exists
         val dbUser = DatabaseUser(
             id = nextId++,
@@ -39,7 +40,8 @@ class UserRepositoryImpl @Inject constructor() : UserRepository  {
         return User(dbUser.name, dbUser.email, dbUser.password)
     }
 
-    override fun loginUser(email: String, password: String): UserDto? {
+    override suspend fun loginUser(email: String, password: String): UserDto? {
+        Log.d("UserRepositoryImpl", "Attempting login for email: $email")
         val dbUser = users.find { it.email == email && it.password == password }
         return dbUser?.let { UserDto(it.name, it.email, it.password) }
     }

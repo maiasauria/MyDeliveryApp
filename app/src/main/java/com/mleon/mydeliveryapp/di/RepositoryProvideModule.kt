@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import com.mleon.mydeliveryapp.data.remote.ApiService
 import com.mleon.mydeliveryapp.data.remote.RetrofitClient
 import com.mleon.mydeliveryapp.data.repository.ProductRepositoryApi
-import com.mleon.mydeliveryapp.data.repository.UserRepositoryImpl
+import com.mleon.mydeliveryapp.data.repository.UserRepositoryApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,5 +34,5 @@ object RepositoryProvideModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(): UserRepositoryImpl = UserRepositoryImpl()
+    fun provideUserRepository(apiService: ApiService): UserRepositoryApi = UserRepositoryApi(apiService)
 }

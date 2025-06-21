@@ -1,11 +1,11 @@
 package com.mleon.mydeliveryapp.presentation.viewmodel
 
+import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import com.mleon.core.model.UserDto
 import com.mleon.mydeliveryapp.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -82,7 +82,8 @@ class SignupViewModel @Inject constructor(
                         password = state.password
                     )
                 )
-                delay(1000)
+                Log.d("SignupViewModel", "Signup result: $result")
+                //delay(1000)
                 if (result != null) {
                     _uiState.update {
                         it.copy(
@@ -94,7 +95,7 @@ class SignupViewModel @Inject constructor(
                 } else {
                     _uiState.update {
                         it.copy(
-                            errorMessageSignup = "El correo ya está registrado.",
+                            errorMessageSignup = "Hubo un error al registrar el usuario.",
                             isFormValid = false
                         )
                     }

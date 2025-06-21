@@ -7,6 +7,6 @@ interface UserRepository {
     fun getUser(user: UserDto): User?
     fun saveUser(user: UserDto)
     fun deleteUser(user: UserDto)
-    fun registerUser(user: UserDto): User?
-    fun loginUser(email: String, password: String): UserDto?
+    suspend fun registerUser(user: UserDto): User?
+    suspend fun loginUser(email: String, password: String): UserDto?
 }
