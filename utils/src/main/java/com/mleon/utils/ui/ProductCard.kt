@@ -135,7 +135,7 @@ fun ProductCard(
 fun ProductCardPreview() {
     ProductCard(
         product = Product(
-            id = 1,
+            id = "1",
             name = "Producto de Ejemplo Con Nombre Largo",
             description = "Descripción del producto de ejemplo con Texto Largo.",
             price = 19.99,

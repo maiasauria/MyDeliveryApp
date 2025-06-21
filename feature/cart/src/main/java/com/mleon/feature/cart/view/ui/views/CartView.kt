@@ -146,7 +146,7 @@ fun CartViewPreview() {
             cartItems = listOf(
                 CartItem(
                     product = Product(
-                        id = 1, name = "Producto 1", price = 10.0, includesDrink = false,
+                        id = "1", name = "Producto 1", price = 10.0, includesDrink = false,
                         description = "",
                         category = listOf(Categories.PIZZA)
                     ),
@@ -154,7 +154,7 @@ fun CartViewPreview() {
                 ),
                 CartItem(
                     product = Product(
-                        id = 2,
+                        id = "2",
                         name = "Producto 2",
                         price = 20.0,
                         includesDrink = true,

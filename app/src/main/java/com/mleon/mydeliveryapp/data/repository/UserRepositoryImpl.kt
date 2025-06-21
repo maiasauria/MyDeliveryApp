@@ -3,8 +3,9 @@ package com.mleon.mydeliveryapp.data.repository
 import com.mleon.core.model.DatabaseUser
 import com.mleon.core.model.User
 import com.mleon.core.model.UserDto
+import javax.inject.Inject
 
-class UserRepositoryImpl : UserRepository {
+class UserRepositoryImpl @Inject constructor() : UserRepository  {
     private val users: MutableList<DatabaseUser> = mutableListOf(
         DatabaseUser(1, "Nicolas", "nicolas@gmail.com", "password123"),
         DatabaseUser(2, "Andrea", "a@a.com", "password456"),

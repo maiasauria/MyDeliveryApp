@@ -1,7 +1,7 @@
 package com.mleon.mydeliveryapp.di
 
 import com.mleon.mydeliveryapp.data.repository.ProductRepository
-import com.mleon.mydeliveryapp.data.repository.ProductRepositoryImpl
+import com.mleon.mydeliveryapp.data.repository.ProductRepositoryApi
 import com.mleon.mydeliveryapp.data.repository.UserRepository
 import com.mleon.mydeliveryapp.data.repository.UserRepositoryImpl
 import dagger.Binds
@@ -16,7 +16,7 @@ abstract class RepositoryBindModule {
     @Binds
     @Singleton
     abstract fun bindProductRepository(
-        impl: ProductRepositoryImpl
+        impl: ProductRepositoryApi
     ): ProductRepository
 
     @Binds

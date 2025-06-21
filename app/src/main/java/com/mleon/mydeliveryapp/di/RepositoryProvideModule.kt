@@ -2,7 +2,9 @@ package com.mleon.mydeliveryapp.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.mleon.mydeliveryapp.data.repository.ProductRepositoryImpl
+import com.mleon.mydeliveryapp.data.remote.ApiService
+import com.mleon.mydeliveryapp.data.remote.RetrofitClient
+import com.mleon.mydeliveryapp.data.repository.ProductRepositoryApi
 import com.mleon.mydeliveryapp.data.repository.UserRepositoryImpl
 import dagger.Module
 import dagger.Provides
@@ -16,8 +18,14 @@ import javax.inject.Singleton
 object RepositoryProvideModule {
     @Provides
     @Singleton
-    fun provideProductRepositoryImpl(): ProductRepositoryImpl =
-        ProductRepositoryImpl(/* dependencies */)
+    fun provideProductRepositoryApi(apiService: ApiService): ProductRepositoryApi =
+        ProductRepositoryApi(apiService)
+
+    @Provides
+    @Singleton
+    fun provideApiService(): ApiService {
+        return RetrofitClient.instance
+    }
 
     @Provides
     @Singleton

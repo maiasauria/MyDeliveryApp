@@ -288,7 +288,7 @@ fun ProductCardCart(
 fun CartProductCardPreview() {
     CartProductCard(
         product = Product(
-            id = 1,
+            id = "1",
             name = "Producto de prueba con un nombre largo",
             description = "Description del producto de prueba con un nombre largo",
             price = 19.99,
@@ -305,7 +305,7 @@ fun CartProductCardPreview() {
 fun ProductCardCartPreview() {
     ProductCardCart(
         product = Product(
-            id = 1,
+            id = "1",
             name = "Producto de prueba con un nombre largo",
             description = "Description del producto de prueba con un nombre largo",
             price = 19.99,

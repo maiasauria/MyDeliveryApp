@@ -3,7 +3,7 @@ package com.mleon.mydeliveryapp.data.repository
 import com.mleon.core.model.Product
 
 interface ProductRepository {
-    fun getProducts(): List<Product>
-    fun filterProducts( nombre: String): List<Product>
-    fun filterProductsByCategory(category: String): List<Product>
+    suspend fun getProducts(): List<Product>
+    suspend fun filterProducts(name: String): List<Product>
+    suspend fun filterProductsByCategory(category: String): List<Product>
 }

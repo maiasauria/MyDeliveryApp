@@ -8,7 +8,6 @@ import com.mleon.mydeliveryapp.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -25,7 +24,7 @@ class ProductListViewModel
     private val _productState = MutableStateFlow(
         ProductListState(
             products = listOf(
-                Product(0, "", "", 0.0, true, "", listOf()),
+                Product("0", "", "", 0.0, true, "", listOf()),
             )
         )
     )
@@ -40,7 +39,7 @@ class ProductListViewModel
 
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             try {
-                delay(2000) // Simulate network delay
+               // delay(2000) // Simulate network delay
                 val nuevaLista = productRepository.getProducts()
                 allProducts = nuevaLista // Store the fetched products
                 _productState.update {

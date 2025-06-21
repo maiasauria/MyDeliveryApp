@@ -2,12 +2,13 @@ package com.mleon.mydeliveryapp.data.repository
 
 import com.mleon.core.model.Categories
 import com.mleon.core.model.Product
+import javax.inject.Inject
 
-class ProductRepositoryImpl : ProductRepository {
+class ProductRepositoryImpl @Inject constructor()  : ProductRepository {
 
     private val products = listOf(
         Product(
-            id = 1,
+            id = "1",
             name = "Hamburguesa con Papas",
             description = "Hamburguesa de res con papas fritas y bebida.",
             price = 15000.0,
@@ -16,7 +17,7 @@ class ProductRepositoryImpl : ProductRepository {
             category = listOf(Categories.BURGER, )
         ),
         Product(
-            id = 2,
+            id = "2",
             name = "Pizza de Muzzarella",
             description = "Pizza de muzzarella.",
             price = 25000.0,
@@ -25,7 +26,7 @@ class ProductRepositoryImpl : ProductRepository {
             category = listOf(Categories.PIZZA, Categories.VEGETARIAN)
         ),
         Product(
-            id = 3,
+            id = "3",
             name = "Fideos con Pesto y Pollo",
             description = "Fideos caseros de espinaca, con pesto de albahaca y pollo grillé",
             price = 23000.0,
@@ -34,7 +35,7 @@ class ProductRepositoryImpl : ProductRepository {
             category = listOf(Categories.PASTA)
         ),
         Product(
-            id = 4,
+            id = "4",
             name = "Sorrentinos de Jamón y 4 Quesos",
             description = "Sorrentinos rellenos de jamón y queso con salsa de tomate.",
             price = 12000.0,
@@ -43,7 +44,7 @@ class ProductRepositoryImpl : ProductRepository {
             category = listOf(Categories.PASTA)
         ),
         Product(
-            id = 5,
+            id = "5",
             name = "Ensalada César con Pollo",
             description = "Ensalada César con pollo, lechuga, crutones y aderezo.",
             price = 18000.0,
@@ -52,7 +53,7 @@ class ProductRepositoryImpl : ProductRepository {
             category = listOf(Categories.SALAD)
         ),
         Product(
-            id = 6,
+            id = "6",
             name = "Falafel con Hummus",
             description = "Falafel con hummus, ensalada y pan pita.",
             price = 15000.0,
@@ -61,7 +62,7 @@ class ProductRepositoryImpl : ProductRepository {
             category = listOf(Categories.VEGAN, Categories.VEGETARIAN)
         ),
         Product(
-            id = 7,
+            id = "7",
             name = "Tacos de Pollo",
             description = "Tacos de pollo con guacamole, cebolla y morrón.",
             price = 20000.0,
@@ -70,7 +71,7 @@ class ProductRepositoryImpl : ProductRepository {
             category = listOf(Categories.MEXICAN, )
         ),
         Product(
-         id = 8,
+         id = "8",
             category = listOf(Categories.VEGAN, Categories.SALAD),
             name = "Ensalada Vegana con Quinoa",
             description = "Ensalada vegana con quinoa, espinacas, tomate cherry y aderezo de mostaza.",
@@ -79,7 +80,7 @@ class ProductRepositoryImpl : ProductRepository {
             imageUrl = "https://img.freepik.com/free-photo/side-view-quinoa-salad-with-tomato-cucumber-basil-salt-pepper-table_141793-3676.jpg?t=st=1749301264~exp=1749304864~hmac=a7ab0cb1489afa583da5d148518fd12217076ec10e72a26647d90f252d4c2b42&w=1380"
         ),
         Product(
-            id = 9,
+            id = "9",
             name = "Hamburguesa de Lentejas",
             description = "Hamburguesa vegana de lentejas con pan integral y ensalada.",
             price = 14000.0,
@@ -88,7 +89,7 @@ class ProductRepositoryImpl : ProductRepository {
             category = listOf(Categories.BURGER, Categories.VEGAN, Categories.VEGETARIAN)
         ),
         Product(
-            id = 10,
+            id = "10",
             name = "Burrito de Carne Asada",
             description = "Burrito de carne asada con arroz, guacamole y salsa.",
             price = 27000.0,
@@ -98,16 +99,16 @@ class ProductRepositoryImpl : ProductRepository {
         )
     )
 
-    override fun getProducts(): List<Product> = products
+    override suspend fun getProducts(): List<Product> = products
 
-    override fun filterProducts(nombre: String): List<Product> {
+    override suspend fun filterProducts(name: String): List<Product> {
         return products.filter {
-            it.name.contains(nombre, ignoreCase = true) ||
-                    it.description.contains(nombre, ignoreCase = true)
+            it.name.contains(name, ignoreCase = true) ||
+                    it.description.contains(name, ignoreCase = true)
         }
     }
 
-    override fun filterProductsByCategory(category: String): List<Product> {
+    override suspend fun filterProductsByCategory(category: String): List<Product> {
         TODO("Not yet implemented")
     }
 

@@ -1,5 +1,6 @@
 package com.mleon.mydeliveryapp.presentation.views
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -53,7 +54,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mleon.core.model.Categories
 import com.mleon.core.model.Product
-import com.mleon.mydeliveryapp.data.repository.ProductRepositoryImpl
 import com.mleon.mydeliveryapp.presentation.viewmodel.ProductListState
 import com.mleon.utils.ui.ListDivider
 import com.mleon.utils.ui.ProductCard
@@ -137,6 +137,7 @@ fun ProductListView(
         }
 
         uiState.error?.let { error ->
+            Log.e("ProductListView", "Error: ${error.message}")
             Toast.makeText(
                 LocalContext.current,
                 "Error: ${error.message}",
@@ -326,24 +327,24 @@ fun ProductsBottomSheetPreview() {
     )
 }
 
-@Preview(showBackground = true)
-@Preview(showBackground = true, name = "ProductListView")
-@Composable
-fun ProductListViewPreview() {
-    ProductListView(
-        uiState = ProductListState(
-            isLoading = false,
-            products = ProductRepositoryImpl().getProducts().take(10),
-            searchQuery = "",
-            selectedCategory = null,
-            error = null,
-            cartMessage = ""
-        ),
-        onSearchQueryChange = {},
-        onCategorySelection = {},
-        onOrderByPriceDescending = {},
-        onOrderByPriceAscending = {},
-        onAddToCart = {},
-        clearCartMessage = {}
-    )
-}
+//@Preview(showBackground = true)
+//@Preview(showBackground = true, name = "ProductListView")
+//@Composable
+//fun ProductListViewPreview() {
+//    ProductListView(
+//        uiState = ProductListState(
+//            isLoading = false,
+//            products = ProductRepositoryImpl().getProducts().take(10),
+//            searchQuery = "",
+//            selectedCategory = null,
+//            error = null,
+//            cartMessage = ""
+//        ),
+//        onSearchQueryChange = {},
+//        onCategorySelection = {},
+//        onOrderByPriceDescending = {},
+//        onOrderByPriceAscending = {},
+//        onAddToCart = {},
+//        clearCartMessage = {}
+//    )
+//}
