@@ -26,8 +26,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route
-
-                Scaffold(
+                Scaffold( //PAsar todo esto a otra clase.
                     bottomBar = {
                         YappBottomBar(
                             currentRoute = currentRoute,

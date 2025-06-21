@@ -1,11 +1,11 @@
-package com.mleon.mydeliveryapp.ui.views
+package com.mleon.mydeliveryapp.presentation.views
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mleon.feature.cart.view.viewmodel.CartViewModel
-import com.mleon.mydeliveryapp.viewmodel.ProductListViewModel
+import com.mleon.mydeliveryapp.presentation.viewmodel.ProductListViewModel
 
 @Composable
 fun ProductListScreen(

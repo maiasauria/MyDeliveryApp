@@ -1,4 +1,4 @@
-package com.mleon.mydeliveryapp.ui.views
+package com.mleon.mydeliveryapp.presentation.views
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mleon.utils.ui.LoadingIndicator
+import com.mleon.utils.ui.FullScreenLoadingIndicator
 import com.mleon.utils.ui.LogoImage
 import com.mleon.utils.ui.ValidatePasswordField
 import com.mleon.utils.ui.ValidateTextField
@@ -100,7 +100,7 @@ fun LoginView(
         }
     }
     if (isLoading) {
-        LoadingIndicator()
+        FullScreenLoadingIndicator()
     }
 }
 

@@ -1,6 +1,9 @@
-package com.mleon.mydeliveryapp.ui.views
+package com.mleon.mydeliveryapp.presentation.views
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,10 +12,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
@@ -38,6 +43,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,10 +54,9 @@ import androidx.compose.ui.unit.dp
 import com.mleon.core.model.Categories
 import com.mleon.core.model.Product
 import com.mleon.mydeliveryapp.data.repository.ProductRepositoryImpl
-import com.mleon.mydeliveryapp.viewmodel.ProductListState
+import com.mleon.mydeliveryapp.presentation.viewmodel.ProductListState
 import com.mleon.utils.ui.ListDivider
 import com.mleon.utils.ui.ProductCard
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,10 +73,12 @@ fun ProductListView(
 
     var showSheet by remember { mutableStateOf(false) }
 
+    val scope = rememberCoroutineScope()
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(start = 16.dp, end = 16.dp)
     ) {
         Column(modifier = Modifier.fillMaxSize())
         {
@@ -86,24 +93,37 @@ fun ProductListView(
                 selectedCategory = uiState.selectedCategory,
                 onCategorySelection = onCategorySelection
             )
+
+            //TODO sacar a una función aparte
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(0.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                //          verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                item { if (uiState.isLoading) { LinearProgressIndicator(modifier = Modifier.fillMaxWidth()) } }
+                item {
+                    if (uiState.isLoading) {
+                        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                    }
+                }
 
-                items(uiState.products) { product ->
-                    ProductCard(
-                        product = product,
-                        onAddToCart = { onAddToCart(product) },
-                        isLoading = uiState.isLoading,
-                    )
-                    Spacer(modifier = Modifier.padding(vertical = 4.dp))
-                    ListDivider()
+                itemsIndexed(uiState.products) { index, product ->
+                    AnimatedVisibility(
+                        visible = true,
+                        enter = fadeIn(animationSpec = tween(2300, 50), initialAlpha = 0.3f)
+                    ) {
+                        ProductCard(
+                            product = product,
+                            onAddToCart = { onAddToCart(product) },
+                            isLoading = uiState.isLoading,
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        ListDivider()
+                        Spacer(modifier = Modifier.height(4.dp))
+                    }
                 }
             }
+
 
             if (showSheet) {
                 ProductsBottomSheet(
@@ -134,17 +154,15 @@ fun ProductListView(
     }
 }
 
-
-
 @Composable
 fun FiltersRow(
     selectedCategory: Categories? = null,
     onCategorySelection: (Categories?) -> Unit,
-){
+) {
     LazyRow(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 8.dp),
+            .fillMaxWidth(),
+        //.padding(bottom = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(Categories.entries) { category ->
@@ -243,9 +261,9 @@ fun SearchAndFiltersBar(
             onValueChange = onSearchQueryChange,
             label = { Text("Buscar") },
             placeholder = { Text("Buscar productos...") },
-            modifier = Modifier.defaultMinSize(minHeight = 48.dp)
-                .weight(1f)
-                ,
+            modifier = Modifier
+                .defaultMinSize(minHeight = 48.dp)
+                .weight(1f),
             trailingIcon = {
                 if (uiState.searchQuery.isNotEmpty()) {
                     IconButton(onClick = { onSearchQueryChange("") }) {
@@ -258,10 +276,11 @@ fun SearchAndFiltersBar(
             }
         )
         IconButton(onClick = onOpenFilters) {
-            Icon(Icons.Filled.ImportExport,
+            Icon(
+                Icons.Filled.ImportExport,
                 contentDescription = "Filtrar productos",
-            modifier = Modifier
-                )
+                modifier = Modifier
+            )
         }
     }
 }
@@ -298,8 +317,8 @@ fun FiltersRowPreview() {
 fun ProductsBottomSheetPreview() {
     ProductsBottomSheet(
         sheetState = rememberStandardBottomSheetState(
-                initialValue = SheetValue.Expanded
-                ),
+            initialValue = SheetValue.Expanded
+        ),
         showSheet = true,
         onDismissRequest = {},
         onOrderByPriceDescending = {},
@@ -308,6 +327,7 @@ fun ProductsBottomSheetPreview() {
 }
 
 @Preview(showBackground = true)
+@Preview(showBackground = true, name = "ProductListView")
 @Composable
 fun ProductListViewPreview() {
     ProductListView(

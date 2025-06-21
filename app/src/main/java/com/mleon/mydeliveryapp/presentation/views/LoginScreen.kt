@@ -1,4 +1,4 @@
-package com.mleon.mydeliveryapp.ui.views
+package com.mleon.mydeliveryapp.presentation.views
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -9,7 +9,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.mleon.mydeliveryapp.viewmodel.LoginViewModel
+import com.mleon.mydeliveryapp.presentation.viewmodel.LoginViewModel
 import kotlinx.coroutines.launch
 
 @Composable

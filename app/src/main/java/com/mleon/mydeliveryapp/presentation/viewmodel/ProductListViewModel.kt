@@ -1,9 +1,9 @@
-package com.mleon.mydeliveryapp.viewmodel
+package com.mleon.mydeliveryapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.mleon.core.model.Product
 import androidx.lifecycle.viewModelScope
 import com.mleon.core.model.Categories
+import com.mleon.core.model.Product
 import com.mleon.mydeliveryapp.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -25,7 +25,7 @@ class ProductListViewModel
     private val _productState = MutableStateFlow(
         ProductListState(
             products = listOf(
-                Product(1, "", "", 0.0, true, "", listOf()),
+                Product(0, "", "", 0.0, true, "", listOf()),
             )
         )
     )

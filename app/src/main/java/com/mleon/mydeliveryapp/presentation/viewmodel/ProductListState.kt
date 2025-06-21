@@ -1,4 +1,4 @@
-package com.mleon.mydeliveryapp.viewmodel
+package com.mleon.mydeliveryapp.presentation.viewmodel
 
 import com.mleon.core.model.Categories
 import com.mleon.core.model.Product

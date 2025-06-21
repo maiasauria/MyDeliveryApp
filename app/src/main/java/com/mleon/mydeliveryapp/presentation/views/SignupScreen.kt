@@ -1,9 +1,9 @@
-package com.mleon.mydeliveryapp.ui.views
+package com.mleon.mydeliveryapp.presentation.views
 
 import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.mleon.mydeliveryapp.viewmodel.SignupViewModel
+import com.mleon.mydeliveryapp.presentation.viewmodel.SignupViewModel
 import kotlinx.coroutines.launch
 
 @Composable

@@ -1,4 +1,4 @@
-package com.mleon.mydeliveryapp.ui.views
+package com.mleon.mydeliveryapp.presentation.views
 
 import ProfileView
 import androidx.compose.runtime.Composable

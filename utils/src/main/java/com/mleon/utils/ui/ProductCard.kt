@@ -26,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -43,105 +42,17 @@ import com.mleon.utils.R
 import com.mleon.utils.toCurrencyFormat
 
 @Composable
-fun ProductCard2(
-    modifier: Modifier = Modifier,
-    product: Product,
-    onAddToCart: (Product) -> Unit = { }
-) {
-
-    Card(
-        modifier = modifier
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(CornerSize(10.dp)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = CardDefaults.outlinedCardBorder()
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(140.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(product.imageUrl)
-                    .crossfade(true)
-                    .build(),
-                placeholder = painterResource(R.drawable.ic_launcher_background),
-                contentDescription = product.name,
-                modifier = Modifier
-                    .height(140.dp)
-                    .width(120.dp)
-                    .clip(RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp)),
-                contentScale = ContentScale.Crop,
-                error = painterResource(R.drawable.ic_launcher_background)
-            )
-
-            Column(
-                modifier = Modifier
-                    .padding(12.dp)
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-            ) {
-
-                Text(
-                    text = product.name,
-                    modifier = Modifier.padding(bottom = 4.dp),
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                )
-                Text(
-                    text = product.description,
-                    modifier = Modifier.padding(bottom = 8.dp),
-                    style = MaterialTheme.typography.bodySmall,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth()
-                        .fillMaxHeight(),
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.SpaceBetween){
-
-                    Text(
-                        text = "\$${product.price.toCurrencyFormat()}",
-                        modifier = Modifier
-                            .padding(bottom = 8.dp),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-
-                    IconButton(onClick = { onAddToCart(product) }) {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .background(MaterialTheme.colorScheme.primary, shape = CircleShape)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Add",
-                                tint = Color.White,
-                                modifier = Modifier.align(Alignment.Center)
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
 fun ProductCard(
     modifier: Modifier = Modifier,
     isLoading: Boolean,
     product: Product,
     onAddToCart: (Product) -> Unit = { }
 ) {
-
     Card(
         modifier = modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(CornerSize(10.dp)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
     ) {
         Row(
             modifier = Modifier
@@ -167,10 +78,11 @@ fun ProductCard(
 
             Column(
                 modifier = Modifier
-                    .padding(4.dp)
+                    .padding(8.dp)
                     .fillMaxWidth()
                     .fillMaxHeight()
             ) {
+                //TODO poner favoritos.
                 Text(
                     text = product.name,
                     modifier = Modifier.padding(bottom = 4.dp),

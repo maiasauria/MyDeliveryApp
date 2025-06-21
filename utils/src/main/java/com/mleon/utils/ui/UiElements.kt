@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -39,7 +40,7 @@ fun ListDivider(
 }
 
 @Composable
-fun LoadingIndicator() {
+fun FullScreenLoadingIndicator() {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -48,4 +49,11 @@ fun LoadingIndicator() {
     ) {
         CircularProgressIndicator()
     }
+}
+
+@Composable
+fun HorizontalLoadingIndicator(
+) {
+    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+
 }
