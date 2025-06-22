@@ -3,12 +3,17 @@ package com.mleon.mydeliveryapp.presentation.viewmodel
 import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.mleon.core.model.UserDto
+import com.mleon.mydeliveryapp.data.model.RegisterResult
 import com.mleon.mydeliveryapp.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -70,45 +75,30 @@ class SignupViewModel @Inject constructor(
         }
     }
 
-    suspend fun onSignupButtonClick() {
-        val state = _uiState.value
-        if (state.isFormValid) {
+    val exceptionHandler = CoroutineExceptionHandler { _, exception ->
+        println("Error occurred: ${exception.message}")
+    }
+
+    fun onSignupButtonClick() {
+        if (_uiState.value.isFormValid) {
             _uiState.update { it.copy(isLoading = true, errorMessageSignup = null) }
-            try {
-                val result = userRepository.registerUser(
-                    UserDto(
-                        name = state.name,
-                        email = state.email,
-                        password = state.password
-                    )
-                )
-                Log.d("SignupViewModel", "Signup result: $result")
-                //delay(1000)
-                if (result != null) {
+            viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+                try {
+                    val userDto = createUserDto()
+                    val result = userRepository.registerUser(userDto)
+                    Log.d("SignupViewModel", "Signup result: $result")
+                    handleRegistrationResult(result)
+                    //delay(1000)
+                } catch (e: Exception) {
                     _uiState.update {
                         it.copy(
-                            errorMessageSignup = null,
-                            password = "", // Clear sensitive data
-                            passwordConfirm = ""
-                        )
-                    }
-                } else {
-                    _uiState.update {
-                        it.copy(
-                            errorMessageSignup = "Hubo un error al registrar el usuario.",
+                            errorMessageSignup = "Error: ${e.message}",
                             isFormValid = false
                         )
                     }
+                } finally {
+                    _uiState.update { it.copy(isLoading = false) }
                 }
-            } catch (e: Exception) {
-                _uiState.update {
-                    it.copy(
-                        errorMessageSignup = "Error: ${e.message}",
-                        isFormValid = false
-                    )
-                }
-            } finally {
-                _uiState.update { it.copy(isLoading = false) }
             }
         } else {
             _uiState.update {
@@ -117,6 +107,35 @@ class SignupViewModel @Inject constructor(
                 )
             }
 
+        }
+    }
+
+    private fun createUserDto(): UserDto {
+        return UserDto(
+            name = _uiState.value.name,
+            email = _uiState.value.email,
+            password = _uiState.value.password
+        )
+    }
+
+    private fun handleRegistrationResult(result: RegisterResult) {
+        if (result.user != null) {
+            _uiState.update  {
+                it.copy(
+                    signupSuccess = true,
+                    errorMessageSignup = null,
+                    password = "",
+                    passwordConfirm = ""
+                )
+            }
+        } else {
+            _uiState.update {
+                it.copy(
+                    signupSuccess = false,
+                    errorMessageSignup = result.message,
+                    isFormValid = false
+                )
+            }
         }
     }
 }

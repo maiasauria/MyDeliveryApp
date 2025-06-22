@@ -1,16 +1,18 @@
 package com.mleon.mydeliveryapp.presentation.viewmodel
 
 import android.content.SharedPreferences
-import android.util.Log
 import android.util.Patterns
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.mleon.mydeliveryapp.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,38 +49,49 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    suspend fun onLoginClick() {
-        val state = _uiState.value
-        if (state.isFormValid) {
+    val exceptionHandler = CoroutineExceptionHandler { _, exception ->
+        println("Error occurred: ${exception.message}")
+    }
+
+    /**
+     * Handles the login button click event.
+     * Validates the form and attempts to log in the user.
+     * Updates the UI state based on the login result.
+     */
+    fun onLoginClick() {
+
+        if (_uiState.value.isFormValid) {
             _uiState.update { it.copy(isLoading = true) }
 
-            try {
-                val result = userRepository.loginUser(
-                    email = state.email,
-                    password = state.password
-                )
-                Log.d("LoginViewModel", "Login result: $result")
-                delay(1000)
-                if (result != null) {
-                    _uiState.update {
-                        it.copy(
-                            errorMessageLogin = null,
-                            password = ""
-                        )
+            viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+                try {
+                    val result = userRepository.loginUser(
+                        email = _uiState.value.email,
+                        password = _uiState.value.password
+                    )
+                    if (result.user != null) {
+                        _uiState.update {
+                            it.copy(
+                                loginSuccess = true,
+                                errorMessageLogin = null,
+                                password = "",
+                            )
+                        }
+                        sharedPreferences.edit { putString("email", _uiState.value.email) }
+                    } else {
+                        _uiState.update {
+                            it.copy(
+                                loginSuccess = false,
+                                errorMessageLogin = result.message,
+                                isFormValid = false
+                            )
+                        }
                     }
-                    sharedPreferences.edit { putString("email", _uiState.value.email) }
-                } else {
-                    _uiState.update {
-                        it.copy(
-                            errorMessageLogin = "Credenciales incorrectas",
-                            isFormValid = false
-                        )
-                    }
+                } catch (e: Exception) {
+                    _uiState.update { it.copy(errorMessageLogin = "Error: ${e.message}") }
+                } finally {
+                    _uiState.update { it.copy(isLoading = false) }
                 }
-            } catch (e: Exception) {
-                _uiState.update { it.copy(errorMessageLogin = "Error: ${e.message}") }
-            } finally {
-                _uiState.update { it.copy(isLoading = false) }
             }
         } else {
             _uiState.update {

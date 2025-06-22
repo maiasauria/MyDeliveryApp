@@ -1,6 +1,7 @@
 package com.mleon.mydeliveryapp.presentation.views
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +23,15 @@ fun SignupScreen(
     var confirmPasswordVisible by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
+
+    LaunchedEffect(uiState.signupSuccess, uiState.errorMessageSignup) {
+        if (uiState.signupSuccess && uiState.errorMessageSignup == null) {
+            navController.navigate("products") {
+                popUpTo("login") { inclusive = true }
+            }
+        }
+    }
+
     SignupView(
         navController = navController,
         name = uiState.name,
@@ -41,16 +51,7 @@ fun SignupScreen(
         confirmPasswordVisible = confirmPasswordVisible,
         onConfirmVisibilityChange = { confirmPasswordVisible = it },
         isFormValid = uiState.isFormValid,
-        onSignupClick = {
-            coroutineScope.launch {
-                signupViewModel.onSignupButtonClick()
-                if (signupViewModel.uiState.value.errorMessageSignup == null) {
-                    navController.navigate("products") {
-                        popUpTo("login") { inclusive = true }
-                    }
-                }
-            }
-        },
+        onSignupClick = { signupViewModel.onSignupButtonClick() },
         isLoading = uiState.isLoading,
         errorMessageSignup = uiState.errorMessageSignup
     )

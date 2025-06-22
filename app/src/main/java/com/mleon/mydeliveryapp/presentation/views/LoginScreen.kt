@@ -1,16 +1,15 @@
 package com.mleon.mydeliveryapp.presentation.views
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mleon.mydeliveryapp.presentation.viewmodel.LoginViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
@@ -19,7 +18,14 @@ fun LoginScreen(
 ) {
     val uiState by loginViewModel.uiState.collectAsState()
     var passwordVisible by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(uiState.loginSuccess, uiState.errorMessageLogin) {
+        if (uiState.loginSuccess && uiState.errorMessageLogin == null) {
+            navController.navigate("products") {
+                popUpTo("login") { inclusive = true }
+            }
+        }
+    }
 
     LoginView(
         email = uiState.email,
@@ -33,19 +39,8 @@ fun LoginScreen(
         isPasswordValid = uiState.isPasswordValid,
         errorMessagePassword = uiState.errorMessagePassword,
         isFormValid = uiState.isFormValid,
-        onLoginClick = {
-            coroutineScope.launch {
-                loginViewModel.onLoginClick()
-                if (loginViewModel.uiState.value.errorMessageLogin == null) {
-                    navController.navigate("products") {
-                        popUpTo("login") { inclusive = true }
-                    }
-                }
-            }
-        },
-        onSignupClick = {
-            navController.navigate("signup")
-        },
+        onLoginClick = { loginViewModel.onLoginClick() },
+        onSignupClick = { navController.navigate("signup") },
         isLoading = uiState.isLoading,
         errorMessageLogin = uiState.errorMessageLogin
     )

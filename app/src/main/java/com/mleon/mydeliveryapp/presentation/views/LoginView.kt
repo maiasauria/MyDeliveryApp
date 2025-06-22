@@ -27,10 +27,10 @@ import com.mleon.utils.ui.ValidateTextField
 @Composable
 fun LoginView(
     email: String = "",
-    onEmailChange: (String) -> Unit  = {},
+    onEmailChange: (String) -> Unit = {},
     isEmailValid: Boolean = true,
     errorMessageEmail: String? = "",
-    password: String= "",
+    password: String = "",
     onPasswordChange: (String) -> Unit = {},
     passwordVisible: Boolean = false,
     onPasswordVisibilityChange: (Boolean) -> Unit = {},

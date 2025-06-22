@@ -4,9 +4,11 @@ import android.util.Log
 import com.mleon.core.model.DatabaseUser
 import com.mleon.core.model.User
 import com.mleon.core.model.UserDto
+import com.mleon.mydeliveryapp.data.model.LoginResult
+import com.mleon.mydeliveryapp.data.model.RegisterResult
 import javax.inject.Inject
 
-class UserRepositoryImpl @Inject constructor() : UserRepository  {
+class UserRepositoryImpl @Inject constructor() : UserRepository {
     private val users: MutableList<DatabaseUser> = mutableListOf(
         DatabaseUser(1, "Nicolas", "nicolas@gmail.com", "password123"),
         DatabaseUser(2, "Andrea", "a@a.com", "password456"),
@@ -28,8 +30,13 @@ class UserRepositoryImpl @Inject constructor() : UserRepository  {
         users.removeIf { it.email == user.email }
     }
 
-    override suspend fun registerUser(user: UserDto): User? {
-        if (users.any { it.email == user.email }) return null // Email already exists
+    override suspend fun registerUser(user: UserDto): RegisterResult {
+        if (users.any { it.email == user.email }) {
+            return RegisterResult(
+                user = null,
+                message = "Email already exists"
+            )
+        }
         val dbUser = DatabaseUser(
             id = nextId++,
             name = user.name,
@@ -37,13 +44,23 @@ class UserRepositoryImpl @Inject constructor() : UserRepository  {
             password = user.password
         )
         users.add(dbUser)
-        return User(dbUser.name, dbUser.email, dbUser.password)
+        return RegisterResult(
+            user = UserDto(dbUser.name, dbUser.email, ""), // Do not expose password
+            message = "User registered successfully"
+        )
     }
 
-    override suspend fun loginUser(email: String, password: String): UserDto? {
+    override suspend fun loginUser(email: String, password: String): LoginResult {
         Log.d("UserRepositoryImpl", "Attempting login for email: $email")
         val dbUser = users.find { it.email == email && it.password == password }
-        return dbUser?.let { UserDto(it.name, it.email, it.password) }
+        return LoginResult(
+            user = dbUser?.let { UserDto(it.name, it.email, it.password) },
+            message = if (dbUser != null) {
+                "Login successful"
+            } else {
+                "Invalid email or password"
+            }
+        )
     }
 
 }

@@ -4,7 +4,11 @@ import android.util.Log
 import com.mleon.core.model.User
 import com.mleon.core.model.UserDto
 import com.mleon.mydeliveryapp.data.model.LoginRequest
+import com.mleon.mydeliveryapp.data.model.LoginResult
+import com.mleon.mydeliveryapp.data.model.RegisterResult
 import com.mleon.mydeliveryapp.data.remote.ApiService
+import org.json.JSONObject
+import retrofit2.HttpException
 
 class UserRepositoryApi(private val apiService: ApiService) : UserRepository {
 
@@ -21,31 +25,52 @@ class UserRepositoryApi(private val apiService: ApiService) : UserRepository {
         // Implementation for deleting user from the API
     }
 
-    override suspend fun registerUser(user: UserDto): User? {
-        val response = apiService.registerUser(user)
-        Log.d("UserRepositoryApi", "Register response: $response")
-        return if (response != null) {
-            User(
-                name = response.name,
-                email = response.email,
-                password = "" // Do not expose password
-            )
-        } else {
-            null
+    override suspend fun registerUser(user: UserDto): RegisterResult {
+        return try {
+            val response = apiService.registerUser(user)
+            Log.d("UserRepositoryApi", "Register response: $response")
+            if (response.message != null) {
+                RegisterResult(user = null, message = response.message)
+            } else if (response.email != null && response.name != null) {
+                RegisterResult(
+                    user = UserDto(
+                        name = response.name,
+                        email = response.email,
+                        password = "" // Do not expose password
+                    ),
+                    message = "User registered successfully"
+                )
+            } else {
+                RegisterResult(user = null, message = "Registration failed")
+            }
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            val message = JSONObject(errorBody ?: "{}").optString("message", "Unknown error")
+            RegisterResult(user = null, message = message)
+        } catch (e: Exception) {
+            RegisterResult(user = null, message = "Error: ${e.message}")
         }
     }
 
-    override suspend fun loginUser(email: String, password: String): UserDto? {
-        val response = apiService.loginUser(LoginRequest(email, password))
-        val user = response.user
-        return if (user != null) {
-            UserDto(
-                name = user.name,
-                email = user.email,
-                password = "" // Do not expose password
-            )
-        } else {
-            null
+    override suspend fun loginUser(email: String, password: String): LoginResult {
+        return try {
+            val response = apiService.loginUser(LoginRequest(email, password))
+            Log.d("UserRepositoryApi", "Login response: $response")
+            val user = response.user
+            if (user != null) {
+                LoginResult(
+                    user = UserDto(name = user.name, email = user.email, password = ""), // Do not expose password),
+                    message = response.message
+                )
+            } else {
+                LoginResult(user = null, message = response.message ?: "Login failed")
+            }
+        } catch (e: HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            val message = JSONObject(errorBody ?: "{}").optString("message", "Error desconocido")
+            LoginResult(user = null, message = message)
+        } catch (e: Exception) {
+            LoginResult(user = null, message = "Error: ${e.message}")
         }
     }
 }
