@@ -16,16 +16,18 @@ fun CartScreen(
 ) {
     val cartState by cartViewModel.cartItems.collectAsState()
     Log.d("CartScreen", "Cart state: $cartState")
-    CartView(
-        state = cartState,
-        onQuantityChange = { product, quantity ->
-            cartViewModel.editQuantity(product, quantity)
-        },
-        onRemoveFromCart = { product ->
-            cartViewModel.removeFromCart(product)
-        },
-        onCheckoutClick = {
-            navController.navigate("checkout")
-        }
-    )
+    if (cartState.cartItems.isEmpty() ) {
+        EmptyCartView(
+            onContinueShoppingClick = { navController.navigate("products") }
+        )
+    } else {
+        CartView(
+            state = cartState,
+            onQuantityChange = { product, quantity -> cartViewModel.editQuantity(product, quantity) },
+            onRemoveFromCart = { product -> cartViewModel.removeFromCart(product) },
+            onCheckoutClick = { navController.navigate("checkout") },
+
+        )
+    }
+
 }

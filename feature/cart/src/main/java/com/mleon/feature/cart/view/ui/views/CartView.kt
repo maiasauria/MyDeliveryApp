@@ -1,10 +1,16 @@
 package com.mleon.feature.cart.view.ui.views
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -34,8 +40,9 @@ fun CartView(
     state: CartState,
     onQuantityChange: (product: Product, quantity: Int) -> Unit,
     onRemoveFromCart: (product: Product) -> Unit,
-    onCheckoutClick: () -> Unit
-) {
+    onCheckoutClick: () -> Unit,
+
+    ) {
     Column(
         modifier = Modifier
             .padding(16.dp)
@@ -44,26 +51,21 @@ fun CartView(
         Text("Mi Carrito", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(16.dp))
 
+        if (state.isLoading) {
+            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+        }
+
         LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f), // Take available space, allow content below
+            modifier = Modifier.fillMaxWidth().weight(1f), // Take available space, allow content below
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (state.isLoading) {
-                item {
-                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-                }
-            }
 
             //Elementos del carrito
             itemsIndexed(state.cartItems) { index, cartItem ->
                 CartProductCard(
                     product = cartItem.product,
                     quantity = cartItem.quantity,
-                    onQuantityChange = { product, quantity ->
-                        onQuantityChange(product, quantity)
-                    },
+                    onQuantityChange = { product, quantity -> onQuantityChange(product, quantity) },
                     onRemoveFromCart = { onRemoveFromCart(cartItem.product) },
                     isLoading = state.isLoading
                 )
@@ -72,70 +74,60 @@ fun CartView(
                     ListDivider()
                 }
             }
-            if (state.cartItems.isEmpty()) {
-                item {
-                    Text(
-                        text = "Tu carrito está vacío",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(vertical = 16.dp)
-                    )
-                }
-            } else {
-                item {
-                    Spacer(modifier = Modifier.height(18.dp))
-                    Text(
-                        text = "Resumen del Pedido",
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                    )
-                }
-                items(state.cartItems) {
-                    Text(
-                        text = "${it.product.name} x ${it.quantity} = $${(it.product.price * it.quantity.toDouble()).toCurrencyFormat()}",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-
-                }
-                item {
-                    Text(
-                        text = "Total de Productos: $${state.totalPrice.toCurrencyFormat()}",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
+            item {
+                Spacer(modifier = Modifier.height(18.dp))
+                Text(
+                    text = "Resumen del Pedido",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                )
             }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-        ListDivider()
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = "Total: $${state.totalPrice.toCurrencyFormat()}",
-                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.weight(1f)
-            )
-            Button(
-                onClick = { onCheckoutClick() },
-                modifier = Modifier.padding(start = 8.dp),
-                enabled = state.cartItems.isNotEmpty() && !state.isLoading
-            ) {
-                Text("Ir a Pagar")
+            items(state.cartItems) {
+                Text(
+                    text = "${it.product.name} x ${it.quantity} = $${(it.product.price * it.quantity.toDouble()).toCurrencyFormat()}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
-        }
-
-        state.errorMessage?.let { errorMessage ->
-            Toast.makeText(
-                LocalContext.current,
-                "Error: $errorMessage",
-                Toast.LENGTH_LONG
-            ).show()
+            item {
+                Text(
+                    text = "Total de Productos: $${state.totalPrice.toCurrencyFormat()}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
         }
     }
+
+    Spacer(modifier = Modifier.height(12.dp))
+    ListDivider()
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "Total: $${state.totalPrice.toCurrencyFormat()}",
+            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+            modifier = Modifier.weight(1f)
+        )
+        Button(
+            onClick = { onCheckoutClick() },
+            modifier = Modifier.padding(start = 8.dp),
+            enabled = state.cartItems.isNotEmpty() && !state.isLoading
+        ) {
+            Text("Ir a Pagar")
+        }
+    }
+
+    state.errorMessage?.let { errorMessage ->
+        Toast.makeText(
+            LocalContext.current,
+            "Error: $errorMessage",
+            Toast.LENGTH_LONG
+        ).show()
+    }
 }
+
 
 @Composable
 @Preview(showBackground = true)
@@ -171,6 +163,38 @@ fun CartViewPreview() {
         onRemoveFromCart = {},
         onCheckoutClick = {}
     )
+}
+
+@Composable
+fun EmptyCartView(onContinueShoppingClick: () -> Unit) {
+    AnimatedVisibility(
+        visible = true,
+        enter = fadeIn() + slideInVertically(),
+        exit = fadeOut() + slideOutVertically()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Tu carrito está vacío",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+
+            Button(
+                onClick = onContinueShoppingClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Explorar Productos")
+            }
+            // You can add an image or icon here if you want
+            // Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = null)
+        }
+    }
 }
 
 @Preview(showBackground = true)
