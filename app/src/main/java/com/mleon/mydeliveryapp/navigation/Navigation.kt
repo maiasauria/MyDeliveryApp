@@ -13,14 +13,14 @@ import com.mleon.mydeliveryapp.presentation.views.ProductListScreen
 import com.mleon.mydeliveryapp.presentation.views.SignupScreen
 
 @Composable
-fun AppNavigation(navController: NavHostController ) {
+fun AppNavigation(navController: NavHostController) {
 
     val cartViewModel: CartViewModel = hiltViewModel()
 
     NavHost(
         navController = navController,
         //startDestination = "login" // Define la ruta inicial
-        startDestination = "products" //TODO Cambiar a "login" cuando se implemente la autenticación
+        startDestination = "login" //TODO Cambiar a "login" cuando se implemente la autenticación
     ) {
 
         // Aquí definimos las rutas de navegación

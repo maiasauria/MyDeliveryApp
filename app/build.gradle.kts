@@ -25,7 +25,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -44,8 +44,6 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.13"
     }
-
-
 }
 
 dependencies {
@@ -53,43 +51,45 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.androidx.core.ktx)
 
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    implementation (libs.material.icons.extended)
+//    implementation(libs.androidx.lifecycle.runtime.ktx)
+//    implementation(libs.androidx.activity.compose)
+//    implementation(platform(libs.androidx.compose.bom)) // Dependencia que se usa para manejar versiones de Compose
+//    implementation(libs.androidx.ui)
+//    //implementation(libs.androidx.ui.graphics) // Dependencia para gráficos en Compose
+//    implementation(libs.androidx.ui.tooling.preview) // Dependencia para previsualizar en Android Studio - En uso
+    implementation(libs.androidx.material3) // OK se usa Material Design 3 en Compose
+    implementation(libs.material.icons.extended) // OK Se usa Para iconos extendidos de Material Design en Compose
+    implementation(libs.androidx.ui.text.google.fonts) //OK se usa, Habilita uso de tipografías de Google Fonts en Compose
+//
+//    //Compose
+//    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
-    //Compose
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-
-    // Retrofit
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3")
+//
+//    // Retrofit
+//    implementation(libs.retrofit)
+//    implementation(libs.converter.gson)
+//    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
 
     // Room (runtime, compiler, ktx)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.navigation.compose.android)
-    implementation(libs.androidx.ui.text.google.fonts)
-    ksp(libs.androidx.room.compiler)
-    implementation(libs.androidx.room.ktx)
+    // implementation(libs.androidx.room.runtime)
+    // ksp(libs.androidx.room.compiler)
+    // implementation(libs.androidx.room.ktx)
+
+    // implementation(libs.androidx.navigation.compose.android)
 
     // ViewModel & LiveData (ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
+    // implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    // implementation(libs.androidx.lifecycle.livedata.ktx)
 
     // Navigation (fragment & ui)
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
+    // implementation(libs.androidx.navigation.fragment.ktx)
+    // implementation(libs.androidx.navigation.ui.ktx)
 
     // Material Components
-    implementation(libs.material)
+    // implementation(libs.material)
 
     // ConstraintLayout
-    implementation(libs.androidx.constraintlayout)
+    // implementation(libs.androidx.constraintlayout)
 
     // Hilt (DI)
     implementation(libs.hilt.android)
@@ -99,8 +99,8 @@ dependencies {
 
     implementation(libs.androidx.appcompat)
 
-    //Coil
-    implementation(libs.coil.compose)
+    // Coil
+    // implementation(libs.coil.compose)
 
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
@@ -119,6 +119,4 @@ dependencies {
     implementation(project(":utils"))
     implementation(project(":feature:cart"))
     implementation(project(":feature:profile"))
-
-
 }

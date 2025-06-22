@@ -252,10 +252,11 @@ fun SearchAndFiltersBar(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier
+        modifier =
+            modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically,
     ) {
         TextField(
             value = uiState.searchQuery,
