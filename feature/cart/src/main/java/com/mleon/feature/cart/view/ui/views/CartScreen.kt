@@ -14,7 +14,7 @@ fun CartScreen(
     navController: NavHostController,
     cartViewModel: CartViewModel = hiltViewModel()
 ) {
-    val cartState by cartViewModel.cartItems.collectAsState()
+    val cartState by cartViewModel.cartState.collectAsState()
     Log.d("CartScreen", "Cart state: $cartState")
     if (cartState.cartItems.isEmpty() ) {
         EmptyCartView(

@@ -15,9 +15,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CartViewModel @Inject constructor() : ViewModel() {
-    private val _cartState = MutableStateFlow(CartState())
-    val cartItems = _cartState.asStateFlow()
+class CartViewModel @Inject constructor(
+    //dependencies here
+) : ViewModel() {
+    private val _cartState =
+        MutableStateFlow(CartState()) // MutableStateFlow es un flujo que puede ser modificado
+    val cartState = _cartState.asStateFlow()
 
     val exceptionHandler = CoroutineExceptionHandler { _, exception ->
         println("Error occurred: ${exception.message}")
@@ -49,7 +52,7 @@ class CartViewModel @Inject constructor() : ViewModel() {
     }
 
     fun editQuantity(product: Product, quantity: Int) {
-        viewModelScope.launch(Dispatchers.IO + exceptionHandler) { //creamos una funcion suspendida. Dispatchers especifica que esta rutina esta ehcha para procesode IO.
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             _cartState.update { it.copy(isLoading = true) }
             try {
                 delay(1000) // Simula acceso a base de datos
@@ -69,19 +72,17 @@ class CartViewModel @Inject constructor() : ViewModel() {
     }
 
     fun removeFromCart(product: Product) {
-        viewModelScope.launch(Dispatchers.IO + exceptionHandler) { //creamos una funcion suspendida. Dispatchers especifica que esta rutina esta ehcha para procesode IO.
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             try {
                 _cartState.update { it.copy(isLoading = true) }
-                delay(500) // Simula acceso a base de datos
+                delay(500)
                 _cartState.update { state ->
                     val updatedList = state.cartItems.filter { it.product != product }
                     val totalPrice = updatedList.sumOf { it.product.price * it.quantity }
                     state.copy(cartItems = updatedList, totalPrice = totalPrice)
                 }
             } catch (e: Exception) {
-                _cartState.update {
-                    it.copy(isLoading = false, errorMessage = e.message)
-                }
+                _cartState.update { it.copy(errorMessage = e.message) }
             } finally {
                 _cartState.update { it.copy(isLoading = false) }
             }
@@ -93,7 +94,12 @@ class CartViewModel @Inject constructor() : ViewModel() {
             _cartState.update { it.copy(isLoading = true) }
             try {
                 delay(1000) // Simula proceso de pago
-                _cartState.update { it.copy(cartItems = emptyList(), totalPrice = 0.0) }
+                _cartState.update {
+                    it.copy(
+                        cartItems = emptyList(),
+                        totalPrice = 0.0
+                    )
+                } //TODO revisar, recien deberia ser cuando se confirma el pago
             } catch (e: Exception) {
                 _cartState.update { it.copy(errorMessage = e.message) }
             } finally {

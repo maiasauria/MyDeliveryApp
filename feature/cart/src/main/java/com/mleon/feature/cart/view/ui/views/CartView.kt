@@ -1,16 +1,10 @@
 package com.mleon.feature.cart.view.ui.views
 
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -43,23 +37,21 @@ fun CartView(
     onCheckoutClick: () -> Unit,
 
     ) {
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-
-    ) {
+    Column(modifier = Modifier.padding(16.dp)) {
         Text("Mi Carrito", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (state.isLoading) {
-            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-        }
-
         LazyColumn(
-            modifier = Modifier.fillMaxWidth().weight(1f), // Take available space, allow content below
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f), // Take available space, allow content below
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-
+            if (state.isLoading) {
+                item {
+                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                }
+            }
             //Elementos del carrito
             itemsIndexed(state.cartItems) { index, cartItem ->
                 CartProductCard(
@@ -94,30 +86,31 @@ fun CartView(
                 )
             }
         }
-    }
+        Spacer(modifier = Modifier.height(12.dp))
+        ListDivider()
 
-    Spacer(modifier = Modifier.height(12.dp))
-    ListDivider()
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = "Total: $${state.totalPrice.toCurrencyFormat()}",
-            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-            modifier = Modifier.weight(1f)
-        )
-        Button(
-            onClick = { onCheckoutClick() },
-            modifier = Modifier.padding(start = 8.dp),
-            enabled = state.cartItems.isNotEmpty() && !state.isLoading
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text("Ir a Pagar")
+            Text(
+                text = "Total: $${state.totalPrice.toCurrencyFormat()}",
+                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.weight(1f)
+            )
+            Button(
+                onClick = { onCheckoutClick() },
+                modifier = Modifier.padding(start = 8.dp),
+                enabled = state.cartItems.isNotEmpty() && !state.isLoading
+            ) {
+                Text("Ir a Pagar")
+            }
         }
     }
+
+
 
     state.errorMessage?.let { errorMessage ->
         Toast.makeText(
@@ -165,50 +158,3 @@ fun CartViewPreview() {
     )
 }
 
-@Composable
-fun EmptyCartView(onContinueShoppingClick: () -> Unit) {
-    AnimatedVisibility(
-        visible = true,
-        enter = fadeIn() + slideInVertically(),
-        exit = fadeOut() + slideOutVertically()
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "Tu carrito está vacío",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(vertical = 16.dp)
-            )
-
-            Button(
-                onClick = onContinueShoppingClick,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Explorar Productos")
-            }
-            // You can add an image or icon here if you want
-            // Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = null)
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun EmptyCartViewPreview() {
-    CartView(
-        state = CartState(
-            isLoading = false,
-            cartItems = emptyList(),
-            totalPrice = 0.0,
-            errorMessage = null
-        ),
-        onQuantityChange = { _, _ -> },
-        onRemoveFromCart = {},
-        onCheckoutClick = {}
-    )
-}

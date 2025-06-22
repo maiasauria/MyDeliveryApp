@@ -10,7 +10,7 @@ import com.mleon.mydeliveryapp.presentation.viewmodel.ProductListViewModel
 @Composable
 fun ProductListScreen(
     productListViewModel: ProductListViewModel = hiltViewModel(),
-    cartViewModel: CartViewModel = hiltViewModel()
+    cartViewModel: CartViewModel //no defino hiltViewModel() porque ya lo paso como parámetro desde el NavGraph
 ) {
     val uiState by productListViewModel.productState.collectAsState()
 

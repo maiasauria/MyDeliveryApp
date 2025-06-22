@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
                             currentRoute = currentRoute,
                             onItemClick = { route ->
                                 navController.navigate(route) {
-                                    popUpTo(navController.graph.startDestinationId) { saveState = true }
+                                    popUpTo(navController.graph.startDestinationId) { saveState = true } // Save the state of the previous destinations
                                     launchSingleTop = true
                                     restoreState = true
                                 }
