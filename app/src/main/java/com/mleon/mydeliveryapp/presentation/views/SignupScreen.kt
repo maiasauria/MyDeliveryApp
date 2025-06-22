@@ -10,8 +10,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.mleon.core.navigation.NavigationRoutes
 import com.mleon.mydeliveryapp.presentation.viewmodel.SignupViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun SignupScreen(
@@ -23,10 +23,9 @@ fun SignupScreen(
     var confirmPasswordVisible by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
-
     LaunchedEffect(uiState.signupSuccess, uiState.errorMessageSignup) {
         if (uiState.signupSuccess && uiState.errorMessageSignup == null) {
-            navController.navigate("products") {
+            navController.navigate(NavigationRoutes.CHECKOUT) {
                 popUpTo("login") { inclusive = true }
             }
         }
@@ -53,6 +52,6 @@ fun SignupScreen(
         isFormValid = uiState.isFormValid,
         onSignupClick = { signupViewModel.onSignupButtonClick() },
         isLoading = uiState.isLoading,
-        errorMessageSignup = uiState.errorMessageSignup
+        errorMessageSignup = uiState.errorMessageSignup,
     )
 }

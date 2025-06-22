@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.mleon.core.navigation.NavigationRoutes
 import com.mleon.utils.ui.FullScreenLoadingIndicator
 import com.mleon.utils.ui.LogoImage
 import com.mleon.utils.ui.ValidateEmailField
@@ -32,20 +33,20 @@ fun SignupView(
     onNameChange: (String) -> Unit = {},
     errorMessageName: String? = null,
     email: String = "",
-    onEmailChange: (String) -> Unit  = {},
+    onEmailChange: (String) -> Unit = {},
     errorMessageEmail: String? = null,
     password: String = "",
-    onPasswordChange: (String) -> Unit  = {},
+    onPasswordChange: (String) -> Unit = {},
     errorMessagePassword: String? = null,
     passwordVisible: Boolean = false,
-    onVisibilityChange: (Boolean) -> Unit  = {},
+    onVisibilityChange: (Boolean) -> Unit = {},
     passwordConfirm: String = "",
     onPasswordConfirmChange: (String) -> Unit = {},
-    onConfirmVisibilityChange: (Boolean) -> Unit  = {},
+    onConfirmVisibilityChange: (Boolean) -> Unit = {},
     errorMessagePasswordConfirm: String? = null,
     confirmPasswordVisible: Boolean = false,
     isFormValid: Boolean = false,
-    onSignupClick: () -> Unit  = {},
+    onSignupClick: () -> Unit = {},
     errorMessageSignup: String? = null,
     isLoading: Boolean = false
 ) {
@@ -120,7 +121,7 @@ fun SignupView(
             Spacer(modifier = Modifier.height(24.dp))
             TextButton(
                 onClick = {
-                    navController.navigate("login")
+                    navController.navigate(NavigationRoutes.LOGIN) // Assuming you have a login route defined
                 },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading

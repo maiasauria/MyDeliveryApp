@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.mleon.core.navigation.NavigationRoutes
 import com.mleon.mydeliveryapp.presentation.viewmodel.LoginViewModel
 
 @Composable
@@ -21,7 +22,7 @@ fun LoginScreen(
 
     LaunchedEffect(uiState.loginSuccess, uiState.errorMessageLogin) {
         if (uiState.loginSuccess && uiState.errorMessageLogin == null) {
-            navController.navigate("products") {
+            navController.navigate(NavigationRoutes.PRODUCTS) {
                 popUpTo("login") { inclusive = true }
             }
         }
@@ -40,8 +41,9 @@ fun LoginScreen(
         errorMessagePassword = uiState.errorMessagePassword,
         isFormValid = uiState.isFormValid,
         onLoginClick = { loginViewModel.onLoginClick() },
-        onSignupClick = { navController.navigate("signup") },
+        onSignupClick = { navController.navigate(NavigationRoutes.SIGNUP) },
         isLoading = uiState.isLoading,
-        errorMessageLogin = uiState.errorMessageLogin
+        errorMessageLogin = uiState.errorMessageLogin,
     )
 }
+

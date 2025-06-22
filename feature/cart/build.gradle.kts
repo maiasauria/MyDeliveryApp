@@ -79,5 +79,6 @@ dependencies {
     //Module Dependencies
     implementation(project(":core:model"))
     implementation(project(":core:data"))
+    implementation(project(":core:navigation"))
     implementation(project(":utils"))
 }

@@ -116,7 +116,9 @@ dependencies {
 
     implementation(project(":core:model"))
     implementation(project(":core:data"))
+    implementation(project(":core:navigation"))
     implementation(project(":utils"))
     implementation(project(":feature:cart"))
     implementation(project(":feature:profile"))
+
 }

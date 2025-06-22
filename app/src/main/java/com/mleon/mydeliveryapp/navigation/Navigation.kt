@@ -11,6 +11,7 @@ import com.mleon.feature.profile.views.ProfileScreen
 import com.mleon.mydeliveryapp.presentation.views.LoginScreen
 import com.mleon.mydeliveryapp.presentation.views.ProductListScreen
 import com.mleon.mydeliveryapp.presentation.views.SignupScreen
+import com.mleon.core.navigation.NavigationRoutes
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
@@ -20,28 +21,28 @@ fun AppNavigation(navController: NavHostController) {
     NavHost(
         navController = navController,
         //startDestination = "login" // Define la ruta inicial
-        startDestination = "login" //TODO Cambiar a "login" cuando se implemente la autenticación
+        startDestination = NavigationRoutes.PRODUCTS //TODO Cambiar a "login" cuando se implemente la autenticación
     ) {
 
         // Aquí definimos las rutas de navegación
-        composable(route = "login") { //a que archivo apuntamos
+        composable(route = NavigationRoutes.LOGIN) { //a que archivo apuntamos
             LoginScreen(navController) // Pasamos el navController a LoginScreen
         }
-        composable(route = "signup") {
+        composable(route = NavigationRoutes.SIGNUP) {
             SignupScreen(navController)
         }
-        composable(route = "products") {
+        composable(route = NavigationRoutes.PRODUCTS) {
             ProductListScreen( cartViewModel = cartViewModel)
         }
-        composable(route = "cart") {
+        composable(route = NavigationRoutes.CART) {
             CartScreen(navController, cartViewModel = cartViewModel)
         }
-        composable(route = "profile") {
+        composable(route = NavigationRoutes.PROFILE) {
             ProfileScreen()
         }
-        composable(route = "orders") {
+        composable(route = NavigationRoutes.ORDERS) {
         }
-        composable(route = "payment") {
+        composable(route = NavigationRoutes.PAYMENT) {
         }
     }
 }

@@ -7,6 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.mleon.core.navigation.NavigationRoutes
 import com.mleon.feature.cart.view.viewmodel.CartViewModel
 
 @Composable
@@ -25,7 +26,7 @@ fun CartScreen(
             state = cartState,
             onQuantityChange = { product, quantity -> cartViewModel.editQuantity(product, quantity) },
             onRemoveFromCart = { product -> cartViewModel.removeFromCart(product) },
-            onCheckoutClick = { navController.navigate("checkout") },
+            onCheckoutClick = { navController.navigate(NavigationRoutes.CHECKOUT) },
 
         )
     }
