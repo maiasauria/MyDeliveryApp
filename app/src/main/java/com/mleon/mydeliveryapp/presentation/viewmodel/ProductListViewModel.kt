@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mleon.core.model.Categories
 import com.mleon.core.model.Product
-import com.mleon.mydeliveryapp.data.repository.ProductRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ProductListViewModel
 @Inject constructor(
-    private val productRepository: ProductRepository
+    private val productRepository: com.mleon.core.data.repository.ProductRepository
 ) : ViewModel() {
     private var allProducts: List<Product> = emptyList()
 

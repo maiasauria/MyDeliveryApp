@@ -23,5 +23,6 @@ rootProject.name = "MyDeliveryApp"
 include(":app")
 include(":feature:cart")
 include(":core:model")
-include(":data")
+include(":core:data")
 include(":utils")
+include(":feature:profile")

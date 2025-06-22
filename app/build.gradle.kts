@@ -98,7 +98,10 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.android)
 
     implementation(libs.androidx.appcompat)
+
+    //Coil
     implementation(libs.coil.compose)
+
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.activity)
@@ -112,9 +115,10 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(project(":core:model"))
-    implementation(project(":data"))
+    implementation(project(":core:data"))
     implementation(project(":utils"))
     implementation(project(":feature:cart"))
+    implementation(project(":feature:profile"))
 
 
 }

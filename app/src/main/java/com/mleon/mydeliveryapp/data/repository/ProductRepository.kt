@@ -1,9 +1,0 @@
-package com.mleon.mydeliveryapp.data.repository
-
-import com.mleon.core.model.Product
-
-interface ProductRepository {
-    suspend fun getProducts(): List<Product>
-    suspend fun filterProducts(name: String): List<Product>
-    suspend fun filterProductsByCategory(category: String): List<Product>
-}

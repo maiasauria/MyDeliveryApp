@@ -7,9 +7,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.mleon.feature.cart.view.ui.views.CartScreen
 import com.mleon.feature.cart.view.viewmodel.CartViewModel
+import com.mleon.feature.profile.views.ProfileScreen
 import com.mleon.mydeliveryapp.presentation.views.LoginScreen
 import com.mleon.mydeliveryapp.presentation.views.ProductListScreen
-import com.mleon.mydeliveryapp.presentation.views.ProfileScreen
 import com.mleon.mydeliveryapp.presentation.views.SignupScreen
 
 @Composable

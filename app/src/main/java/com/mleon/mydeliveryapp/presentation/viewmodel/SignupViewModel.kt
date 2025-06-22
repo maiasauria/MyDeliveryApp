@@ -5,8 +5,8 @@ import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mleon.core.model.UserDto
-import com.mleon.mydeliveryapp.data.model.RegisterResult
-import com.mleon.mydeliveryapp.data.repository.UserRepository
+import com.mleon.core.data.model.RegisterResult
+import com.mleon.core.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignupViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: com.mleon.core.data.repository.UserRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SignupUiState())
     val uiState: StateFlow<SignupUiState> = _uiState
@@ -118,7 +118,7 @@ class SignupViewModel @Inject constructor(
         )
     }
 
-    private fun handleRegistrationResult(result: RegisterResult) {
+    private fun handleRegistrationResult(result: com.mleon.core.data.model.RegisterResult) {
         if (result.user != null) {
             _uiState.update  {
                 it.copy(
