@@ -121,5 +121,6 @@ dependencies {
     implementation(project(":feature:cart"))
     implementation(project(":feature:profile"))
     implementation(project(":feature:checkout"))
+    implementation(project(":feature:orders"))
 
 }

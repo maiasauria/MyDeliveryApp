@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.mleon.feature.checkout"
+    namespace = "com.mleon.feature.orders"
     compileSdk = 35
 
     defaultConfig {
@@ -40,7 +40,9 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.runtime.android)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 
     //Material Design
     implementation(libs.androidx.material3.android)
@@ -56,14 +58,7 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler) // Procesador de anotaciones para Hilt, que genera el código necesario para la inyección de dependencias en tiempo de compilación.
 
-    //Coil
-    implementation(libs.coil.compose)
-
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-
-    implementation(project(":feature:cart"))
+    implementation(project(":core:navigation"))
     implementation(project(":core:model"))
     implementation(project(":utils"))
     implementation(project(":core:data"))

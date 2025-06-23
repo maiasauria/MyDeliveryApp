@@ -2,6 +2,7 @@ package com.mleon.mydeliveryapp.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mleon.core.data.repository.ProductRepository
 import com.mleon.core.model.Categories
 import com.mleon.core.model.Product
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +18,7 @@ import javax.inject.Inject
 class ProductListViewModel
     @Inject
     constructor(
-        private val productRepository: com.mleon.core.data.repository.ProductRepository,
+        private val productRepository: ProductRepository,
     ) : ViewModel() {
         private var allProducts: List<Product> = emptyList()
 

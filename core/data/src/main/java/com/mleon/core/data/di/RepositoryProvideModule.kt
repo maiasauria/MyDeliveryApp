@@ -2,26 +2,51 @@ package com.mleon.core.data.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.mleon.core.data.remote.OrderApiService
+import com.mleon.core.data.remote.ProductsApiService
+import com.mleon.core.data.remote.RetrofitClient
+import com.mleon.core.data.remote.UsersApiService
+import com.mleon.core.data.repository.OrdersRepositoryApi
+import com.mleon.core.data.repository.ProductRepositoryApi
+import com.mleon.core.data.repository.UserRepositoryApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryProvideModule {
-    @Provides
-    @Singleton
-    fun provideProductRepositoryApi(apiService: com.mleon.core.data.remote.ApiService): com.mleon.core.data.repository.ProductRepositoryApi =
-        com.mleon.core.data.repository.ProductRepositoryApi(apiService)
+
+    //TODO dividir en modulos
 
     @Provides
     @Singleton
-    fun provideApiService(): com.mleon.core.data.remote.ApiService {
-        return com.mleon.core.data.remote.RetrofitClient.instance
-    }
+    fun provideRetrofit(): Retrofit =
+        Retrofit.Builder()
+            .baseUrl(RetrofitClient.url)
+            .client(RetrofitClient.okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+    @Provides
+    @Singleton
+    fun provideProductsApiService(retrofit: Retrofit): ProductsApiService =
+        retrofit.create(ProductsApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideUsersApiService(retrofit: Retrofit): UsersApiService =
+        retrofit.create(UsersApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideOrderApiService(retrofit: Retrofit): OrderApiService =
+        retrofit.create(OrderApiService::class.java)
 
     @Provides
     @Singleton
@@ -30,6 +55,17 @@ object RepositoryProvideModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(apiService: com.mleon.core.data.remote.ApiService): com.mleon.core.data.repository.UserRepositoryApi =
-        com.mleon.core.data.repository.UserRepositoryApi(apiService)
+    fun provideUserRepository(apiService: UsersApiService): UserRepositoryApi =
+        UserRepositoryApi(apiService)
+
+    @Provides
+    @Singleton
+    fun provideOrdersRepository(apiService: OrderApiService): OrdersRepositoryApi =
+        OrdersRepositoryApi(apiService)
+
+    @Provides
+    @Singleton
+    fun provideProductRepositoryApi(apiService: ProductsApiService): ProductRepositoryApi =
+        ProductRepositoryApi(apiService)
+
 }

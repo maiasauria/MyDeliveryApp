@@ -137,7 +137,7 @@ fun CheckoutView(
             Text(text = "Subtotal: $${(subtotalAmount.toCurrencyFormat())}")
             Text(text = "Costo de envio: $${(shippingCost.toCurrencyFormat())}")
             Text(text = "Total: $${(totalAmount.toCurrencyFormat())}")
-            Text(text = "Direccion de envio: $shipping/Address")
+            Text(text = "Direccion de envio: $shippingAddress")
 
             Spacer(modifier = Modifier.height(12.dp))
             ListDivider()

@@ -1,16 +1,16 @@
 package com.mleon.core.data.repository
 
 import android.util.Log
-import com.mleon.core.model.User
-import com.mleon.core.model.UserDto
 import com.mleon.core.data.model.LoginRequest
 import com.mleon.core.data.model.LoginResult
 import com.mleon.core.data.model.RegisterResult
-import com.mleon.core.data.remote.ApiService
+import com.mleon.core.data.remote.UsersApiService
+import com.mleon.core.model.User
+import com.mleon.core.model.UserDto
 import org.json.JSONObject
 import retrofit2.HttpException
 
-class UserRepositoryApi(private val apiService: ApiService) : UserRepository {
+class UserRepositoryApi(private val apiService: UsersApiService) : UserRepository {
 
     override fun getUser(user: UserDto): User? {
         // Implementation for fetching user details from the API

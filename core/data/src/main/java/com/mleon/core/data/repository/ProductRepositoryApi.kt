@@ -1,11 +1,14 @@
 package com.mleon.core.data.repository
 
 import com.mleon.core.data.model.RemoteProduct
-import com.mleon.core.data.remote.ApiService
+import com.mleon.core.data.remote.ProductsApiService
 import com.mleon.core.model.Categories
 import com.mleon.core.model.Product
+import javax.inject.Inject
 
-class ProductRepositoryApi(private val apiService: ApiService) : ProductRepository {
+class ProductRepositoryApi @Inject constructor( //Inyectamos el ApiService
+    private val apiService: ProductsApiService
+) : ProductRepository {
     override suspend fun getProducts(): List<Product> {
         return apiService.getProducts().map { remoteProduct -> remoteProduct.toProduct() }
     }

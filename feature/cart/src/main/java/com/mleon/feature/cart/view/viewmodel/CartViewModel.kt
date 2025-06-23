@@ -89,6 +89,20 @@ class CartViewModel @Inject constructor(
         }
     }
 
+    fun clearCart() {
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+            _cartState.update { it.copy(isLoading = true) }
+            try {
+                delay(500) // Simula acceso a base de datos
+                _cartState.update { CartState() } // Resetea el estado del carrito
+            } catch (e: Exception) {
+                _cartState.update { it.copy(errorMessage = e.message) }
+            } finally {
+                _cartState.update { it.copy(isLoading = false) }
+            }
+        }
+    }
+
     fun checkout() {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             _cartState.update { it.copy(isLoading = true) }

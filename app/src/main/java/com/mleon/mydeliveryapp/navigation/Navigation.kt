@@ -9,6 +9,7 @@ import com.mleon.core.navigation.NavigationRoutes
 import com.mleon.feature.cart.view.ui.views.CartScreen
 import com.mleon.feature.cart.view.viewmodel.CartViewModel
 import com.mleon.feature.checkout.view.CheckoutScreen
+import com.mleon.feature.orders.view.OrdersListScreen
 import com.mleon.feature.profile.views.ProfileScreen
 import com.mleon.mydeliveryapp.presentation.views.LoginScreen
 import com.mleon.mydeliveryapp.presentation.views.ProductListScreen
@@ -21,10 +22,9 @@ fun AppNavigation(navController: NavHostController) {
 
     NavHost(
         navController = navController,
-        //startDestination = "login" // Define la ruta inicial
+        // startDestination = "login" // Define la ruta inicial
         startDestination = NavigationRoutes.PRODUCTS //TODO Cambiar a "login" cuando se implemente la autenticación
     ) {
-
         // Aquí definimos las rutas de navegación
         composable(route = NavigationRoutes.LOGIN) { //a que archivo apuntamos
             LoginScreen(navController) // Pasamos el navController a LoginScreen
@@ -42,6 +42,7 @@ fun AppNavigation(navController: NavHostController) {
             ProfileScreen()
         }
         composable(route = NavigationRoutes.ORDERS) {
+            OrdersListScreen(navController)
         }
         composable(route = NavigationRoutes.CHECKOUT) {
             CheckoutScreen(navController, cartViewModel = cartViewModel)

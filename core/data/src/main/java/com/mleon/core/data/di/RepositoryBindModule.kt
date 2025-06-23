@@ -1,5 +1,7 @@
 package com.mleon.core.data.di
 
+import com.mleon.core.data.repository.OrdersRepository
+import com.mleon.core.data.repository.OrdersRepositoryApi
 import com.mleon.core.data.repository.ProductRepository
 import com.mleon.core.data.repository.ProductRepositoryApi
 import com.mleon.core.data.repository.UserRepository
@@ -15,13 +17,13 @@ import javax.inject.Singleton
 abstract class RepositoryBindModule {
     @Binds
     @Singleton
-    abstract fun bindProductRepository(
-        impl: com.mleon.core.data.repository.ProductRepositoryApi
-    ): com.mleon.core.data.repository.ProductRepository
+    abstract fun bindProductRepository(impl: ProductRepositoryApi): ProductRepository
 
     @Binds
     @Singleton
-    abstract fun bindUserRepository(
-        impl: com.mleon.core.data.repository.UserRepositoryApi
-    ): com.mleon.core.data.repository.UserRepository
+    abstract fun bindUserRepository(impl: UserRepositoryApi): UserRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindOrdersRepository(impl: OrdersRepositoryApi): OrdersRepository
 }
