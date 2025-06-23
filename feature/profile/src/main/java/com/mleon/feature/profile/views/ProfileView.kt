@@ -25,8 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
+import com.mleon.utils.ui.ScreenTitle
 
 @Composable
 fun ProfileView() {
@@ -51,6 +53,9 @@ fun ProfileView() {
                 .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+
+        ScreenTitle("Perfil")
+
         Card(
             modifier =
                 Modifier
@@ -120,4 +125,10 @@ fun ProfileView() {
             Text("Guardar")
         }
     }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun ProfileViewPreview() {
+    ProfileView()
 }

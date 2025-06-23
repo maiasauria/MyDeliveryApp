@@ -1,7 +1,5 @@
 package com.mleon.mydeliveryapp.presentation.views
 
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -37,85 +35,78 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mleon.core.model.Categories
 import com.mleon.core.model.Product
-import com.mleon.mydeliveryapp.presentation.viewmodel.ProductListState
 import com.mleon.utils.ui.ListDivider
 import com.mleon.utils.ui.ProductCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductListView(
-    uiState: ProductListState,
+    selectedCategory: Categories? = null,
+    searchQuery: String = "",
+    isLoading: Boolean = false,
+    products: List<Product> = emptyList(),
+    showBottomSheet: Boolean,
+    onShowBottomSheetChange: (Boolean) -> Unit,
+    sheetState: SheetState,
     onSearchQueryChange: (String) -> Unit,
     onCategorySelection: (Categories?) -> Unit,
     onOrderByPriceDescending: () -> Unit,
     onOrderByPriceAscending: () -> Unit,
     onAddToCart: (Product) -> Unit,
-    clearCartMessage: () -> Unit
 ) {
-    val sheetState = rememberModalBottomSheetState()
-
-    var showSheet by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp),
     ) {
-        Column(modifier = Modifier.fillMaxSize())
-        {
+        Column(modifier = Modifier.fillMaxSize()) {
             SearchAndFiltersBar(
-                uiState = uiState,
                 onSearchQueryChange = onSearchQueryChange,
                 onOpenFilters = {
-                    showSheet = true
-                },
+                    onShowBottomSheetChange(true)     },
             )
             FiltersRow(
-                selectedCategory = uiState.selectedCategory,
-                onCategorySelection = onCategorySelection
+                selectedCategory = selectedCategory,
+                onCategorySelection = onCategorySelection,
             )
 
-            //TODO sacar a una función aparte
+            // TODO sacar a una función aparte
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(0.dp),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(0.dp),
                 //          verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 item {
-                    if (uiState.isLoading) {
+                    if (isLoading) {
                         LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                     }
                 }
 
-                itemsIndexed(uiState.products) { index, product ->
+                itemsIndexed(products) { index, product ->
                     AnimatedVisibility(
                         visible = true,
-                        enter = fadeIn(animationSpec = tween(2300, 50), initialAlpha = 0.3f)
+                        enter = fadeIn(animationSpec = tween(2300, 50), initialAlpha = 0.3f),
                     ) {
                         ProductCard(
                             product = product,
                             onAddToCart = { onAddToCart(product) },
-                            isLoading = uiState.isLoading,
+                            isLoading = isLoading,
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         ListDivider()
@@ -124,32 +115,14 @@ fun ProductListView(
                 }
             }
 
-
-            if (showSheet) {
+            if (showBottomSheet) {
                 ProductsBottomSheet(
                     sheetState = sheetState,
-                    showSheet = showSheet,
-                    onDismissRequest = { showSheet = false },
+                    showSheet = showBottomSheet,
+                    onDismissRequest = { onShowBottomSheetChange(false)},
                     onOrderByPriceDescending = onOrderByPriceDescending,
-                    onOrderByPriceAscending = onOrderByPriceAscending
+                    onOrderByPriceAscending = onOrderByPriceAscending,
                 )
-            }
-        }
-
-        uiState.error?.let { error ->
-            Log.e("ProductListView", "Error: ${error.message}")
-            Toast.makeText(
-                LocalContext.current,
-                "Error: ${error.message}",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-        val context = LocalContext.current
-        val cartMessage = uiState.cartMessage
-        LaunchedEffect(cartMessage) {
-            if (cartMessage.isNotEmpty()) {
-                Toast.makeText(context, cartMessage, Toast.LENGTH_SHORT).show()
-                clearCartMessage()
             }
         }
     }
@@ -161,9 +134,10 @@ fun FiltersRow(
     onCategorySelection: (Categories?) -> Unit,
 ) {
     LazyRow(
-        modifier = Modifier
-            .fillMaxWidth(),
-        //.padding(bottom = 8.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth(),
+        // .padding(bottom = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(Categories.entries) { category ->
@@ -176,11 +150,12 @@ fun FiltersRow(
                     onCategorySelection(newCategory)
                 },
                 label = { Text(category.getCategoryName()) },
-                colors = FilterChipDefaults.filterChipColors(
-                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                    selectedContainerColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray,
-                ),
-                modifier = Modifier.padding(4.dp)
+                colors =
+                    FilterChipDefaults.filterChipColors(
+                        selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                        selectedContainerColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray,
+                    ),
+                modifier = Modifier.padding(4.dp),
             )
         }
     }
@@ -193,17 +168,18 @@ fun ProductsBottomSheet(
     showSheet: Boolean,
     onDismissRequest: () -> Unit,
     onOrderByPriceDescending: () -> Unit,
-    onOrderByPriceAscending: () -> Unit
+    onOrderByPriceAscending: () -> Unit,
 ) {
     if (showSheet) {
         ModalBottomSheet(
             onDismissRequest = onDismissRequest,
-            sheetState = sheetState
+            sheetState = sheetState,
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
             ) {
                 Text("Ordenar por precio", style = MaterialTheme.typography.titleLarge)
                 ListDivider()
@@ -212,12 +188,12 @@ fun ProductsBottomSheet(
                         onOrderByPriceAscending()
                         onDismissRequest()
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text("Precio Ascendente")
                         Icon(Icons.Filled.ArrowUpward, contentDescription = "Orden Ascendente")
@@ -228,12 +204,12 @@ fun ProductsBottomSheet(
                         onOrderByPriceDescending()
                         onDismissRequest()
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text("Precio Descendente")
                         Icon(Icons.Filled.ArrowDownward, contentDescription = "Orden Descendente")
@@ -246,28 +222,29 @@ fun ProductsBottomSheet(
 
 @Composable
 fun SearchAndFiltersBar(
-    uiState: ProductListState,
+    searchQuery: String = "",
     onSearchQueryChange: (String) -> Unit,
     onOpenFilters: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier =
             modifier
-            .fillMaxWidth()
-            .padding(bottom = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         TextField(
-            value = uiState.searchQuery,
+            value = searchQuery,
             onValueChange = onSearchQueryChange,
             label = { Text("Buscar") },
             placeholder = { Text("Buscar productos...") },
-            modifier = Modifier
-                .defaultMinSize(minHeight = 48.dp)
-                .weight(1f),
+            modifier =
+                Modifier
+                    .defaultMinSize(minHeight = 48.dp)
+                    .weight(1f),
             trailingIcon = {
-                if (uiState.searchQuery.isNotEmpty()) {
+                if (searchQuery.isNotEmpty()) {
                     IconButton(onClick = { onSearchQueryChange("") }) {
                         Icon(
                             imageVector = Icons.Filled.Close,
@@ -275,13 +252,13 @@ fun SearchAndFiltersBar(
                         )
                     }
                 }
-            }
+            },
         )
         IconButton(onClick = onOpenFilters) {
             Icon(
                 Icons.Filled.ImportExport,
                 contentDescription = "Filtrar productos",
-                modifier = Modifier
+                modifier = Modifier,
             )
         }
     }
@@ -289,16 +266,9 @@ fun SearchAndFiltersBar(
 
 @Preview(showBackground = true)
 @Composable
-fun SearchBarPreview() {
+private fun SearchBarPreview() {
     SearchAndFiltersBar(
-        uiState = ProductListState(
-            isLoading = false,
-            products = emptyList(),
-            searchQuery = "",
-            selectedCategory = null,
-            error = null,
-            cartMessage = ""
-        ),
+        searchQuery = "",
         onSearchQueryChange = {},
         onOpenFilters = {},
     )
@@ -306,32 +276,33 @@ fun SearchBarPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun FiltersRowPreview() {
+private fun FiltersRowPreview() {
     FiltersRow(
         selectedCategory = Categories.PIZZA,
-        onCategorySelection = {}
+        onCategorySelection = {},
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview()
 @Composable
-fun ProductsBottomSheetPreview() {
+private fun ProductsBottomSheetPreview() {
     ProductsBottomSheet(
-        sheetState = rememberStandardBottomSheetState(
-            initialValue = SheetValue.Expanded
-        ),
+        sheetState =
+            rememberStandardBottomSheetState(
+                initialValue = SheetValue.Expanded,
+            ),
         showSheet = true,
         onDismissRequest = {},
         onOrderByPriceDescending = {},
-        onOrderByPriceAscending = {}
+        onOrderByPriceAscending = {},
     )
 }
 
-//@Preview(showBackground = true)
-//@Preview(showBackground = true, name = "ProductListView")
-//@Composable
-//fun ProductListViewPreview() {
+// @Preview(showBackground = true)
+// @Preview(showBackground = true, name = "ProductListView")
+// @Composable
+// fun ProductListViewPreview() {
 //    ProductListView(
 //        uiState = ProductListState(
 //            isLoading = false,
@@ -348,4 +319,4 @@ fun ProductsBottomSheetPreview() {
 //        onAddToCart = {},
 //        clearCartMessage = {}
 //    )
-//}
+// }

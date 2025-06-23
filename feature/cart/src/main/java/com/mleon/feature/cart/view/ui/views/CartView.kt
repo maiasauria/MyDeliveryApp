@@ -1,6 +1,5 @@
 package com.mleon.feature.cart.view.ui.views
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,28 +17,28 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mleon.core.model.CartItem
 import com.mleon.core.model.Categories
 import com.mleon.core.model.Product
-import com.mleon.feature.cart.view.viewmodel.CartState
 import com.mleon.utils.toCurrencyFormat
 import com.mleon.utils.ui.ListDivider
+import com.mleon.utils.ui.ScreenTitle
 
 @Composable
 fun CartView(
-    state: CartState,
+    cartItems: List<CartItem>,
+    totalPrice: Double,
+    isLoading: Boolean,
+    errorMessage: String?,
     onQuantityChange: (product: Product, quantity: Int) -> Unit,
     onRemoveFromCart: (product: Product) -> Unit,
-    onCheckoutClick: () -> Unit,
-
+    onCheckoutClick: () -> Unit
     ) {
     Column(modifier = Modifier.padding(16.dp)) {
-        Text("Mi Carrito", style = MaterialTheme.typography.titleLarge)
-        Spacer(modifier = Modifier.height(16.dp))
+        ScreenTitle("Carrito")
 
         LazyColumn(
             modifier = Modifier
@@ -47,21 +46,21 @@ fun CartView(
                 .weight(1f), // Take available space, allow content below
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (state.isLoading) {
+            if (isLoading) {
                 item {
                     LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                 }
             }
             //Elementos del carrito
-            itemsIndexed(state.cartItems) { index, cartItem ->
+            itemsIndexed(cartItems) { index, cartItem ->
                 CartProductCard(
                     product = cartItem.product,
                     quantity = cartItem.quantity,
                     onQuantityChange = { product, quantity -> onQuantityChange(product, quantity) },
                     onRemoveFromCart = { onRemoveFromCart(cartItem.product) },
-                    isLoading = state.isLoading
+                    isLoading = isLoading
                 )
-                if (index < state.cartItems.lastIndex) { //No mostrar el divisor después del último elemento
+                if (index < cartItems.lastIndex) { //No mostrar el divisor después del último elemento
                     Spacer(modifier = Modifier.padding(vertical = 4.dp))
                     ListDivider()
                 }
@@ -73,7 +72,7 @@ fun CartView(
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                 )
             }
-            items(state.cartItems) {
+            items(cartItems) {
                 Text(
                     text = "${it.product.name} x ${it.quantity} = $${(it.product.price * it.quantity.toDouble()).toCurrencyFormat()}",
                     style = MaterialTheme.typography.bodyMedium
@@ -81,7 +80,7 @@ fun CartView(
             }
             item {
                 Text(
-                    text = "Total de Productos: $${state.totalPrice.toCurrencyFormat()}",
+                    text = "Total de Productos: $${totalPrice.toCurrencyFormat()}",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -96,65 +95,54 @@ fun CartView(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "Total: $${state.totalPrice.toCurrencyFormat()}",
+                text = "Total: $${totalPrice.toCurrencyFormat()}",
                 style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.weight(1f)
             )
             Button(
                 onClick = { onCheckoutClick() },
                 modifier = Modifier.padding(start = 8.dp),
-                enabled = state.cartItems.isNotEmpty() && !state.isLoading
+                enabled = cartItems.isNotEmpty() && !isLoading
             ) {
                 Text("Ir a Pagar")
             }
         }
     }
 
-
-
-    state.errorMessage?.let { errorMessage ->
-        Toast.makeText(
-            LocalContext.current,
-            "Error: $errorMessage",
-            Toast.LENGTH_LONG
-        ).show()
-    }
 }
+
 
 
 @Composable
 @Preview(showBackground = true)
 fun CartViewPreview() {
     CartView(
-        state = CartState(
-            isLoading = false,
-            cartItems = listOf(
-                CartItem(
-                    product = Product(
-                        id = "1", name = "Producto 1", price = 10.0, includesDrink = false,
-                        description = "",
-                        category = listOf(Categories.PIZZA)
-                    ),
-                    quantity = 2
+        cartItems = listOf(
+            CartItem(
+                product = Product(
+                    id = "1", name = "Producto 1", price = 10.0, includesDrink = false,
+                    description = "",
+                    category = listOf(Categories.PIZZA)
                 ),
-                CartItem(
-                    product = Product(
-                        id = "2",
-                        name = "Producto 2",
-                        price = 20.0,
-                        includesDrink = true,
-                        description = "",
-                        category = listOf(Categories.PIZZA)
-                    ),
-                    quantity = 1
-                )
+                quantity = 2
             ),
-            totalPrice = 40.0,
-            errorMessage = null
+            CartItem(
+                product = Product(
+                    id = "2",
+                    name = "Producto 2",
+                    price = 20.0,
+                    includesDrink = true,
+                    description = "",
+                    category = listOf(Categories.PIZZA)
+                ),
+                quantity = 1
+            )
         ),
+        totalPrice = 40.0,
+        isLoading = false,
+        errorMessage = null,
         onQuantityChange = { _, _ -> },
         onRemoveFromCart = {},
         onCheckoutClick = {}
     )
 }
-

@@ -120,5 +120,6 @@ dependencies {
     implementation(project(":utils"))
     implementation(project(":feature:cart"))
     implementation(project(":feature:profile"))
+    implementation(project(":feature:checkout"))
 
 }

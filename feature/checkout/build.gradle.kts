@@ -2,11 +2,12 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     id("org.jetbrains.kotlin.plugin.compose")
+    id("com.google.dagger.hilt.android") version "2.56.2"
     id("com.google.devtools.ksp") version "2.1.21-2.0.1"
 }
 
 android {
-    namespace = "com.mleon.feature.profile"
+    namespace = "com.mleon.feature.checkout"
     compileSdk = 35
 
     defaultConfig {
@@ -39,19 +40,30 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.runtime.android)
+
+    //Material Design
+    implementation(libs.androidx.material3.android)
+    implementation(libs.material.icons.extended)
 
     //Compose
     implementation(libs.androidx.ui) //dependencia principal de compose
     implementation(libs.androidx.ui.tooling.preview) // vista previa para compose
+    implementation(libs.androidx.hilt.navigation.compose) // Integración de Hilt con Jetpack Compose para la inyección de dependencias en composables.
     implementation(libs.androidx.foundation.android) // Proporciona componentes básicos de la interfaz de usuario, como contenedores y modificadores, para Jetpack Compose.
-    implementation(libs.androidx.material3.android)
-    implementation(libs.androidx.activity.compose) // Proporciona integración de Jetpack Compose con actividades de Android.
+
+    // Hilt (DI)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler) // Procesador de anotaciones para Hilt, que genera el código necesario para la inyección de dependencias en tiempo de compilación.
 
     //Coil
     implementation(libs.coil.compose)
 
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation(project(":feature:cart"))
+    implementation(project(":core:model"))
     implementation(project(":utils"))
 }

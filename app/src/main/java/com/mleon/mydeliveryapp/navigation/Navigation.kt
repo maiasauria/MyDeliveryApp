@@ -5,13 +5,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.mleon.core.navigation.NavigationRoutes
 import com.mleon.feature.cart.view.ui.views.CartScreen
 import com.mleon.feature.cart.view.viewmodel.CartViewModel
+import com.mleon.feature.checkout.view.CheckoutScreen
 import com.mleon.feature.profile.views.ProfileScreen
 import com.mleon.mydeliveryapp.presentation.views.LoginScreen
 import com.mleon.mydeliveryapp.presentation.views.ProductListScreen
 import com.mleon.mydeliveryapp.presentation.views.SignupScreen
-import com.mleon.core.navigation.NavigationRoutes
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
@@ -32,7 +33,7 @@ fun AppNavigation(navController: NavHostController) {
             SignupScreen(navController)
         }
         composable(route = NavigationRoutes.PRODUCTS) {
-            ProductListScreen( cartViewModel = cartViewModel)
+            ProductListScreen(cartViewModel = cartViewModel)
         }
         composable(route = NavigationRoutes.CART) {
             CartScreen(navController, cartViewModel = cartViewModel)
@@ -42,7 +43,8 @@ fun AppNavigation(navController: NavHostController) {
         }
         composable(route = NavigationRoutes.ORDERS) {
         }
-        composable(route = NavigationRoutes.PAYMENT) {
+        composable(route = NavigationRoutes.CHECKOUT) {
+            CheckoutScreen(navController, cartViewModel = cartViewModel)
         }
     }
 }
