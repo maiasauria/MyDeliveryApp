@@ -1,9 +1,9 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    id("org.jetbrains.kotlin.plugin.compose")
-    id("com.google.dagger.hilt.android") version "2.56.2"
-    id("com.google.devtools.ksp") version "2.1.21-2.0.1"
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.android.hilt)
+    alias(libs.plugins.kotlin.ksp)
 }
 
 android {
@@ -76,7 +76,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    //Module Dependencies
+    // Project Modules
     implementation(project(":core:model"))
     implementation(project(":core:data"))
     implementation(project(":core:navigation"))

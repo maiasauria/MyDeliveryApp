@@ -1,9 +1,9 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    id("org.jetbrains.kotlin.plugin.compose")
-    id("com.google.dagger.hilt.android") version "2.56.2"
-    id("com.google.devtools.ksp") version "2.1.21-2.0.1"
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.android.hilt)
+    alias(libs.plugins.kotlin.ksp)
 }
 
 android {
@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler) // Procesador de anotaciones para Hilt, que genera el código necesario para la inyección de dependencias en tiempo de compilación.
 
+    // Project Modules
     implementation(project(":core:navigation"))
     implementation(project(":core:model"))
     implementation(project(":utils"))

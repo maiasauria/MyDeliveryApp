@@ -1,8 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    id("org.jetbrains.kotlin.plugin.compose")
-    id("com.google.devtools.ksp") version "2.1.21-2.0.1"
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -36,14 +35,13 @@ android {
 
 dependencies {
 
+    // Kotlin Stdlib & Core KTX
+    implementation(libs.kotlin.stdlib)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 
     //Compose
+    implementation(platform(libs.androidx.compose.bom)) // se usa para manejar versiones de Compose
     implementation(libs.androidx.ui) //dependencia principal de compose
     implementation(libs.androidx.ui.tooling.preview) // vista previa para compose
     implementation(libs.androidx.foundation.android) // Proporciona componentes básicos de la interfaz de usuario, como contenedores y modificadores, para Jetpack Compose.
@@ -53,5 +51,12 @@ dependencies {
     //Coil
     implementation(libs.coil.compose)
 
+    // Testing
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    debugImplementation(libs.androidx.ui.tooling)
+
+    // Project Modules
     implementation(project(":utils"))
 }

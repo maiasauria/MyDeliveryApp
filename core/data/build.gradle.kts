@@ -50,10 +50,11 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    implementation(project(":core:model"))
-
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // Project Modules
+    implementation(project(":core:model"))
 }

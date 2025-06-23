@@ -44,26 +44,32 @@ dependencies {
     // Kotlin Stdlib & Core KTX
     implementation(libs.kotlin.stdlib)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
 
+    // Compose (using BOM)
+    implementation(platform(libs.androidx.compose.bom)) // se usa para manejar versiones de Compose
+    implementation(libs.androidx.ui) // Dependencia principal de Jetpack Compose
+    implementation(libs.androidx.ui.tooling.preview) // Dependencia para previsualizar en Android Studio
+    implementation(libs.androidx.material3) // OK se usa Material Design 3 en Compose
+    implementation(libs.material.icons.extended) // OK Se usa Para iconos extendidos de Material Design en Compose
+    implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    implementation (libs.material.icons.extended)
 
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.runtime.android)
-    implementation(libs.androidx.ui.text.android)
-
+    // Coil
     implementation(libs.coil.compose)
-    implementation("io.coil-kt.coil3:coil-network-okhttp:3.2.0")
-    implementation(project(":core:model"))
+    implementation(libs.coil.network.okhttp)
+    
+    // ??
+    implementation(libs.androidx.runtime.android) //
+    implementation(libs.androidx.ui.text.android) //
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    debugImplementation(libs.ui.tooling)
+    debugImplementation(libs.androidx.ui.tooling)
+
+    // Project Modules
+    implementation(project(":core:model"))
 }
