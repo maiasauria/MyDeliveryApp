@@ -2,7 +2,7 @@ package com.mleon.core.data.model
 
 data class OrderRequest(
     val orderId: String,
-    val cartItems: List<CartItemDto>,
+    val productIds: List<CartItemDto>,
     val shippingAddress: String,
     val paymentMethod: String,
     val total: Double,
@@ -10,11 +10,18 @@ data class OrderRequest(
 )
 
 data class CartItemDto(
-    val productId: String,
+    val name: String,
+    val description: String,
+    val imageUrl: String,
+    val price: Double,
+    val includesDrink: Boolean,
+    val categories: List<String>,
     val quantity: Int
 )
 
 data class OrderResponse(
     val orderId: String,
-    val status: String
+    val productIds: List<CartItemDto>,
+    val total: Double,
+    val timestamp: Long
 )

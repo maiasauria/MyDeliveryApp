@@ -21,13 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.mleon.feature.orders.viewmodel.OrdersViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrdersListScreen(
-    navController: NavHostController,
     viewModel: OrdersViewModel = hiltViewModel()
 ) {
     val orders by viewModel.orders.collectAsState()
@@ -62,10 +60,10 @@ fun OrdersListScreen(
                                     .padding(8.dp)
                             ) {
                                 Column(modifier = Modifier.padding(16.dp)) {
-                                    Text("Pedido: ${order.orderId}", style = MaterialTheme.typography.titleMedium)
-                                    Text("Estado: ${order.status}")
-                                    Text("Total: $${order.totalAmount}")
-                                    Text("Fecha: ${order.date}")
+                                    Text("Cantidad de productos: ${order.productIds.sumOf { it.quantity }}", style = MaterialTheme.typography.bodyMedium)
+                                    Text("Dirección de envío: ${order.shippingAddress}", style = MaterialTheme.typography.bodyMedium)
+                                    Text("Total: $${order.total}")
+                                    Text("Fecha: ${java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(java.util.Date(order.timestamp))}")
                                 }
                             }
                         }

@@ -10,10 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
@@ -37,18 +33,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.mleon.core.model.CartItem
+import com.mleon.core.model.PaymentMethod
 import com.mleon.core.model.Product
-import com.mleon.utils.R
 import com.mleon.utils.toCurrencyFormat
 import com.mleon.utils.ui.ListDivider
 import com.mleon.utils.ui.ScreenTitle
@@ -59,16 +48,19 @@ import kotlinx.coroutines.launch
 fun CheckoutView(
     cartItems: List<CartItem>,
     shippingAddress: String,
-    paymentMethod: String,
+    paymentMethod: PaymentMethod,
     onConfirmOrder: () -> Unit,
     isLoading: Boolean,
+    isOrderValid: Boolean = false,
+    onPaymentMethodSelection: (PaymentMethod) -> Unit = {},
     errorMessage: String?,
     subtotalAmount: Double = 0.0,
     shippingCost: Double = 0.0,
     totalAmount: Double = 0.0,
-    onNavigateToOrders: () -> Unit
+    onNavigateToOrders: () -> Unit,
 ) {
-    var selectedPaymentMethod by remember { mutableStateOf("Cash") }
+    var selectedPaymentMethod by remember { mutableStateOf<String?>(null) }
+
     val tooltipState = rememberTooltipState()
     val scope = rememberCoroutineScope()
 
@@ -79,7 +71,6 @@ fun CheckoutView(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
-
             ScreenTitle("Confirmación del pedido")
 
             // Display the list of products
@@ -88,11 +79,11 @@ fun CheckoutView(
 //                verticalArrangement = Arrangement.spacedBy(4.dp),
 //            ) {
 
-                if (isLoading) {
+            if (isLoading) {
 //                    item {
-                        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
 //                    }
-                }
+            }
 //
 //                items(cartItems) { item ->
 //                    Row(
@@ -124,11 +115,11 @@ fun CheckoutView(
 //                }
 //            }
 
-            //Mostrar la cantidad total de productos (cart * cantidad)
+            // Mostrar la cantidad total de productos (cart * cantidad)
             Text(
                 text = "Total: ${cartItems.sumOf { it.quantity }} productos.",
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(vertical = 8.dp)
+                modifier = Modifier.padding(vertical = 8.dp),
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -145,36 +136,38 @@ fun CheckoutView(
             // Payment Method Selection
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     RadioButton(
-                        selected = selectedPaymentMethod == "Tarjeta de Credito",
+                        selected = paymentMethod == PaymentMethod.CREDIT_CARD,
                         onClick = { /* Do nothing, it's disabled */ },
-                        enabled = false
+                        enabled = false,
                     )
 
                     TooltipBox(
                         positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
                         tooltip = {
-                            PlainTooltip(
-                            ) { Text("Estamos trabajando en la integración de pagos con tarjeta de crédito. Por favor, elegi otro método de pago por ahora.") }
+                            PlainTooltip {
+                                Text(
+                                    "Estamos trabajando en la integración de pagos con tarjeta de crédito. Por favor, elegi otro método de pago por ahora.",
+                                )
+                            }
                         },
                         state = tooltipState,
-
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("Tarjeta de Credito")
+                            Text(PaymentMethod.CREDIT_CARD.displayName)
                             IconButton(
                                 onClick = {
                                     scope.launch {
                                         tooltipState.show()
                                     }
                                 },
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(20.dp),
                             ) {
                                 Icon(imageVector = Icons.Filled.Info, contentDescription = "Info")
                             }
@@ -184,13 +177,15 @@ fun CheckoutView(
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     RadioButton(
-                        selected = selectedPaymentMethod == "Efectivo",
-                        onClick = { selectedPaymentMethod = "Efectivo" }
+                        selected = paymentMethod == PaymentMethod.CASH,
+                        onClick = {
+                            onPaymentMethodSelection(PaymentMethod.CASH)
+                        }
                     )
-                    Text("Efectivo")
+                    Text(PaymentMethod.CASH.displayName)
                 }
             }
 
@@ -200,15 +195,15 @@ fun CheckoutView(
                 Text(
                     text = "Error: $errorMessage",
                     color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = 8.dp),
                 )
             }
         }
 
         Button(
             onClick = onConfirmOrder,
-            enabled = !isLoading,
-            modifier = Modifier.fillMaxWidth()
+            enabled = !isLoading, //&& isOrderValid,
+            modifier = Modifier.fillMaxWidth(),
         ) {
             if (isLoading) {
                 CircularProgressIndicator()
@@ -219,17 +214,23 @@ fun CheckoutView(
     }
 }
 
+@Composable
+fun PaymentMethodSelection() {
+    // TODO implement
+}
+
 @Preview(showBackground = true)
 @Composable
-fun CheckoutViewPreview() {
-    val cartItems = listOf(
-        CartItem(Product("1", "Product 1", "Product Description", 20.0, false, "image1.jpg"), 2),
-        CartItem(Product("2", "Product 2", "Product Description", 30.0, false, "image2.jpg"), 1),
-    )
+private fun CheckoutViewPreview() {
+    val cartItems =
+        listOf(
+            CartItem(Product("1", "Product 1", "Product Description", 20.0, false, "image1.jpg"), 2),
+            CartItem(Product("2", "Product 2", "Product Description", 30.0, false, "image2.jpg"), 1),
+        )
     CheckoutView(
         cartItems = cartItems,
         shippingAddress = "Calle 123",
-        paymentMethod = "Efectivo",
+        paymentMethod = PaymentMethod.CASH,
         onConfirmOrder = {},
         isLoading = false,
         errorMessage = null,

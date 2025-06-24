@@ -2,7 +2,9 @@ package com.mleon.core.model
 
 data class Order(
     val orderId: String,
-    val status: String,
-    val totalAmount: Double,
-    val date: String
+    val productIds: List<CartItem>,
+    val shippingAddress: String,
+    val paymentMethod: String,
+    val total: Double,
+    val timestamp: Long
 )

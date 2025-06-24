@@ -42,7 +42,7 @@ fun AppNavigation(navController: NavHostController) {
             ProfileScreen()
         }
         composable(route = NavigationRoutes.ORDERS) {
-            OrdersListScreen(navController)
+            OrdersListScreen()
         }
         composable(route = NavigationRoutes.CHECKOUT) {
             CheckoutScreen(navController, cartViewModel = cartViewModel)

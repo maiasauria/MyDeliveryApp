@@ -18,9 +18,12 @@ class OrdersRepositoryApi
                 .map { remoteOrder ->
                     Order(
                         orderId = remoteOrder.orderId,
-                        status = remoteOrder.status,
-                        totalAmount = remoteOrder.totalAmount,
-                        date = remoteOrder.date,
+                        productIds = remoteOrder.productIds,
+                        shippingAddress = remoteOrder.shippingAddress,
+                        paymentMethod = remoteOrder.paymentMethod,
+                        total = remoteOrder.total,
+                        timestamp = remoteOrder.timestamp
+
                     )
                 }
 

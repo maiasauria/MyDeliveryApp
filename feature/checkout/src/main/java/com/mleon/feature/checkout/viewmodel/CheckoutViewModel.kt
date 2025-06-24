@@ -1,10 +1,12 @@
 package com.mleon.feature.checkout.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mleon.core.data.model.CartItemDto
 import com.mleon.core.data.model.OrderRequest
 import com.mleon.core.data.repository.OrdersRepository
+import com.mleon.core.model.PaymentMethod
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,11 +15,6 @@ import kotlinx.coroutines.launch
 import java.util.UUID.randomUUID
 import javax.inject.Inject
 
-data class CheckoutUiState(
-    val isLoading: Boolean = false,
-    val errorMessage: String? = null,
-    val orderConfirmed: Boolean = false,
-)
 
 @HiltViewModel
 class CheckoutViewModel
@@ -28,20 +25,27 @@ class CheckoutViewModel
         private val _uiState = MutableStateFlow(CheckoutUiState())
         val uiState: StateFlow<CheckoutUiState> = _uiState
 
+    fun onPaymentMethodSelection(paymentMethod: PaymentMethod) {
+        Log.d("CheckoutViewModel", "onPaymentMethodSelection called with paymentMethod: $paymentMethod")
+        _uiState.update { it.copy(paymentMethod = paymentMethod, validOrder = true) }
+    }
+
         fun confirmOrder(
             cartItems: List<CartItemDto>,
             shippingAddress: String,
-            paymentMethod: String,
+            paymentMethod: PaymentMethod,
             total: Double
         ) {
             viewModelScope.launch {
+                Log.d("CheckoutViewModel", "confirmOrder called with cartItems: $cartItems, shippingAddress: $shippingAddress, paymentMethod: $paymentMethod, total: $total")
+
                 _uiState.update { it.copy(isLoading = true, errorMessage = null) }
                 try {
-                    val request = OrderRequest( //TODO Paso el objeto o las partes?
-                        orderId = randomUUID().toString(), //TODO ??
-                        cartItems = cartItems,
+                    val request = OrderRequest(
+                        orderId = randomUUID().toString(),
+                        productIds = cartItems,
                         shippingAddress = shippingAddress,
-                        paymentMethod = paymentMethod,
+                        paymentMethod = paymentMethod.apiValue,
                         total = total,
                         timestamp = System.currentTimeMillis()
                     )

@@ -24,27 +24,39 @@ fun CheckoutScreen(
     val shippingCost = 10.0 // Temporary fixed shipping cost
     val totalAmount = subTotalAmount + shippingCost // Total amount calculation
     val shippingAddress = "Calle123" // Placeholder for shipping address
-    val paymentMethod = "Tarjeta de Crédito" // Placeholder for payment method
 
-    val cartItemDtos = cartItems.map { CartItemDto(it.product.id, it.quantity) }
+    //TODO crear metodos de mapeo
+    val cartItemDtos = cartItems.map { CartItemDto (
+        name = it.product.name,
+        description = it.product.description,
+        imageUrl = it.product.imageUrl ?: "",
+        price = it.product.price,
+        includesDrink = it.product.includesDrink,
+        categories = it.product.category.map { category -> category.name },
+        quantity = it.quantity
+    ) }
 
     if (uiState.orderConfirmed) {
         cartViewModel.clearCart()
-        // Optionally navigate to another screen
+        navController.navigate(NavigationRoutes.ORDERS) {
+            popUpTo(NavigationRoutes.CART) { inclusive = true } // Clear the back stack
+        }
     }
 
+    //TODO pasar lo que queda a State
     CheckoutView(
         cartItems = cartItems,
         subtotalAmount = subTotalAmount,
         shippingCost = shippingCost,
         totalAmount = totalAmount,
+        isOrderValid = uiState.validOrder,
         shippingAddress = shippingAddress,
-        paymentMethod = paymentMethod,
+        paymentMethod = uiState.paymentMethod,
         onConfirmOrder = {
             checkoutViewModel.confirmOrder(
                 cartItemDtos,
                 shippingAddress,
-                paymentMethod,
+                uiState.paymentMethod,
                 totalAmount
             )
         },
