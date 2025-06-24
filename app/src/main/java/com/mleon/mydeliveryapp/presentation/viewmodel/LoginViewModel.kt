@@ -77,7 +77,9 @@ class LoginViewModel @Inject constructor(
                                 password = "",
                             )
                         }
-                        sharedPreferences.edit { putString("email", _uiState.value.email) }
+                        val user = result.user
+                        val userEmail = user?.email ?: ""
+                        sharedPreferences.edit { putString("user_email", userEmail) }
                     } else {
                         _uiState.update {
                             it.copy(

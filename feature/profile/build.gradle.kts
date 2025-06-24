@@ -58,6 +58,8 @@ dependencies {
     ksp(libs.hilt.android.compiler) // Procesador de anotaciones para Hilt, que genera el código necesario para la inyección de dependencias en tiempo de compilación.
     implementation(libs.androidx.hilt.navigation.compose) // Integración de Hilt con Jetpack Compose para la inyección de dependencias en composables.
 
+    //Cloudinary
+    implementation("com.cloudinary:cloudinary-android:2.3.1") // Biblioteca para interactuar con Cloudinary, un servicio de gestión de medios en la nube.
 
     // Testing
     testImplementation(libs.junit)
