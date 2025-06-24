@@ -1,12 +1,14 @@
 package com.mleon.mydeliveryapp.presentation.viewmodel
 
+import android.content.SharedPreferences
 import android.util.Log
 import android.util.Patterns
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mleon.core.model.UserDto
 import com.mleon.core.data.model.RegisterResult
 import com.mleon.core.data.repository.UserRepository
+import com.mleon.core.model.UserDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignupViewModel @Inject constructor(
-    private val userRepository: com.mleon.core.data.repository.UserRepository
+    private val userRepository: UserRepository,
+    private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SignupUiState())
     val uiState: StateFlow<SignupUiState> = _uiState
@@ -29,20 +32,31 @@ class SignupViewModel @Inject constructor(
             state.copy(
                 email = email,
                 isEmailValid = isEmailValid,
-                isFormValid = isEmailValid && state.isPasswordValid && state.isNameValid && state.doPasswordsMatch,
+                isFormValid = isEmailValid && state.isPasswordValid && state.isLastnameValid && state.isNameValid && state.doPasswordsMatch,
                 errorMessageEmail = if (!isEmailValid) "El email no es válido" else null,
                 errorMessageSignup = null
             )
         }
     }
-
+    fun onLastnameChange(lastname: String) {
+        _uiState.update { state ->
+            val isLastnameValid = lastname.trim().length in 2..50
+            state.copy(
+                lastname = lastname,
+                isLastnameValid = isLastnameValid,
+                isFormValid = state.isNameValid && isLastnameValid && state.isEmailValid && state.isPasswordValid && state.doPasswordsMatch,
+                errorMessageLastname = if (!isLastnameValid) "El apellido debe tener entre 2 y 50 caracteres" else null,
+                errorMessageSignup = null
+            )
+        }
+    }
     fun onPasswordChange(password: String) {
         _uiState.update { state ->
             val isPasswordValid = password.length in 8..12
             state.copy(
                 password = password,
                 isPasswordValid = isPasswordValid,
-                isFormValid = isPasswordValid && state.isEmailValid && state.isNameValid && state.doPasswordsMatch,
+                isFormValid = isPasswordValid && state.isEmailValid && state.isNameValid && state.isLastnameValid && state.doPasswordsMatch,
                 errorMessagePassword = if (!isPasswordValid) "La contraseña debe tener entre 8 y 12 caracteres" else null,
                 errorMessageSignup = null
             )
@@ -55,7 +69,7 @@ class SignupViewModel @Inject constructor(
             state.copy(
                 passwordConfirm = confirmPassword,
                 doPasswordsMatch = doPasswordsMatch,
-                isFormValid = state.isEmailValid && state.isPasswordValid && state.isNameValid && doPasswordsMatch,
+                isFormValid = state.isEmailValid && state.isPasswordValid && state.isNameValid && state.isLastnameValid && doPasswordsMatch,
                 errorMessageConfirmPassword = if (!doPasswordsMatch) "Las contraseñas no coinciden" else null,
                 errorMessageSignup = null
             )
@@ -68,7 +82,7 @@ class SignupViewModel @Inject constructor(
             state.copy(
                 name = name,
                 isNameValid = isNameValid,
-                isFormValid = isNameValid && state.isEmailValid && state.isPasswordValid && state.doPasswordsMatch,
+                isFormValid = isNameValid && state.isEmailValid && state.isLastnameValid && state.isPasswordValid && state.doPasswordsMatch,
                 errorMessageName = if (!isNameValid) "El nombre debe tener entre 6 y 50 caracteres" else null,
                 errorMessageSignup = null
             )
@@ -85,6 +99,7 @@ class SignupViewModel @Inject constructor(
             viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
                 try {
                     val userDto = createUserDto()
+                    Log.d("SignupViewModel", "User DTO: $userDto")
                     val result = userRepository.registerUser(userDto)
                     Log.d("SignupViewModel", "Signup result: $result")
                     handleRegistrationResult(result)
@@ -114,11 +129,14 @@ class SignupViewModel @Inject constructor(
         return UserDto(
             name = _uiState.value.name,
             email = _uiState.value.email,
-            password = _uiState.value.password
+            password = _uiState.value.password,
+            lastname = _uiState.value.lastname,
+            address = "", // Assuming address is not required for signup
+            userImageUrl = null // Assuming userImageUrl is not required for signup
         )
     }
 
-    private fun handleRegistrationResult(result: com.mleon.core.data.model.RegisterResult) {
+    private fun handleRegistrationResult(result: RegisterResult) {
         if (result.user != null) {
             _uiState.update  {
                 it.copy(
@@ -128,6 +146,10 @@ class SignupViewModel @Inject constructor(
                     passwordConfirm = ""
                 )
             }
+            val user = result.user
+            val userEmail = user?.email ?: ""
+            sharedPreferences.edit { putString("user_email", userEmail) }
+            Log.d("SignupViewModel", "User registered successfully: $userEmail")
         } else {
             _uiState.update {
                 it.copy(

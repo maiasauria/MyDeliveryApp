@@ -1,7 +1,9 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.android.hilt)
 }
 
 android {
@@ -51,6 +53,12 @@ dependencies {
     //Coil
     implementation(libs.coil.compose)
 
+    // Hilt (DI)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler) // Procesador de anotaciones para Hilt, que genera el código necesario para la inyección de dependencias en tiempo de compilación.
+    implementation(libs.androidx.hilt.navigation.compose) // Integración de Hilt con Jetpack Compose para la inyección de dependencias en composables.
+
+
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -59,4 +67,6 @@ dependencies {
 
     // Project Modules
     implementation(project(":utils"))
+    implementation(project(":core:model"))
+    implementation(project(":core:data"))
 }

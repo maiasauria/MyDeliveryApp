@@ -25,8 +25,8 @@ fun SignupScreen(
 
     LaunchedEffect(uiState.signupSuccess, uiState.errorMessageSignup) {
         if (uiState.signupSuccess && uiState.errorMessageSignup == null) {
-            navController.navigate(NavigationRoutes.CHECKOUT) {
-                popUpTo("login") { inclusive = true }
+            navController.navigate(NavigationRoutes.PRODUCTS) {
+                popUpTo(NavigationRoutes.LOGIN) { inclusive = true }
             }
         }
     }
@@ -36,6 +36,9 @@ fun SignupScreen(
         name = uiState.name,
         onNameChange = { signupViewModel.onNameChange(it) },
         errorMessageName = uiState.errorMessageName,
+        lastname = uiState.lastname,
+        onLastnameChange = { signupViewModel.onLastnameChange(it) },
+        errorMessageLastname = uiState.errorMessageLastname,
         email = uiState.email,
         onEmailChange = { signupViewModel.onEmailChange(it) },
         errorMessageEmail = uiState.errorMessageEmail,

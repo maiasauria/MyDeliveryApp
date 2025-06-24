@@ -27,14 +27,14 @@ fun CartScreen(
 
     if (cartState.cartItems.isEmpty() ) {
         EmptyCartView(
-            onContinueShoppingClick = { navController.navigate(NavigationRoutes.PRODUCTS) }
+            onContinueShoppingClick = { navController.popBackStack() }
         )
     } else {
         CartView(
             cartItems = cartState.cartItems,
             totalPrice = cartState.totalPrice,
             isLoading = cartState.isLoading,
-            errorMessage = null, // Pass null, the error message is handled above
+            errorMessage = null, // Pass null, the error message is handled above TODO eliminar?
             onQuantityChange = { product, quantity -> cartViewModel.editQuantity(product, quantity) },
             onRemoveFromCart = { product -> cartViewModel.removeFromCart(product) },
             onCheckoutClick = { navController.navigate(NavigationRoutes.CHECKOUT) }

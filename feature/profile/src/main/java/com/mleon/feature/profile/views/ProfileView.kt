@@ -12,72 +12,75 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.mleon.utils.ui.ScreenTitle
 
 @Composable
-fun ProfileView() {
-    var nombre by remember { mutableStateOf("") }
-    var apellido by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var nacionalidad by remember { mutableStateOf("") }
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
-
+fun ProfileView(
+    name: String,
+    lastname: String,
+    email: String,
+    address: String,
+    userImageUrl: String?,
+    isLoading: Boolean,
+    isSaved: Boolean,
+    errorMessage: String?,
+    onNameChange: (String) -> Unit,
+    onLastnameChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onAddressChange: (String) -> Unit,
+    onUserImageUrlChange: (String?) -> Unit,
+    onImageUriChange: (android.net.Uri?) -> Unit,
+    onSave: () -> Unit,
+    onClearSaved: () -> Unit
+) {
     val launcher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent(),
-        ) { uri: Uri? ->
-            imageUri = uri
+        ) { uri: android.net.Uri? ->
+            onImageUriChange(uri)
         }
 
     Column(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-
         ScreenTitle("Perfil")
 
         Card(
-            modifier =
-                Modifier
-                    .size(120.dp)
-                    .align(Alignment.CenterHorizontally),
+            modifier = Modifier
+                .size(120.dp)
+                .align(Alignment.CenterHorizontally),
         ) {
-            if (imageUri != null) {
+            if (!userImageUrl.isNullOrEmpty()) {
                 Image(
-                    painter = rememberAsyncImagePainter(imageUri),
+                    painter = rememberAsyncImagePainter(model = userImageUrl),
                     contentDescription = "Profile Image",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
                 )
             } else {
-                // Placeholder image or icon
                 Icon(
                     painter = painterResource(id = android.R.drawable.ic_menu_camera),
                     contentDescription = "Add Image",
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .padding(24.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(24.dp),
                 )
             }
         }
@@ -88,47 +91,47 @@ fun ProfileView() {
             Text("Cargar Imagen")
         }
         OutlinedTextField(
-            value = nombre,
-            onValueChange = { nombre = it },
+            value = name,
+            onValueChange = onNameChange,
             label = { Text("Nombre") },
             modifier = Modifier.fillMaxWidth(),
         )
         OutlinedTextField(
-            value = apellido,
-            onValueChange = { apellido = it },
+            value = lastname,
+            onValueChange = onLastnameChange,
             label = { Text("Apellido") },
             modifier = Modifier.fillMaxWidth(),
         )
         OutlinedTextField(
             value = email,
-            onValueChange = { email = it },
+            onValueChange = onEmailChange,
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth(),
         )
         OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Contraseña") },
-            modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation(),
-        )
-        OutlinedTextField(
-            value = nacionalidad,
-            onValueChange = { nacionalidad = it },
-            label = { Text("Nacionalidad") },
+            value = address,
+            onValueChange = onAddressChange,
+            label = { Text("Dirección") },
             modifier = Modifier.fillMaxWidth(),
         )
         Button(
-            onClick = { /* Save action */ },
+            onClick = onSave,
             modifier = Modifier.align(Alignment.End),
+            enabled = !isLoading
         ) {
             Text("Guardar")
         }
+        if (isLoading) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+        }
+        errorMessage?.let {
+            Snackbar { Text(it) }
+        }
+        if (isSaved) {
+            Snackbar {
+                Text("Perfil guardado")
+                LaunchedEffect(Unit) { onClearSaved() }
+            }
+        }
     }
-}
-
-@Composable
-@Preview(showBackground = true)
-fun ProfileViewPreview() {
-    ProfileView()
 }

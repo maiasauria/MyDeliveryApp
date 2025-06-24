@@ -7,14 +7,20 @@ import com.mleon.core.data.model.RegisterResult
 import com.mleon.core.data.remote.UsersApiService
 import com.mleon.core.model.User
 import com.mleon.core.model.UserDto
+import com.mleon.core.model.toUser
 import org.json.JSONObject
 import retrofit2.HttpException
 
 class UserRepositoryApi(private val apiService: UsersApiService) : UserRepository {
 
     override fun getUser(user: UserDto): User? {
-        // Implementation for fetching user details from the API
-        return null // Placeholder return
+        return User(
+            email = user.email,
+            name = user.name,
+            lastname = user.lastname,
+            address = user.address,
+            userImageUrl = user.userImageUrl
+        )
     }
 
     override fun saveUser(user: UserDto) {
@@ -31,12 +37,14 @@ class UserRepositoryApi(private val apiService: UsersApiService) : UserRepositor
             Log.d("UserRepositoryApi", "Register response: $response")
             if (response.message != null) {
                 RegisterResult(user = null, message = response.message)
-            } else if (response.email != null && response.name != null) {
+            } else if (
+                response.email != null &&
+                response.name != null &&
+                response.lastname != null
+            ) {
                 RegisterResult(
-                    user = UserDto(
-                        name = response.name,
-                        email = response.email,
-                        password = "" // Do not expose password
+                    user = User(name = user.name, email = user.email,
+                        lastname = user.lastname, address = "",
                     ),
                     message = "User registered successfully"
                 )
@@ -59,7 +67,9 @@ class UserRepositoryApi(private val apiService: UsersApiService) : UserRepositor
             val user = response.user
             if (user != null) {
                 LoginResult(
-                    user = UserDto(name = user.name, email = user.email, password = ""), // Do not expose password),
+                    user = User(name = user.name, email = user.email,
+                        lastname = user.lastname, address = user.address,
+                        ), // Do not expose password),
                     message = response.message
                 )
             } else {
@@ -73,4 +83,32 @@ class UserRepositoryApi(private val apiService: UsersApiService) : UserRepositor
             LoginResult(user = null, message = "Error: ${e.message}")
         }
     }
+
+    override suspend fun getUserByEmail(email: String): User? {
+        return try {
+            val userDto = apiService.getUserByEmail(email)
+            userDto?.toUser()
+        } catch (e: HttpException) {
+            Log.e("UserRepositoryApi", "Error fetching user by email: ${e.message()}")
+            null
+        } catch (e: Exception) {
+            Log.e("UserRepositoryApi", "Error fetching user by email: ${e.message}")
+            null
+        }
+    }
+
+    override suspend fun updateUser(user: User): User? {
+        return try {
+            val response = apiService.updateUser(user.email, user)
+            response.toUser()
+        } catch (e: HttpException) {
+            Log.e("UserRepositoryApi", "Error updating user: ${e.message()}")
+            null
+        } catch (e: Exception) {
+            Log.e("UserRepositoryApi", "Error updating user: ${e.message}")
+            null
+        }
+    }
+
+
 }

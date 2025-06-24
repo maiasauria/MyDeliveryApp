@@ -1,6 +1,6 @@
 package com.mleon.core.data.model
 
-import com.mleon.core.model.UserDto
+import com.mleon.core.model.User
 
 data class LoginRequest(
     val email: String,
@@ -13,12 +13,12 @@ data class LoginResponse(
 )
 
 data class LoginResult(
-    val user: UserDto?,
+    val user: User?,
     val message: String?
 )
 
 data class RegisterResult(
-    val user: UserDto?,
+    val user: User?,
     val message: String?
 )
 
@@ -26,7 +26,10 @@ data class RegisterResponse(
     val _id: String? = null,
     val email: String? = null,
     val name: String? = null,
-    val password: String? = null,
+    val lastname: String? = null,
+    val address: String? = null,
+    val userImageUrl: String? = null,
+    //val password: String? = null,
     val createdAt: String? = null,
     val updatedAt: String? = null,
     val __v: Int? = null,
@@ -37,7 +40,9 @@ data class UserApiModel(
     val _id: String,
     val email: String,
     val name: String,
-    val password: String,
+    val lastname: String,
+    val address: String,
+    val userImageUrl: String? = null,
     val createdAt: String,
     val updatedAt: String,
     val __v: Int

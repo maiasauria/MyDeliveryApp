@@ -30,8 +30,11 @@ import com.mleon.utils.ui.ValidateTextField
 fun SignupView(
     navController: NavHostController,
     name: String = "",
+    lastname: String = "",
     onNameChange: (String) -> Unit = {},
+    onLastnameChange: (String) -> Unit = {},
     errorMessageName: String? = null,
+    errorMessageLastname: String? = null,
     email: String = "",
     onEmailChange: (String) -> Unit = {},
     errorMessageEmail: String? = null,
@@ -67,9 +70,17 @@ fun SignupView(
             ValidateTextField(
                 value = name,
                 onValueChange = { onNameChange(it) },
-                label = "Nombre Completo",
+                label = "Nombre",
                 isError = errorMessageName != null,
                 errorMessage = errorMessageName,
+                enabled = !isLoading
+            )
+            ValidateTextField(
+                value = lastname,
+                onValueChange = { onLastnameChange(it) },
+                label = "Apellido",
+                isError = errorMessageLastname != null,
+                errorMessage = errorMessageLastname,
                 enabled = !isLoading
             )
             ValidateEmailField(

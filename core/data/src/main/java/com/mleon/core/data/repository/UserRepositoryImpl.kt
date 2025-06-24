@@ -1,11 +1,12 @@
 package com.mleon.core.data.repository
 
 import android.util.Log
+import com.mleon.core.data.model.LoginResult
+import com.mleon.core.data.model.RegisterResult
 import com.mleon.core.model.DatabaseUser
 import com.mleon.core.model.User
 import com.mleon.core.model.UserDto
-import com.mleon.core.data.model.LoginResult
-import com.mleon.core.data.model.RegisterResult
+import com.mleon.core.model.toUser
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor() : UserRepository {
@@ -17,7 +18,7 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
 
     override fun getUser(user: UserDto): User? {
         val dbUser = users.find { it.email == user.email }
-        return dbUser?.let { User(it.name, it.email, it.password) }
+        return dbUser?.toUser()
     }
 
     override fun saveUser(user: UserDto) {
@@ -45,7 +46,7 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
         )
         users.add(dbUser)
         return RegisterResult(
-            user = UserDto(dbUser.name, dbUser.email, ""), // Do not expose password
+            user = dbUser.toUser(),
             message = "User registered successfully"
         )
     }
@@ -53,14 +54,25 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
     override suspend fun loginUser(email: String, password: String): LoginResult {
         Log.d("UserRepositoryImpl", "Attempting login for email: $email")
         val dbUser = users.find { it.email == email && it.password == password }
-        return LoginResult(
-            user = dbUser?.let { UserDto(it.name, it.email, it.password) },
-            message = if (dbUser != null) {
-                "Login successful"
-            } else {
-                "Invalid email or password"
-            }
-        )
+        return if (dbUser != null) {
+            LoginResult(
+                user = dbUser.toUser(),
+                message = "Login successful"
+            )
+        } else {
+            LoginResult(
+                user = null,
+                message = "Invalid email or password"
+            )
+        }
+    }
+
+    override suspend fun getUserByEmail(email: String): User? {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateUser(user: User): User? {
+        TODO("Not yet implemented")
     }
 
 }
