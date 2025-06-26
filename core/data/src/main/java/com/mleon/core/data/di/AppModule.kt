@@ -25,4 +25,5 @@ object AppModule {
     fun provideSharedPreferences(
         @ApplicationContext appContext: Context,
     ): SharedPreferences = appContext.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
+
 }

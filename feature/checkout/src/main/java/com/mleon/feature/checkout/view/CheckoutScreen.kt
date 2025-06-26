@@ -14,8 +14,8 @@ import com.mleon.feature.checkout.viewmodel.CheckoutViewModel
 @Composable
 fun CheckoutScreen(
     navController: NavHostController,
-    cartViewModel: CartViewModel,
-    checkoutViewModel: CheckoutViewModel = hiltViewModel()
+    cartViewModel: CartViewModel = hiltViewModel(),
+    checkoutViewModel: CheckoutViewModel = hiltViewModel(),
 ) {
     val uiState by checkoutViewModel.uiState.collectAsState()
 
@@ -37,8 +37,7 @@ fun CheckoutScreen(
         }
     }
 
-
-    //TODO pasar lo que queda a State
+    // TODO pasar lo que queda a State
     CheckoutView(
         cartItems = cartItems,
         subtotalAmount = subTotalAmount,
@@ -52,13 +51,13 @@ fun CheckoutScreen(
                 cartItemDtos,
                 shippingAddress,
                 uiState.paymentMethod,
-                totalAmount
+                totalAmount,
             )
         },
         isLoading = uiState.isLoading,
         errorMessage = uiState.errorMessage,
         onNavigateToOrders = {
-            navController.navigate(NavigationRoutes.PRODUCTS)  // Navigate to orders screen
-        }
+            navController.navigate(NavigationRoutes.PRODUCTS) // Navigate to orders screen
+        },
     )
 }

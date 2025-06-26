@@ -19,7 +19,7 @@ import com.mleon.feature.productlist.viewmodel.ProductListViewModel
 @Composable
 fun ProductListScreen(
     productListViewModel: ProductListViewModel = hiltViewModel(),
-    cartViewModel: CartViewModel //no defino hiltViewModel() porque ya lo paso como parámetro desde el NavGraph
+    cartViewModel: CartViewModel = hiltViewModel()
 ) {
     val uiState by productListViewModel.productState.collectAsState()
 

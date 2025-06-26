@@ -1,13 +1,12 @@
 package com.mleon.mydeliveryapp.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.mleon.core.navigation.NavigationRoutes
 import com.mleon.feature.cart.view.ui.views.CartScreen
-import com.mleon.feature.cart.view.viewmodel.CartViewModel
 import com.mleon.feature.checkout.view.CheckoutScreen
 import com.mleon.feature.orders.view.OrdersListScreen
 import com.mleon.feature.productlist.view.ProductListScreen
@@ -17,26 +16,22 @@ import com.mleon.login.view.LoginScreen
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
-
-    val cartViewModel: CartViewModel = hiltViewModel()
-
     NavHost(
         navController = navController,
-        // startDestination = "login" // Define la ruta inicial
-        startDestination = NavigationRoutes.PRODUCTS //TODO Cambiar a "login" cuando se implemente la autenticación
+        startDestination = NavigationRoutes.PRODUCTS
     ) {
         // Aquí definimos las rutas de navegación
-        composable(route = NavigationRoutes.LOGIN) { //a que archivo apuntamos
+        composable(route = NavigationRoutes.LOGIN) { //a que ruta apuntamos
             LoginScreen(navController) // Pasamos el navController a LoginScreen
         }
         composable(route = NavigationRoutes.SIGNUP) {
             SignupScreen(navController)
         }
         composable(route = NavigationRoutes.PRODUCTS) {
-            ProductListScreen(cartViewModel = cartViewModel)
+            ProductListScreen()
         }
         composable(route = NavigationRoutes.CART) {
-            CartScreen(navController, cartViewModel = cartViewModel)
+            CartScreen(navController)
         }
         composable(route = NavigationRoutes.PROFILE) {
             ProfileScreen()
@@ -45,7 +40,17 @@ fun AppNavigation(navController: NavHostController) {
             OrdersListScreen()
         }
         composable(route = NavigationRoutes.CHECKOUT) {
-            CheckoutScreen(navController, cartViewModel = cartViewModel)
+            CheckoutScreen(navController)
         }
+    }
+}
+
+fun NavController.navigateToRoute(route: String) {
+    this.navigate(route) {
+        popUpTo(this@navigateToRoute.graph.startDestinationId) { // Limpia la pila de navegación hasta el destino inicial
+            saveState = true // Guarda el estado de la pantalla actual
+        }
+        launchSingleTop = true // Evita crear múltiples instancias de la misma pantalla
+        restoreState = true // Restaura el estado guardado de la pantalla si está disponible
     }
 }
