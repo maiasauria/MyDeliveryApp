@@ -31,15 +31,15 @@ class ProfileViewModel
         private val _uiState = MutableStateFlow(ProfileUiState())
         val uiState: StateFlow<ProfileUiState> = _uiState
 
+    val exceptionHandler =
+        CoroutineExceptionHandler { _, exception ->
+            Log.e("ProfileViewModel", "Coroutine error", exception)
+            _uiState.update { it.copy(errorMessage = "Ocurrió un error inesperado. Intenta nuevamente.") }
+        }
+
         init {
             loadProfile()
         }
-
-        val exceptionHandler =
-            CoroutineExceptionHandler { _, exception ->
-                Log.e("ProfileViewModel", "Coroutine error", exception)
-                _uiState.update { it.copy(errorMessage = "Ocurrió un error inesperado. Intenta nuevamente.") }
-            }
 
         private fun loadProfile() {
             viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
@@ -117,6 +117,10 @@ class ProfileViewModel
                             .contentResolver
                             .openInputStream(uri)
                             ?: throw IllegalArgumentException("Unable to open input stream for URI: $uri")
+
+                    Log.d("ProfileViewModel", "Cloudinary API Key: ${cloudinary.config.apiKey}")
+                    Log.d("ProfileViewModel", "Cloudinary API Secret: ${cloudinary.config.apiSecret}")
+                    Log.d("ProfileViewModel", "Cloudinary Cloud Name: ${cloudinary.config.cloudName}")
                     val result =
                         cloudinary
                             .uploader()
@@ -124,7 +128,9 @@ class ProfileViewModel
                     val imageUrl = result["secure_url"] as String
                     _uiState.update { it.copy(userImageUrl = imageUrl) }
                 } catch (e: Exception) {
-                    _uiState.update { it.copy(errorMessage = e.message ?: "") }
+                    _uiState.update { it.copy(errorMessage = e.message ?: "")
+                    }
+                    Log.e("ProfileViewModel", "Error uploading image: ${e.message}")
                 } finally {
                     _uiState.update { it.copy(isImageUploading = false) }
                 }

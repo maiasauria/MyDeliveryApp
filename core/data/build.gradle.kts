@@ -1,3 +1,13 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+val secretsProperties = Properties().apply {
+    val secretsFile = rootProject.file("secrets.properties")
+    if (secretsFile.exists()) {
+        load(FileInputStream(secretsFile))
+    }
+}
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -16,11 +26,10 @@ android {
         consumerProguardFiles("consumer-rules.pro")
 
         defaultConfig {
-            buildConfigField("String", "CLOUDINARY_API_KEY", "\"${project.findProperty("CLOUDINARY_API_KEY") ?: ""}\"")
-            buildConfigField("String", "CLOUDINARY_API_SECRET", "\"${project.findProperty("CLOUDINARY_API_SECRET") ?: ""}\"")
-            buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"${project.findProperty("CLOUDINARY_CLOUD_NAME") ?: ""}\"")
+            buildConfigField("String", "CLOUDINARY_API_KEY", "\"${secretsProperties["CLOUDINARY_API_KEY"] ?: ""}\"")
+            buildConfigField("String", "CLOUDINARY_API_SECRET", "\"${secretsProperties["CLOUDINARY_API_SECRET"] ?: ""}\"")
+            buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"${secretsProperties["CLOUDINARY_CLOUD_NAME"] ?: ""}\"")
         }
-
     }
 
     buildTypes {

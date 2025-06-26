@@ -13,13 +13,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    //TODO revisar si se usa.
-    @Provides
-    @Singleton
-    fun provideApplicationContext(
-        @ApplicationContext context: Context,
-    ): Context = context
-
     @Provides
     @Singleton
     fun provideSharedPreferences(
