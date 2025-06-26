@@ -8,6 +8,8 @@ import com.mleon.core.data.repository.interfaces.OrdersRepository
 import com.mleon.core.model.CartItemDto
 import com.mleon.core.model.PaymentMethod
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -15,47 +17,52 @@ import kotlinx.coroutines.launch
 import java.util.UUID.randomUUID
 import javax.inject.Inject
 
-
 @HiltViewModel
-class CheckoutViewModel
-    @Inject
-    constructor(
-        private val repository: OrdersRepository,
-    ) : ViewModel() {
-        private val _uiState = MutableStateFlow(CheckoutUiState())
-        val uiState: StateFlow<CheckoutUiState> = _uiState
+class CheckoutViewModel @Inject constructor(
+    private val repository: OrdersRepository,
+) : ViewModel() {
+    private val _uiState = MutableStateFlow(CheckoutUiState())
+    val uiState: StateFlow<CheckoutUiState> = _uiState
 
+    val exceptionHandler =
+        CoroutineExceptionHandler { _, exception ->
+            Log.e("CheckoutViewModel", "Coroutine error", exception)
+            _uiState.update { it.copy(errorMessage = "Ocurrió un error inesperado. Intenta nuevamente.") }
+        }
 
     fun confirmOrder(
         cartItems: List<CartItemDto>,
         shippingAddress: String,
         paymentMethod: PaymentMethod,
-        total: Double
+        total: Double,
     ) {
-        viewModelScope.launch {
-            Log.d("CheckoutViewModel", "confirmOrder called with cartItems: $cartItems, shippingAddress: $shippingAddress, paymentMethod: $paymentMethod, total: $total",)
+        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+            Log.d(
+                "CheckoutViewModel",
+                "confirmOrder called with cartItems: $cartItems, shippingAddress: $shippingAddress, paymentMethod: $paymentMethod, total: $total",
+            )
 
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             try {
-                val request = OrderRequest(
-                    orderId = randomUUID().toString(),
-                    productIds = cartItems,
-                    shippingAddress = shippingAddress,
-                    paymentMethod = paymentMethod.apiValue,
-                    total = total,
-                    timestamp = System.currentTimeMillis()
-                )
+                val request =
+                    OrderRequest(
+                        orderId = randomUUID().toString(),
+                        productIds = cartItems,
+                        shippingAddress = shippingAddress,
+                        paymentMethod = paymentMethod.apiValue,
+                        total = total,
+                        timestamp = System.currentTimeMillis(),
+                    )
 
-                //TODO revisar.
+                // TODO revisar.
                 val result = repository.createOrder(request)
                 Log.d("CheckoutViewModel", "Order created successfully: $result")
                 // TODO revisar los codigos de retorno
                 if (result != null) {
                     _uiState.update { it.copy(isLoading = false, orderConfirmed = true) }
                 }
-                //TODO si el pedido esta ok navegar ahistoria de pedidos o mostrar mensaje de éxito
-                //TODO validar la respuesta del servidor y manejar errores si es necesario
-
+                // TODO si el pedido esta ok navegar ahistoria de pedidos o mostrar mensaje de éxito
+                // TODO validar la respuesta del servidor y manejar errores si es necesario
             } catch (e: Exception) {
                 _uiState.update { it.copy(errorMessage = e.message) }
             } finally {
@@ -65,11 +72,7 @@ class CheckoutViewModel
     }
 
     fun onPaymentMethodSelection(paymentMethod: PaymentMethod) {
-        Log.d("CheckoutViewModel", "onPaymentMethodSelection called with paymentMethod: $paymentMethod")
+        Log.d("CheckoutViewModel", "onPaymentMethodSelection called with paymentMethod: $paymentMethod",)
         _uiState.update { it.copy(paymentMethod = paymentMethod, validOrder = true) }
     }
-
 }
-
-
-//TODO limpiar el carrito despues de confirmar.

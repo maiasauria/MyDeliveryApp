@@ -3,6 +3,7 @@ package com.mleon.feature.profile.viewmodel
 import android.app.Application
 import android.content.SharedPreferences
 import android.net.Uri
+import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,6 +11,7 @@ import com.cloudinary.Cloudinary
 import com.mleon.core.data.repository.interfaces.UserRepository
 import com.mleon.core.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +20,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor(
+class ProfileViewModel
+    @Inject
+    constructor(
         private val myApplication: Application,
         private val userRepository: UserRepository,
         private val sharedPreferences: SharedPreferences,
@@ -31,8 +35,14 @@ class ProfileViewModel @Inject constructor(
             loadProfile()
         }
 
+        val exceptionHandler =
+            CoroutineExceptionHandler { _, exception ->
+                Log.e("ProfileViewModel", "Coroutine error", exception)
+                _uiState.update { it.copy(errorMessage = "Ocurrió un error inesperado. Intenta nuevamente.") }
+            }
+
         private fun loadProfile() {
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
                 _uiState.update { it.copy(isLoading = true, errorMessage = "") }
                 try {
                     val userEmail = sharedPreferences.getString("user_email", null)
@@ -68,7 +78,7 @@ class ProfileViewModel @Inject constructor(
         }
 
         fun updateProfile() {
-            viewModelScope.launch {
+            viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
                 val state = _uiState.value
                 try {
                     _uiState.update {
@@ -88,7 +98,6 @@ class ProfileViewModel @Inject constructor(
                         )
                     userRepository.updateUser(user)
                     _uiState.update { it.copy(isLoading = false, isSaved = true) }
-
                 } catch (e: Exception) {
                     _uiState.update { it.copy(isLoading = false, errorMessage = e.message ?: "") }
                 }
@@ -100,7 +109,7 @@ class ProfileViewModel @Inject constructor(
      * This function runs in the IO dispatcher to avoid blocking the main thread.
      */
         private fun uploadImage(uri: Uri) {
-            viewModelScope.launch(Dispatchers.IO) {
+            viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
                 _uiState.update { it.copy(isImageUploading = true) }
                 try {
                     val inputStream =
@@ -124,7 +133,7 @@ class ProfileViewModel @Inject constructor(
 
         fun onImageUriChange(uri: Uri?) {
             if (uri != null) {
-                viewModelScope.launch(Dispatchers.IO) {
+                viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
                     val url = uploadImage(uri)
                 }
             }
@@ -144,7 +153,7 @@ class ProfileViewModel @Inject constructor(
         }
 
         fun onUserImageUrlChange(url: String) {
-            //TODO validar
+            // TODO validar
             _uiState.update { state ->
                 state.copy(
                     userImageUrl = url,

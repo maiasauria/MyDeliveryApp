@@ -1,5 +1,6 @@
 package com.mleon.feature.cart.view.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mleon.core.model.CartItem
@@ -23,7 +24,8 @@ class CartViewModel @Inject constructor(
     val cartState = _cartState.asStateFlow()
 
     val exceptionHandler = CoroutineExceptionHandler { _, exception ->
-        println("Error occurred: ${exception.message}")
+        Log.e("CartViewModel", "Coroutine error", exception)
+        _cartState.update { it.copy(errorMessage = "Ocurrió un error inesperado. Intenta nuevamente.") }
     }
 
     fun addToCart(product: Product) {

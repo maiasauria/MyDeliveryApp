@@ -20,11 +20,13 @@ fun LoginScreen(
     val uiState by loginViewModel.uiState.collectAsState()
     var passwordVisible by remember { mutableStateOf(false) }
 
+    // Launch Effect (accion secundaria) cuando cambian los valores de loginSuccess o errorMessageLogin
     LaunchedEffect(uiState.loginSuccess, uiState.errorMessageLogin) {
         if (uiState.loginSuccess && uiState.errorMessageLogin == null) {
             navController.navigate(NavigationRoutes.PRODUCTS) {
-                popUpTo("login") { inclusive = true }
+                popUpTo(NavigationRoutes.LOGIN) { inclusive = true } // elimina la pantalla de login del stack de navegación
             }
+            uiState.copy(loginSuccess = false) // Resetea el estado del ViewModel después de un login exitoso
         }
     }
 
