@@ -54,15 +54,11 @@ class CheckoutViewModel @Inject constructor(
                         timestamp = System.currentTimeMillis(),
                     )
 
-                // TODO revisar.
                 val result = repository.createOrder(request)
                 Log.d("CheckoutViewModel", "Order created successfully: $result")
-                // TODO revisar los codigos de retorno
                 if (result != null) {
                     _uiState.update { it.copy(isLoading = false, orderConfirmed = true) }
                 }
-                // TODO si el pedido esta ok navegar ahistoria de pedidos o mostrar mensaje de éxito
-                // TODO validar la respuesta del servidor y manejar errores si es necesario
             } catch (e: Exception) {
                 _uiState.update { it.copy(errorMessage = e.message) }
             } finally {
@@ -71,6 +67,7 @@ class CheckoutViewModel @Inject constructor(
         }
     }
 
+    // Todavia no está en uso, falta validar TJ
     fun onPaymentMethodSelection(paymentMethod: PaymentMethod) {
         Log.d("CheckoutViewModel", "onPaymentMethodSelection called with paymentMethod: $paymentMethod",)
         _uiState.update { it.copy(paymentMethod = paymentMethod, validOrder = true) }

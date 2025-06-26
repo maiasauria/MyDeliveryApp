@@ -33,25 +33,25 @@ fun SignupView(
     lastname: String = "",
     onNameChange: (String) -> Unit = {},
     onLastnameChange: (String) -> Unit = {},
-    errorMessageName: String? = null,
-    errorMessageLastname: String? = null,
+    errorMessageName: String = "",
+    errorMessageLastname: String = "",
     email: String = "",
     onEmailChange: (String) -> Unit = {},
-    errorMessageEmail: String? = null,
+    errorMessageEmail: String = "",
     password: String = "",
     onPasswordChange: (String) -> Unit = {},
-    errorMessagePassword: String? = null,
+    errorMessagePassword: String = "",
     passwordVisible: Boolean = false,
-    onVisibilityChange: (Boolean) -> Unit = {},
+    onPasswordVisibilityChange: (Boolean) -> Unit = {},
     passwordConfirm: String = "",
     onPasswordConfirmChange: (String) -> Unit = {},
-    onConfirmVisibilityChange: (Boolean) -> Unit = {},
-    errorMessagePasswordConfirm: String? = null,
+    onConfirmPasswordVisibilityChange: (Boolean) -> Unit = {},
+    errorMessagePasswordConfirm: String = "",
     confirmPasswordVisible: Boolean = false,
     isFormValid: Boolean = false,
     onSignupClick: () -> Unit = {},
-    errorMessageSignup: String? = null,
-    isLoading: Boolean = false
+    errorMessageSignup: String = "",
+    isLoading: Boolean = false,
 ) {
     Box(
         modifier = Modifier
@@ -69,17 +69,17 @@ fun SignupView(
             LogoImage()
             ValidateTextField(
                 value = name,
-                onValueChange = { onNameChange(it) },
+                onValueChange = onNameChange,
                 label = "Nombre",
-                isError = errorMessageName != null,
+                isError = errorMessageName.isNotEmpty(),
                 errorMessage = errorMessageName,
                 enabled = !isLoading
             )
             ValidateTextField(
                 value = lastname,
-                onValueChange = { onLastnameChange(it) },
+                onValueChange = onLastnameChange,
                 label = "Apellido",
-                isError = errorMessageLastname != null,
+                isError = errorMessageLastname.isNotEmpty(),
                 errorMessage = errorMessageLastname,
                 enabled = !isLoading
             )
@@ -87,7 +87,7 @@ fun SignupView(
                 value = email,
                 onValueChange = onEmailChange,
                 label = "Email",
-                isError = errorMessageEmail != null,
+                isError = errorMessageEmail.isNotEmpty(),
                 errorMessage = errorMessageEmail,
                 enabled = !isLoading
             )
@@ -95,24 +95,24 @@ fun SignupView(
                 value = password,
                 onValueChange = onPasswordChange,
                 label = "Contraseña",
-                isError = errorMessagePassword != null,
+                isError = errorMessagePassword.isNotEmpty(),
                 errorMessage = errorMessagePassword,
                 passwordVisible = passwordVisible,
-                onPasswordVisibilityChange = { onVisibilityChange(!passwordVisible) },
+                onPasswordVisibilityChange = { onPasswordVisibilityChange(!passwordVisible) },
                 enabled = !isLoading
             )
             ValidatePasswordField(
                 value = passwordConfirm,
-                onValueChange = { onPasswordConfirmChange(it) },
+                onValueChange = onPasswordConfirmChange,
                 label = "Confirma tu contraseña",
-                isError = errorMessagePasswordConfirm != null,
+                isError = errorMessagePasswordConfirm.isNotEmpty(),
                 errorMessage = errorMessagePasswordConfirm,
                 passwordVisible = confirmPasswordVisible,
-                onPasswordVisibilityChange = { onConfirmVisibilityChange(!confirmPasswordVisible) },
+                onPasswordVisibilityChange = { onConfirmPasswordVisibilityChange(!confirmPasswordVisible) },
                 enabled = !isLoading
             )
             Spacer(modifier = Modifier.height(16.dp))
-            if (errorMessageSignup != null) {
+            if (errorMessageSignup.isNotEmpty()) {
                 Text(
                     text = errorMessageSignup,
                     color = MaterialTheme.colorScheme.error,

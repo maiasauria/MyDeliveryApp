@@ -3,7 +3,6 @@ package com.mleon.login.view
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,17 +29,17 @@ fun LoginView(
     email: String = "",
     onEmailChange: (String) -> Unit = {},
     isEmailValid: Boolean = true,
-    errorMessageEmail: String? = "",
+    errorMessageEmail: String = "",
     password: String = "",
     onPasswordChange: (String) -> Unit = {},
     passwordVisible: Boolean = false,
     onPasswordVisibilityChange: (Boolean) -> Unit = {},
     isPasswordValid: Boolean = true,
-    errorMessagePassword: String? = "",
+    errorMessagePassword: String = "",
     isFormValid: Boolean = false,
     onLoginClick: () -> Unit = {},
     onSignupClick: () -> Unit = {},
-    errorMessageLogin: String? = null,
+    errorMessageLogin: String = "",
     isLoading: Boolean = false,
 ) {
     Box(
@@ -76,7 +75,7 @@ fun LoginView(
                 enabled = !isLoading
             )
             Spacer(modifier = Modifier.height(16.dp))
-            if (errorMessageLogin != null) {
+            if (errorMessageLogin.isNotEmpty()) {
                 Text(
                     text = errorMessageLogin,
                     color = MaterialTheme.colorScheme.error,
@@ -91,21 +90,12 @@ fun LoginView(
                 enabled = !isLoading
             )
             Spacer(modifier = Modifier.height(24.dp))
-            Row(
+            TextButton(
+                onClick = onSignupClick,
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
+                enabled = !isLoading
             ) {
-                Text(
-                    text = "¿No tenés una cuenta?",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                TextButton(
-                    onClick = onSignupClick,
-                    enabled = !isLoading
-                ) {
-                    Text(text = "Registrate acá")
-                }
+                Text(text = "¿No tenes una cuenta? Registrate acá")
             }
         }
     }
@@ -137,12 +127,4 @@ fun LoginButton(
 @Composable
 fun LoginViewPreview() {
     LoginView()
-}
-@Preview(showBackground = true)
-@Composable
-fun LoginViewPreviewError() {
-    LoginView(
-        isFormValid = false,
-        errorMessageLogin = "Error al iniciar sesión. Por favor, intente nuevamente.",
-    )
 }

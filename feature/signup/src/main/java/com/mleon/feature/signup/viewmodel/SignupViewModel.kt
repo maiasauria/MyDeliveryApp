@@ -19,145 +19,147 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SignupViewModel @Inject constructor(
-    private val userRepository: UserRepository,
-    private val sharedPreferences: SharedPreferences
-) : ViewModel() {
-    private val _uiState = MutableStateFlow(SignupUiState())
-    val uiState: StateFlow<SignupUiState> = _uiState
+class SignupViewModel
+    @Inject
+    constructor(
+        private val userRepository: UserRepository,
+        private val sharedPreferences: SharedPreferences,
+    ) : ViewModel() {
+        private val _uiState = MutableStateFlow(SignupUiState())
+        val uiState: StateFlow<SignupUiState> = _uiState
 
-    fun onEmailChange(email: String) {
-        _uiState.update { state ->
-            val isEmailValid = Patterns.EMAIL_ADDRESS.matcher(email).matches()
-            state.copy(
-                email = email,
-                isEmailValid = isEmailValid,
-                isFormValid = isEmailValid && state.isPasswordValid && state.isLastnameValid && state.isNameValid && state.doPasswordsMatch,
-                errorMessageEmail = if (!isEmailValid) "El email no es válido" else null,
-                errorMessageSignup = null
-            )
+        fun onEmailChange(email: String) {
+            _uiState.update { it.copy(email = email) }
+            validateForm()
         }
-    }
-    fun onLastnameChange(lastname: String) {
-        _uiState.update { state ->
-            val isLastnameValid = lastname.trim().length in 2..50
-            state.copy(
-                lastname = lastname,
-                isLastnameValid = isLastnameValid,
-                isFormValid = state.isNameValid && isLastnameValid && state.isEmailValid && state.isPasswordValid && state.doPasswordsMatch,
-                errorMessageLastname = if (!isLastnameValid) "El apellido debe tener entre 2 y 50 caracteres" else null,
-                errorMessageSignup = null
-            )
-        }
-    }
-    fun onPasswordChange(password: String) {
-        _uiState.update { state ->
-            val isPasswordValid = password.length in 8..12
-            state.copy(
-                password = password,
-                isPasswordValid = isPasswordValid,
-                isFormValid = isPasswordValid && state.isEmailValid && state.isNameValid && state.isLastnameValid && state.doPasswordsMatch,
-                errorMessagePassword = if (!isPasswordValid) "La contraseña debe tener entre 8 y 12 caracteres" else null,
-                errorMessageSignup = null
-            )
-        }
-    }
 
-    fun onConfirmPasswordChange(confirmPassword: String) {
-        _uiState.update { state ->
-            val doPasswordsMatch = confirmPassword == state.password
-            state.copy(
-                passwordConfirm = confirmPassword,
-                doPasswordsMatch = doPasswordsMatch,
-                isFormValid = state.isEmailValid && state.isPasswordValid && state.isNameValid && state.isLastnameValid && doPasswordsMatch,
-                errorMessageConfirmPassword = if (!doPasswordsMatch) "Las contraseñas no coinciden" else null,
-                errorMessageSignup = null
-            )
+        fun onLastnameChange(lastname: String) {
+            _uiState.update { it.copy(lastname = lastname) }
+            validateForm()
         }
-    }
 
-    fun onNameChange(name: String) {
-        _uiState.update { state ->
-            val isNameValid = name.trim().length in 6..50
-            state.copy(
-                name = name,
-                isNameValid = isNameValid,
-                isFormValid = isNameValid && state.isEmailValid && state.isLastnameValid && state.isPasswordValid && state.doPasswordsMatch,
-                errorMessageName = if (!isNameValid) "El nombre debe tener entre 6 y 50 caracteres" else null,
-                errorMessageSignup = null
-            )
+        fun onPasswordChange(password: String) {
+            _uiState.update { it.copy(password = password) }
+            validateForm()
         }
-    }
 
-    val exceptionHandler = CoroutineExceptionHandler { _, exception ->
-        println("Error occurred: ${exception.message}")
-    }
+        fun onConfirmPasswordChange(confirmPassword: String) {
+            _uiState.update { it.copy(passwordConfirm = confirmPassword) }
+            validateForm()
+        }
 
-    fun onSignupButtonClick() {
-        if (_uiState.value.isFormValid) {
-            _uiState.update { it.copy(isLoading = true, errorMessageSignup = null) }
+        fun onNameChange(name: String) {
+            _uiState.update { it.copy(name = name) }
+            validateForm()
+        }
+
+        val exceptionHandler =
+            CoroutineExceptionHandler { _, exception ->
+                println("Error occurred: ${exception.message}")
+            }
+
+        fun onSignupButtonClick() {
+            validateForm()
+            if (!_uiState.value.isFormValid) {
+                _uiState.update { it.copy(errorMessageSignup = "Por favor, completa todos los campos correctamente.") }
+                return
+            }
+
+            _uiState.update { it.copy(isLoading = true, errorMessageSignup = "") }
+
             viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
                 try {
                     val userDto = createUserDto()
-                    Log.d("SignupViewModel", "User DTO: $userDto")
                     val result = userRepository.registerUser(userDto)
-                    Log.d("SignupViewModel", "Signup result: $result")
                     handleRegistrationResult(result)
-                    //delay(1000)
                 } catch (e: Exception) {
                     _uiState.update {
                         it.copy(
                             errorMessageSignup = "Error: ${e.message}",
-                            isFormValid = false
+                            isFormValid = false,
                         )
                     }
                 } finally {
                     _uiState.update { it.copy(isLoading = false) }
                 }
             }
-        } else {
-            _uiState.update {
-                it.copy(
-                    errorMessageSignup = "Por favor, completa todos los campos correctamente."
-                )
-            }
-
         }
-    }
 
-    private fun createUserDto(): UserDto {
-        return UserDto(
-            name = _uiState.value.name,
-            email = _uiState.value.email,
-            password = _uiState.value.password,
-            lastname = _uiState.value.lastname,
-            address = "", // Assuming address is not required for signup
-            userImageUrl = null // Assuming userImageUrl is not required for signup
-        )
-    }
+        private fun validateForm() {
+            val currentState = _uiState.value // Obtiene el estado actual una vez
+            val isNameValid = currentState.name.isNotBlank() && currentState.name.length in 2..20
+            val isLastnameValid = currentState.lastname.isNotBlank() && currentState.lastname.length in 2..20
+            val isEmailValid = Patterns.EMAIL_ADDRESS.matcher(currentState.email).matches()
+            val isPasswordValid = currentState.password.length in 8..12
+            val isPasswordConfirmValid = currentState.password == currentState.passwordConfirm && currentState.passwordConfirm.isNotBlank()
 
-    private fun handleRegistrationResult(result: RegisterResult) {
-        if (result.user != null) {
-            _uiState.update  {
-                it.copy(
-                    signupSuccess = true,
-                    errorMessageSignup = null,
-                    password = "",
-                    passwordConfirm = ""
-                )
-            }
-            val user = result.user
-            val userEmail = user?.email ?: ""
-            sharedPreferences.edit { putString("user_email", userEmail) }
-            Log.d("SignupViewModel", "User registered successfully: $userEmail")
-        } else {
             _uiState.update {
                 it.copy(
-                    signupSuccess = false,
-                    errorMessageSignup = result.message,
-                    isFormValid = false
+                    errorMessageName = if (!isNameValid && currentState.name.isNotEmpty()) "El nombre no puede estar vacío" else "",
+                    errorMessageLastname =
+                        if (!isLastnameValid && currentState.lastname.isNotEmpty()) {
+                            "El apellido no puede estar vacío"
+                        } else {
+                            ""
+                        },
+                    errorMessageEmail = if (!isEmailValid && currentState.email.isNotEmpty()) "Email inválido" else "",
+                    errorMessagePassword =
+                        if (!isPasswordValid && currentState.password.isNotEmpty()) {
+                            "La contraseña debe tener entre 8 y 12 caracteres"
+                        } else {
+                            ""
+                        },
+                    errorMessagePasswordConfirm =
+                        if (!isPasswordConfirmValid && currentState.passwordConfirm.isNotEmpty()) {
+                            "Las contraseñas no coinciden"
+                        } else {
+                            ""
+                        },
+                    isFormValid = isNameValid && isLastnameValid && isEmailValid && isPasswordValid && isPasswordConfirmValid,
                 )
             }
         }
+
+        private fun createUserDto(): UserDto {
+            // Accede al estado actual una vez para construir el DTO
+            val currentState = _uiState.value
+            return UserDto(
+                name = currentState.name,
+                email = currentState.email,
+                password = currentState.password,
+                lastname = currentState.lastname,
+                address = "",
+                userImageUrl = null,
+            )
+        }
+
+        private fun handleRegistrationResult(result: RegisterResult) {
+            if (result.user != null) {
+                // Si el registro fue exitoso, actualiza el estado de la UI
+                _uiState.update {
+                    it.copy(
+                        signupSuccess = true,
+                        errorMessageSignup = "",
+                        password = "",
+                        passwordConfirm = "",
+                    )
+                }
+                val user = result.user
+                val userEmail = user?.email ?: ""
+
+                // Guarda el email del usuario en SharedPreferences
+                sharedPreferences.edit { putString("user_email", userEmail) }
+                Log.d("SignupViewModel", "User registered successfully: $userEmail")
+            } else {
+                _uiState.update {
+                    it.copy(
+                        signupSuccess = false,
+                        errorMessageSignup =
+                            result.message
+                                ?: "Error desconocido al registrar usuario.",
+                        isFormValid = false,
+                    )
+                }
+            }
+        }
     }
-}

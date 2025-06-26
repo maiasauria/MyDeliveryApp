@@ -12,12 +12,12 @@ data class SignupUiState(
     val isLastnameValid: Boolean = false,
     val isFormValid: Boolean = false,
     val doPasswordsMatch: Boolean = false,
-    val errorMessageEmail: String? = null,
-    val errorMessagePassword: String? = null,
-    val errorMessageName: String? = null,
-    val errorMessageLastname: String? = null,
-    val errorMessageConfirmPassword: String? = null,
-    val errorMessageSignup: String? = null,
+    val errorMessageEmail: String = "",
+    val errorMessagePassword: String = "",
+    val errorMessageName: String = "",
+    val errorMessageLastname: String = "",
+    val errorMessagePasswordConfirm: String = "",
+    val errorMessageSignup: String = "",
     val signupSuccess: Boolean = false,
     val isLoading: Boolean = false
 )

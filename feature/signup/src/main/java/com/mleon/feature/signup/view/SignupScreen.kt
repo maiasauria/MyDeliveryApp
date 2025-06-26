@@ -24,7 +24,7 @@ fun SignupScreen(
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(uiState.signupSuccess, uiState.errorMessageSignup) {
-        if (uiState.signupSuccess && uiState.errorMessageSignup == null) {
+        if (uiState.signupSuccess && uiState.errorMessageSignup.isEmpty()) {
             navController.navigate(NavigationRoutes.PRODUCTS) {
                 popUpTo(NavigationRoutes.LOGIN) { inclusive = true }
             }
@@ -46,12 +46,12 @@ fun SignupScreen(
         onPasswordChange = { signupViewModel.onPasswordChange(it) },
         errorMessagePassword = uiState.errorMessagePassword,
         passwordVisible = passwordVisible,
-        onVisibilityChange = { passwordVisible = it },
+        onPasswordVisibilityChange = { passwordVisible = it },
         passwordConfirm = uiState.passwordConfirm,
         onPasswordConfirmChange = { signupViewModel.onConfirmPasswordChange(it) },
-        errorMessagePasswordConfirm = uiState.errorMessageConfirmPassword,
+        errorMessagePasswordConfirm = uiState.errorMessagePasswordConfirm,
         confirmPasswordVisible = confirmPasswordVisible,
-        onConfirmVisibilityChange = { confirmPasswordVisible = it },
+        onConfirmPasswordVisibilityChange = { confirmPasswordVisible = it },
         isFormValid = uiState.isFormValid,
         onSignupClick = { signupViewModel.onSignupButtonClick() },
         isLoading = uiState.isLoading,
