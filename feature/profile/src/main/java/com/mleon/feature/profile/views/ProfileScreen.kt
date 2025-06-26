@@ -38,7 +38,6 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
         address = state.address,
         userImageUrl = state.userImageUrl,
         isLoading = state.isLoading,
-
         isImageUploading = state.isImageUploading,
         isFormValid = state.isFormValid,
         errorMessageName = state.errorMessageName,

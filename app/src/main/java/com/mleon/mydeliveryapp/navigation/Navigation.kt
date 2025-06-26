@@ -10,10 +10,10 @@ import com.mleon.feature.cart.view.ui.views.CartScreen
 import com.mleon.feature.cart.view.viewmodel.CartViewModel
 import com.mleon.feature.checkout.view.CheckoutScreen
 import com.mleon.feature.orders.view.OrdersListScreen
+import com.mleon.feature.productlist.view.ProductListScreen
 import com.mleon.feature.profile.views.ProfileScreen
-import com.mleon.mydeliveryapp.presentation.views.LoginScreen
-import com.mleon.mydeliveryapp.presentation.views.ProductListScreen
-import com.mleon.mydeliveryapp.presentation.views.SignupScreen
+import com.mleon.feature.signup.view.SignupScreen
+import com.mleon.login.view.LoginScreen
 
 @Composable
 fun AppNavigation(navController: NavHostController) {

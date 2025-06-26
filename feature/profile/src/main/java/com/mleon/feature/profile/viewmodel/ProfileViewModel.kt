@@ -7,7 +7,7 @@ import android.util.Patterns
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.cloudinary.Cloudinary
-import com.mleon.core.data.repository.UserRepository
+import com.mleon.core.data.repository.interfaces.UserRepository
 import com.mleon.core.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,9 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel
-    @Inject
-    constructor(
+class ProfileViewModel @Inject constructor(
         private val myApplication: Application,
         private val userRepository: UserRepository,
         private val sharedPreferences: SharedPreferences,

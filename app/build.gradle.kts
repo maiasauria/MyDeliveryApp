@@ -98,5 +98,8 @@ dependencies {
     implementation(project(":feature:profile"))
     implementation(project(":feature:checkout"))
     implementation(project(":feature:orders"))
+    implementation(project(":feature:login"))
+    implementation(project(":feature:signup"))
+    implementation(project(":feature:productlist"))
 
 }
