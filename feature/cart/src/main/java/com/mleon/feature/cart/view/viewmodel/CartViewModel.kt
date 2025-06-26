@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-    //dependencies here
+
 ) : ViewModel() {
     private val _cartState =
         MutableStateFlow(CartState()) // MutableStateFlow es un flujo que puede ser modificado

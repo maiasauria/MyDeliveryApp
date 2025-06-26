@@ -66,6 +66,7 @@ dependencies {
     // Project Modules
     implementation(project(":feature:cart"))
     implementation(project(":core:model"))
+    implementation(project(":core:data"))
     implementation(project(":utils"))
     implementation(project(":core:data"))
     implementation(project(":core:navigation"))
