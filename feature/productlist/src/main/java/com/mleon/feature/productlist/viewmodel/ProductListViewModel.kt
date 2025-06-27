@@ -43,7 +43,6 @@ class ProductListViewModel
 
             viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
                 try {
-                    // delay(2000) // Simulate network delay
                     val nuevaLista = productRepository.getProducts()
                     allProducts = nuevaLista // Store the fetched products
                     _productState.update {
