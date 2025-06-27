@@ -1,10 +1,10 @@
 package com.mleon.core.data.datasource.remote
 
-import com.mleon.core.data.model.OrderRequest
-import com.mleon.core.data.model.OrderResponse
 import com.mleon.core.data.remote.OrderApiService
 import com.mleon.core.data.repository.interfaces.OrdersRepository
 import com.mleon.core.model.Order
+import com.mleon.core.data.model.OrderRequest
+import com.mleon.core.data.model.OrderResponse
 import javax.inject.Inject
 
 class OrderRemoteDataSource

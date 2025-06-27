@@ -1,0 +1,29 @@
+package com.mleon.core.data.datasource.local.dao
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
+import com.mleon.core.data.datasource.local.entities.OrderEntity
+
+@Dao
+interface OrderDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrder(order: OrderEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrders(orders: List<OrderEntity>)
+
+    @Update
+    suspend fun updateOrder(order: OrderEntity)
+
+    @Query("DELETE FROM orders WHERE id = :orderId")
+    suspend fun deleteOrder(orderId: String)
+
+    @Query("SELECT * FROM orders WHERE id = :orderId")
+    suspend fun getOrderById(orderId: String): OrderEntity?
+
+    @Query("SELECT * FROM orders")
+    suspend fun getAllOrders(): List<OrderEntity>
+}

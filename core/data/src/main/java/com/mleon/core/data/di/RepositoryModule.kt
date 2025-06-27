@@ -6,6 +6,9 @@ import com.mleon.core.data.datasource.remote.UserRemoteDataSource
 import com.mleon.core.data.remote.OrderApiService
 import com.mleon.core.data.remote.ProductsApiService
 import com.mleon.core.data.remote.UsersApiService
+import com.mleon.core.data.repository.CartItemRepositoryImpl
+import com.mleon.core.data.repository.ProductRepositoryImpl
+import com.mleon.core.data.repository.interfaces.CartItemRepository
 import com.mleon.core.data.repository.interfaces.OrdersRepository
 import com.mleon.core.data.repository.interfaces.ProductRepository
 import com.mleon.core.data.repository.interfaces.UserRepository
@@ -44,7 +47,7 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindProductRepository(impl: ProductRemoteDataSource): ProductRepository
+    abstract fun bindProductRepository(impl: ProductRepositoryImpl): ProductRepository
 
     @Binds
     @Singleton
@@ -53,4 +56,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindOrdersRepository(impl: OrderRemoteDataSource): OrdersRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCartItemRepository(impl: CartItemRepositoryImpl): CartItemRepository
 }

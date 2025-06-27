@@ -9,7 +9,7 @@ data class LoginRequest(
 
 data class LoginResponse(
     val message: String,
-    val user: UserApiModel?
+    val user: RemoteUser?
 )
 
 data class LoginResult(
@@ -34,16 +34,4 @@ data class RegisterResponse(
     val updatedAt: String? = null,
     val __v: Int? = null,
     val message: String? = null // present only on failure
-)
-
-data class UserApiModel(
-    val _id: String,
-    val email: String,
-    val name: String,
-    val lastname: String,
-    val address: String,
-    val userImageUrl: String? = null,
-    val createdAt: String,
-    val updatedAt: String,
-    val __v: Int
 )

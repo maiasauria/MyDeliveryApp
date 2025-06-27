@@ -1,11 +1,10 @@
 package com.mleon.feature.cart.di
 
-import android.content.Context
+import com.mleon.core.data.repository.interfaces.CartItemRepository
 import com.mleon.feature.cart.view.viewmodel.CartViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -16,8 +15,8 @@ class CartModule {
     @Provides
     @Singleton
     fun provideCartViewModel(
-        @ApplicationContext context: Context
+        cartItemRepository: CartItemRepository
     ): CartViewModel {
-        return CartViewModel()
+        return CartViewModel(cartItemRepository)
     }
 }

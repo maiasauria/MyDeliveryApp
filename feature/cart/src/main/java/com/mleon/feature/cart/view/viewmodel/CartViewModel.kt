@@ -3,6 +3,8 @@ package com.mleon.feature.cart.view.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mleon.core.data.datasource.local.entities.CartItemEntity
+import com.mleon.core.data.repository.interfaces.CartItemRepository
 import com.mleon.core.model.CartItem
 import com.mleon.core.model.Product
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-
+ private val cartItemRepository: CartItemRepository
 ) : ViewModel() {
     private val _cartState =
         MutableStateFlow(CartState()) // MutableStateFlow es un flujo que puede ser modificado
@@ -30,6 +32,17 @@ class CartViewModel @Inject constructor(
     fun addToCart(product: Product) {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) { //creamos una funcion suspendida. Dispatchers especifica que esta rutina esta ehcha para procesode IO.
             _cartState.update { it.copy(isLoading = true) }
+
+            val existingCartItem = cartItemRepository.getCartItemByProductId(product.id)
+            if(existingCartItem != null) {
+                // Si el producto ya está en el carrito, incrementamos la cantidad
+                val updatedCartItem = existingCartItem.copy(quantity = existingCartItem.quantity + 1)
+                cartItemRepository.updateCartItem(updatedCartItem)
+            } else {
+                // Si no está en el carrito, lo agregamos
+                cartItemRepository.insertCartItem(CartItemEntity(productId = product.id, quantity = 1))
+            }
+
             try {
                 _cartState.update { state ->
                     val existingItem = state.cartItems.find { it.product == product }
