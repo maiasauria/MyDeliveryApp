@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -50,6 +51,8 @@ fun ProfileView(
     errorMessageEmail: String = "",
     errorMessageAddress: String = "",
     isFormValid: Boolean = false,
+    onRequestCamera: () -> Unit = {},
+    onRequestGallery: () -> Unit = {},
 ) {
     val launcher =
         rememberLauncherForActivityResult(
@@ -69,10 +72,20 @@ fun ProfileView(
 
         UserImage(
             userImageUrl = userImageUrl,
-            onClick = { launcher.launch("image/*") },
+            onClick = onRequestGallery, // Default: tap image to pick from gallery
             modifier = Modifier.align(Alignment.CenterHorizontally),
         )
-
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Button(onClick = onRequestCamera, enabled = !isLoading) {
+                Text("Sacar una foto")
+            }
+            Button(onClick = onRequestGallery, enabled = !isLoading) {
+                Text("Subir una foto")
+            }
+        }
         ValidateTextField(
             value = name,
             onValueChange = onNameChange,

@@ -35,22 +35,6 @@ class LoginViewModel @Inject constructor(
         validateForm()
     }
 
-    private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
-        Log.e("LoginViewModel", "Error en coroutine: ${exception.message}", exception)
-        _uiState.update {
-            it.copy(
-                errorMessageLogin = "Ocurrió un error inesperado. Por favor, intenta de nuevo.",
-                isLoading = false,
-                isFormValid = false
-            )
-        }
-    }
-
-    /**
-     * Handles the login button click event.
-     * Validates the form and attempts to log in the user.
-     * Updates the UI state based on the login result.
-     */
     fun onLoginClick() {
         validateForm()
 
@@ -119,4 +103,16 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
+        Log.e("LoginViewModel", "Error en coroutine: ${exception.message}", exception)
+        _uiState.update {
+            it.copy(
+                errorMessageLogin = "Ocurrió un error inesperado. Por favor, intenta de nuevo.",
+                isLoading = false,
+                isFormValid = false
+            )
+        }
+    }
+
 }
