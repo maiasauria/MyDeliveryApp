@@ -1,10 +1,9 @@
 package com.mleon.core.data.datasource.remote
 
 import com.mleon.core.data.datasource.ProductDataSource
-import com.mleon.core.data.datasource.remote.model.RemoteProduct
+import com.mleon.core.data.datasource.remote.model.toProduct
 import com.mleon.core.data.remote.ProductsApiService
 import com.mleon.core.model.Product
-import com.mleon.core.model.enums.Categories
 import javax.inject.Inject
 
 
@@ -17,15 +16,3 @@ class ProductRemoteDataSource @Inject constructor( //Inyectamos el ApiService
     }
 }
 
-fun RemoteProduct.toProduct(): Product {
-    val safeCategory = categories?.mapNotNull { runCatching { Categories.valueOf(it) }.getOrNull() } ?: emptyList()
-    return Product(
-        id = _id,
-        name = name,
-        description = description ?: "",
-        price = price,
-        imageUrl = imageUrl ?: "",
-        category = safeCategory,
-        includesDrink = includesDrink ?: false,
-    )
-}

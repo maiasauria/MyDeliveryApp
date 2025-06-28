@@ -1,8 +1,8 @@
 package com.mleon.core.data.datasource.fake
 
+import com.mleon.core.data.datasource.OrderDataSource
 import com.mleon.core.data.model.OrderRequest
 import com.mleon.core.data.model.OrderResponse
-import com.mleon.core.data.repository.interfaces.OrdersRepository
 import com.mleon.core.model.CartItem
 import com.mleon.core.model.Order
 import com.mleon.core.model.Product
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class OrderFakeDataSource
     @Inject
-    constructor() : OrdersRepository {
+    constructor() : OrderDataSource {
         private val orders =
             mutableListOf<Order>(
                 Order(

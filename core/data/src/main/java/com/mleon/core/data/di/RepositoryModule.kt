@@ -1,5 +1,6 @@
 package com.mleon.core.data.di
 
+import com.mleon.core.data.datasource.OrderDataSource
 import com.mleon.core.data.datasource.ProductDataSource
 import com.mleon.core.data.datasource.UserDataSource
 import com.mleon.core.data.datasource.remote.OrderRemoteDataSource
@@ -9,10 +10,11 @@ import com.mleon.core.data.remote.OrderApiService
 import com.mleon.core.data.remote.ProductsApiService
 import com.mleon.core.data.remote.UsersApiService
 import com.mleon.core.data.repository.CartItemRepositoryImpl
+import com.mleon.core.data.repository.impl.OrderRepositoryImpl
 import com.mleon.core.data.repository.impl.ProductRepositoryImpl
 import com.mleon.core.data.repository.impl.UserRepositoryImpl
 import com.mleon.core.data.repository.interfaces.CartItemRepository
-import com.mleon.core.data.repository.interfaces.OrdersRepository
+import com.mleon.core.data.repository.interfaces.OrderRepository
 import com.mleon.core.data.repository.interfaces.ProductRepository
 import com.mleon.core.data.repository.interfaces.UserRepository
 import dagger.Binds
@@ -57,6 +59,10 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
+    abstract fun bindOrderDataSource(impl: OrderRemoteDataSource): OrderDataSource
+
+    @Binds
+    @Singleton
     abstract fun bindProductRepository(impl: ProductRepositoryImpl): ProductRepository
 
     @Binds
@@ -65,7 +71,7 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindOrdersRepository(impl: OrderRemoteDataSource): OrdersRepository
+    abstract fun bindOrdersRepository(impl: OrderRepositoryImpl): OrderRepository
 
     @Binds
     @Singleton

@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mleon.core.data.model.OrderRequest
-import com.mleon.core.data.repository.interfaces.OrdersRepository
+import com.mleon.core.data.repository.interfaces.OrderRepository
 import com.mleon.core.model.dtos.CartItemDto
 import com.mleon.core.model.enums.PaymentMethod
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CheckoutViewModel @Inject constructor(
-    private val repository: OrdersRepository,
+    private val repository: OrderRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CheckoutUiState())
     val uiState: StateFlow<CheckoutUiState> = _uiState
