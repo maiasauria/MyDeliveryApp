@@ -1,4 +1,4 @@
-package com.mleon.core.data.repository
+package com.mleon.core.data.repository.impl
 
 import android.util.Log
 import com.mleon.core.data.datasource.ProductDataSource
@@ -10,6 +10,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+// Esta clase implementa un DataSource que puede ser Remoto o Local
+// Y guarda los productos en Room
 class ProductRepositoryImpl @Inject constructor(
     private val productDao: ProductDao,
     private val productDataSource: ProductDataSource
@@ -30,6 +32,8 @@ class ProductRepositoryImpl @Inject constructor(
                         description = product.description,
                         price = product.price,
                         imageUrl = product.imageUrl ?: "", // Handle null imageUrl
+                        categories = product.category // Convert List<Categories> to List<String>
+
                     )
                 }
                 productDao.insertProducts(productEntities)
@@ -46,7 +50,8 @@ class ProductRepositoryImpl @Inject constructor(
                         description = entity.description,
                         price = entity.price,
                         imageUrl = entity.imageUrl,
-                        includesDrink = false, //TODO: Adjust based on your model
+                        includesDrink = false, //TODO: Implementar
+                        category = entity.categories
                     )
                 }
             }
