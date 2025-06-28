@@ -1,9 +1,9 @@
 package com.mleon.core.data.datasource.fake
 
 import android.util.Log
+import com.mleon.core.data.datasource.UserDataSource
 import com.mleon.core.data.model.LoginResult
 import com.mleon.core.data.model.RegisterResult
-import com.mleon.core.data.repository.interfaces.UserRepository
 import com.mleon.core.model.DatabaseUser
 import com.mleon.core.model.User
 import com.mleon.core.model.dtos.UserDto
@@ -12,28 +12,13 @@ import javax.inject.Inject
 
 class UserFakeDataSource
     @Inject
-    constructor() : UserRepository {
+    constructor() : UserDataSource {
         private val users: MutableList<DatabaseUser> =
             mutableListOf(
                 DatabaseUser(1, "Nicolas", "nicolas@gmail.com", "password123"),
                 DatabaseUser(2, "Andrea", "a@a.com", "password456"),
             )
         private var nextId = 3
-
-        override fun getUser(user: UserDto): User? {
-            val dbUser = users.find { it.email == user.email }
-            return dbUser?.toUser()
-        }
-
-        override fun saveUser(user: UserDto) {
-            if (users.none { it.email == user.email }) {
-                users.add(DatabaseUser(nextId++, user.name, user.email, user.password))
-            }
-        }
-
-        override fun deleteUser(user: UserDto) {
-            users.removeIf { it.email == user.email }
-        }
 
         override suspend fun registerUser(user: UserDto): RegisterResult {
             if (users.any { it.email == user.email }) {

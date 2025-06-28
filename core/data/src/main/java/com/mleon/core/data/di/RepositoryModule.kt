@@ -1,6 +1,7 @@
 package com.mleon.core.data.di
 
 import com.mleon.core.data.datasource.ProductDataSource
+import com.mleon.core.data.datasource.UserDataSource
 import com.mleon.core.data.datasource.remote.OrderRemoteDataSource
 import com.mleon.core.data.datasource.remote.ProductRemoteDataSource
 import com.mleon.core.data.datasource.remote.UserRemoteDataSource
@@ -9,6 +10,7 @@ import com.mleon.core.data.remote.ProductsApiService
 import com.mleon.core.data.remote.UsersApiService
 import com.mleon.core.data.repository.CartItemRepositoryImpl
 import com.mleon.core.data.repository.impl.ProductRepositoryImpl
+import com.mleon.core.data.repository.impl.UserRepositoryImpl
 import com.mleon.core.data.repository.interfaces.CartItemRepository
 import com.mleon.core.data.repository.interfaces.OrdersRepository
 import com.mleon.core.data.repository.interfaces.ProductRepository
@@ -51,11 +53,15 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
+    abstract fun bindUserDataSource(impl: UserRemoteDataSource): UserDataSource
+
+    @Binds
+    @Singleton
     abstract fun bindProductRepository(impl: ProductRepositoryImpl): ProductRepository
 
     @Binds
     @Singleton
-    abstract fun bindUserRepository(impl: UserRemoteDataSource): UserRepository
+    abstract fun bindUserRepository(impl: UserRepositoryImpl): UserRepository
 
     @Binds
     @Singleton

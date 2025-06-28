@@ -101,7 +101,6 @@ class LoginViewModel @Inject constructor(
             val user = result.user
             val userEmail = user?.email ?: ""
             sharedPreferences.edit { putString("user_email", userEmail) }
-            Log.d("LoginViewModel", "User logged in successfully: $userEmail")
 
             _uiState.update {
                 it.copy(
@@ -114,7 +113,7 @@ class LoginViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     loginSuccess = false,
-                    errorMessageLogin = result.message ?: "Credenciales incorrectas. Intenta de nuevo.",
+                    errorMessageLogin = result.message ?: "Error desconocido. Intenta de nuevo.",
                     isFormValid = false
                 )
             }

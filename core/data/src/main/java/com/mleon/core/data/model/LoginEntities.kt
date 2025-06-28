@@ -30,9 +30,8 @@ data class RegisterResponse(
     val lastname: String? = null,
     val address: String? = null,
     val userImageUrl: String? = null,
-    //val password: String? = null,
     val createdAt: String? = null,
     val updatedAt: String? = null,
     val __v: Int? = null,
-    val message: String? = null // present only on failure
+    val message: String? = null // presente solo si hay un error.
 )
