@@ -1,5 +1,7 @@
 package com.mleon.core.model
 
+import com.mleon.core.model.enums.Categories
+
 data class Product(
     val id: String,
     val name: String,
@@ -7,10 +9,5 @@ data class Product(
     val price: Double,
     val includesDrink: Boolean,
     val imageUrl: String? = "",
-    val category: List<Categories> = emptyList() ,
-
-) {
-    fun formatPrice(): String {
-        return "$${"%.2f".format(price)}"
-    }
-}
+    val category: List<Categories> = emptyList(),
+    )

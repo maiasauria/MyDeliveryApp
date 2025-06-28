@@ -9,6 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+// Dependencias para la aplicacion
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {

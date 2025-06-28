@@ -3,7 +3,7 @@ package com.mleon.core.data.repository.interfaces
 import com.mleon.core.data.model.LoginResult
 import com.mleon.core.data.model.RegisterResult
 import com.mleon.core.model.User
-import com.mleon.core.model.UserDto
+import com.mleon.core.model.dtos.UserDto
 
 interface UserRepository {
     fun getUser(user: UserDto): User?

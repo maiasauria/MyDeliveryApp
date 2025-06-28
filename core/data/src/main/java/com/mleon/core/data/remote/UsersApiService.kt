@@ -4,7 +4,7 @@ import com.mleon.core.data.model.LoginRequest
 import com.mleon.core.data.model.LoginResponse
 import com.mleon.core.data.model.RegisterResponse
 import com.mleon.core.model.User
-import com.mleon.core.model.UserDto
+import com.mleon.core.model.dtos.UserDto
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST

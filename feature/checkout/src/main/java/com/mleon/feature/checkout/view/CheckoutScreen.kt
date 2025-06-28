@@ -6,7 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.mleon.core.model.toDto
+import com.mleon.core.model.dtos.toDto
 import com.mleon.core.navigation.NavigationRoutes
 import com.mleon.feature.cart.view.viewmodel.CartViewModel
 import com.mleon.feature.checkout.viewmodel.CheckoutViewModel

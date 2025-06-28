@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mleon.core.data.model.RegisterResult
 import com.mleon.core.data.repository.interfaces.UserRepository
-import com.mleon.core.model.UserDto
+import com.mleon.core.model.dtos.UserDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers

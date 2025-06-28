@@ -1,7 +1,7 @@
-package com.mleon.core.data.repository.interfaces
+package com.mleon.core.data.datasource
 
 import com.mleon.core.model.Product
 
-interface ProductRepository {
+interface ProductDataSource {
     suspend fun getProducts(): List<Product>
 }

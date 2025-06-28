@@ -7,8 +7,8 @@ import com.mleon.core.data.model.RegisterResult
 import com.mleon.core.data.remote.UsersApiService
 import com.mleon.core.data.repository.interfaces.UserRepository
 import com.mleon.core.model.User
-import com.mleon.core.model.UserDto
-import com.mleon.core.model.toUser
+import com.mleon.core.model.dtos.UserDto
+import com.mleon.core.model.dtos.toUser
 import org.json.JSONObject
 import retrofit2.HttpException
 

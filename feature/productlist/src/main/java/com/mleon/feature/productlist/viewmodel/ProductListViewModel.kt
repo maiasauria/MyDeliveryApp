@@ -3,8 +3,8 @@ package com.mleon.feature.productlist.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mleon.core.data.repository.interfaces.ProductRepository
-import com.mleon.core.model.Categories
 import com.mleon.core.model.Product
+import com.mleon.core.model.enums.Categories
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers

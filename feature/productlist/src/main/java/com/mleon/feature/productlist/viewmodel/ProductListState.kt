@@ -1,7 +1,7 @@
 package com.mleon.feature.productlist.viewmodel
 
-import com.mleon.core.model.Categories
 import com.mleon.core.model.Product
+import com.mleon.core.model.enums.Categories
 
 data class ProductListState (
     val isLoading: Boolean = false,

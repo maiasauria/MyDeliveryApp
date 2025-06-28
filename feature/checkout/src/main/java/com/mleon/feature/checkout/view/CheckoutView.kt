@@ -36,7 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mleon.core.model.CartItem
-import com.mleon.core.model.PaymentMethod
+import com.mleon.core.model.enums.PaymentMethod
 import com.mleon.core.model.Product
 import com.mleon.utils.toCurrencyFormat
 import com.mleon.utils.ui.ListDivider

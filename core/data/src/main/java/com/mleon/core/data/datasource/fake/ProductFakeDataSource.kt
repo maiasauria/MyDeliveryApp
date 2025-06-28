@@ -1,11 +1,11 @@
 package com.mleon.core.data.datasource.fake
 
-import com.mleon.core.data.repository.interfaces.ProductRepository
-import com.mleon.core.model.Categories
+import com.mleon.core.data.datasource.ProductDataSource
 import com.mleon.core.model.Product
+import com.mleon.core.model.enums.Categories
 import javax.inject.Inject
 
-class ProductFakeDataSource @Inject constructor()  : ProductRepository {
+class ProductFakeDataSource @Inject constructor() : ProductDataSource {
 
     private val products = listOf(
         Product(
@@ -101,18 +101,6 @@ class ProductFakeDataSource @Inject constructor()  : ProductRepository {
     )
 
     override suspend fun getProducts(): List<Product> = products
-
-    override suspend fun filterProducts(name: String): List<Product> {
-        return products.filter {
-            it.name.contains(name, ignoreCase = true) ||
-                    it.description.contains(name, ignoreCase = true)
-        }
-    }
-
-    override suspend fun filterProductsByCategory(category: String): List<Product> {
-        TODO("Not yet implemented")
-    }
-
 
 }
 

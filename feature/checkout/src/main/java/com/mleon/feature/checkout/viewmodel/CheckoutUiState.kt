@@ -1,6 +1,6 @@
 package com.mleon.feature.checkout.viewmodel
 
-import com.mleon.core.model.PaymentMethod
+import com.mleon.core.model.enums.PaymentMethod
 
 data class CheckoutUiState(
     val isLoading: Boolean = false,

@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mleon.core.model.CartItem
-import com.mleon.core.model.Categories
+import com.mleon.core.model.enums.Categories
 import com.mleon.core.model.Product
 import com.mleon.utils.toCurrencyFormat
 import com.mleon.utils.ui.ListDivider

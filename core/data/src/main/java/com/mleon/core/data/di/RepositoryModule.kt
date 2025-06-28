@@ -1,5 +1,6 @@
 package com.mleon.core.data.di
 
+import com.mleon.core.data.datasource.ProductDataSource
 import com.mleon.core.data.datasource.remote.OrderRemoteDataSource
 import com.mleon.core.data.datasource.remote.ProductRemoteDataSource
 import com.mleon.core.data.datasource.remote.UserRemoteDataSource
@@ -44,6 +45,9 @@ abstract class RepositoryModule {
     }
 
     // --- BINDS DE INTERFACES A IMPLEMENTACIONES
+    @Binds
+    @Singleton
+    abstract fun bindProductDataSource(impl: ProductRemoteDataSource): ProductDataSource
 
     @Binds
     @Singleton

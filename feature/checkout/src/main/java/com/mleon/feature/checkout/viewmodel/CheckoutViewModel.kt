@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mleon.core.data.model.OrderRequest
 import com.mleon.core.data.repository.interfaces.OrdersRepository
-import com.mleon.core.model.CartItemDto
-import com.mleon.core.model.PaymentMethod
+import com.mleon.core.model.dtos.CartItemDto
+import com.mleon.core.model.enums.PaymentMethod
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers

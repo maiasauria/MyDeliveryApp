@@ -1,4 +1,4 @@
-package com.mleon.core.data.model
+package com.mleon.core.data.datasource.remote.model
 
 data class RemoteProduct(
     val name: String,

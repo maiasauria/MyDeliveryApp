@@ -1,4 +1,4 @@
-package com.mleon.core.model
+package com.mleon.core.model.enums
 
 enum class PaymentMethod(val displayName: String, val apiValue: String) {
     CASH("Efectivo", "CASH"),

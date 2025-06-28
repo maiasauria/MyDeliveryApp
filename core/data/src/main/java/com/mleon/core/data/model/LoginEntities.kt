@@ -1,5 +1,6 @@
 package com.mleon.core.data.model
 
+import com.mleon.core.data.datasource.remote.model.RemoteUser
 import com.mleon.core.model.User
 
 data class LoginRequest(

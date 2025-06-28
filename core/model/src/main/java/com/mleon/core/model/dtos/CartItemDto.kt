@@ -1,4 +1,6 @@
-package com.mleon.core.model
+package com.mleon.core.model.dtos
+
+import com.mleon.core.model.CartItem
 
 data class CartItemDto(
     val name: String,
