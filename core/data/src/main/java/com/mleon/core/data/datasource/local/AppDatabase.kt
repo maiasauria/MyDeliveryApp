@@ -22,6 +22,8 @@ import com.mleon.core.data.datasource.local.entities.ProductEntity
     version = 1,
     exportSchema = false
 )
+
+//Siempre que definamos un DAO debe estar declarado aca
 @TypeConverters(CategoriesListConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 

@@ -65,24 +65,14 @@ fun ProductCard(
                     .height(120.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            AsyncImage(
-                model =
-                    ImageRequest
-                        .Builder(LocalContext.current)
-                        .data(product.imageUrl)
-                        .crossfade(true)
-                        .build(),
-                placeholder = painterResource(R.drawable.ic_launcher_background),
+
+            ImageLoader(url = product.imageUrl ?: "",
                 contentDescription = product.name,
                 modifier =
                     Modifier
                         .height(110.dp)
                         .width(110.dp)
-                        .padding(end = 8.dp)
-                        .clip(RoundedCornerShape(10.dp)),
-                contentScale = ContentScale.Crop,
-                error = painterResource(R.drawable.ic_launcher_background),
-            )
+                )
 
             Column(
                 modifier =
@@ -250,7 +240,7 @@ fun CartProductCard(
                                     Modifier
                                         .size(35.dp)
                                         .background(
-                                            MaterialTheme.colorScheme.primary,
+                                            color = if (isLoading) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
                                             shape = CircleShape,
                                         ),
                             ) {
