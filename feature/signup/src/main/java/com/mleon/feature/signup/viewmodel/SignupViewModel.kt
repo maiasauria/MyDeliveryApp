@@ -53,7 +53,7 @@ class SignupViewModel
             validateForm()
         }
 
-        val exceptionHandler =
+        private val exceptionHandler =
             CoroutineExceptionHandler { _, exception ->
                 println("Error occurred: ${exception.message}")
             }

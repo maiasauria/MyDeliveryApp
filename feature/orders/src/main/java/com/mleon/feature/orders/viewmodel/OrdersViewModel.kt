@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mleon.core.data.repository.interfaces.OrderRepository
-import com.mleon.core.model.Order
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -17,31 +16,33 @@ import javax.inject.Inject
 class OrdersViewModel @Inject constructor(
     private val repository: OrderRepository
 ) : ViewModel() {
-    private val _orders = MutableStateFlow<List<Order>>(emptyList())
-    val orders: StateFlow<List<Order>> = _orders
+    private val _uiState = MutableStateFlow(OrdersUiState())
+    val uiState: StateFlow<OrdersUiState> = _uiState
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
-
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
-
-    val exceptionHandler =
+    private val exceptionHandler =
         CoroutineExceptionHandler { _, exception ->
             Log.e("OrdersViewModel", "Coroutine error", exception)
-            _error.value = "Ocurrió un error inesperado. Intenta nuevamente."
+            _uiState.value = _uiState.value.copy(
+                isLoading = false,
+                error = "Ocurrió un error inesperado. Intenta nuevamente."
+            )
         }
 
     fun fetchOrders() {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            _isLoading.value = true
-            _error.value = null
+            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             try {
-                _orders.value = repository.getOrders()
+                val orders = repository.getOrders()
+                _uiState.value = _uiState.value.copy(
+                    orders = orders,
+                    isLoading = false,
+                    error = null
+                )
             } catch (e: Exception) {
-                _error.value = e.message
-            } finally {
-                _isLoading.value = false
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = e.message
+                )
             }
         }
     }

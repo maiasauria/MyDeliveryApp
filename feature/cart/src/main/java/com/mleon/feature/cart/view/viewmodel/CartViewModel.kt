@@ -24,7 +24,7 @@ class CartViewModel @Inject constructor(
         MutableStateFlow(CartState()) // MutableStateFlow es un flujo que puede ser modificado
     val cartState = _cartState.asStateFlow()
 
-    val exceptionHandler = CoroutineExceptionHandler { _, exception ->
+    private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
         Log.e("CartViewModel", "Coroutine error", exception)
         _cartState.update { it.copy(errorMessage = "Ocurrió un error inesperado. Intenta nuevamente.") }
     }

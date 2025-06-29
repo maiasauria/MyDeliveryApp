@@ -24,7 +24,7 @@ class CheckoutViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(CheckoutUiState())
     val uiState: StateFlow<CheckoutUiState> = _uiState
 
-    val exceptionHandler =
+    private val exceptionHandler =
         CoroutineExceptionHandler { _, exception ->
             Log.e("CheckoutViewModel", "Coroutine error", exception)
             _uiState.update { it.copy(errorMessage = "Ocurrió un error inesperado. Intenta nuevamente.") }

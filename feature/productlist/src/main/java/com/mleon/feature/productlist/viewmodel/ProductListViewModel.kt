@@ -33,7 +33,7 @@ class ProductListViewModel
             )
         val productState = _productState.asStateFlow()
 
-        val exceptionHandler =
+        private val exceptionHandler =
             CoroutineExceptionHandler { _, exception ->
                 println("Error occurred: ${exception.message}")
             }
