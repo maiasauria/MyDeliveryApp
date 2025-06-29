@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_email_label">Email</string>
+    <string name="login_password_label">Contraseña</string>
+    <string name="login_no_account">¿No tenes una cuenta? Registrate acá</string>
+    <string name="login_button">Iniciar Sesión</string>
+</resources>

@@ -60,7 +60,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
     
-    // ??
+    //
     implementation(libs.androidx.runtime.android) //
     implementation(libs.androidx.ui.text.android) //
 
@@ -72,4 +72,5 @@ dependencies {
 
     // Project Modules
     implementation(project(":core:model"))
+    implementation(project(":core:navigation"))
 }

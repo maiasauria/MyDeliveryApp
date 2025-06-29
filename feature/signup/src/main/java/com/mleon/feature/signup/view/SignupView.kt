@@ -16,10 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mleon.core.navigation.NavigationRoutes
+import com.mleon.feature.signup.R
 import com.mleon.utils.ui.FullScreenLoadingIndicator
 import com.mleon.utils.ui.LogoImage
 import com.mleon.utils.ui.ValidateEmailField
@@ -70,7 +72,7 @@ fun SignupView(
             ValidateTextField(
                 value = name,
                 onValueChange = onNameChange,
-                label = "Nombre",
+                label = stringResource(R.string.signup_name_label),
                 isError = errorMessageName.isNotEmpty(),
                 errorMessage = errorMessageName,
                 enabled = !isLoading
@@ -78,7 +80,7 @@ fun SignupView(
             ValidateTextField(
                 value = lastname,
                 onValueChange = onLastnameChange,
-                label = "Apellido",
+                label = stringResource(R.string.signup_lastname_label),
                 isError = errorMessageLastname.isNotEmpty(),
                 errorMessage = errorMessageLastname,
                 enabled = !isLoading
@@ -86,7 +88,7 @@ fun SignupView(
             ValidateEmailField(
                 value = email,
                 onValueChange = onEmailChange,
-                label = "Email",
+                label = stringResource(R.string.signup_email_label),
                 isError = errorMessageEmail.isNotEmpty(),
                 errorMessage = errorMessageEmail,
                 enabled = !isLoading
@@ -94,7 +96,7 @@ fun SignupView(
             ValidatePasswordField(
                 value = password,
                 onValueChange = onPasswordChange,
-                label = "Contraseña",
+                label = stringResource(R.string.signup_password_label),
                 isError = errorMessagePassword.isNotEmpty(),
                 errorMessage = errorMessagePassword,
                 passwordVisible = passwordVisible,
@@ -104,7 +106,7 @@ fun SignupView(
             ValidatePasswordField(
                 value = passwordConfirm,
                 onValueChange = onPasswordConfirmChange,
-                label = "Confirma tu contraseña",
+                label = stringResource(R.string.signup_confirm_password_label),
                 isError = errorMessagePasswordConfirm.isNotEmpty(),
                 errorMessage = errorMessagePasswordConfirm,
                 passwordVisible = confirmPasswordVisible,
@@ -127,17 +129,17 @@ fun SignupView(
                 enabled = isFormValid && !isLoading,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Registrarse")
+                Text(stringResource(R.string.signup_button))
             }
             Spacer(modifier = Modifier.height(24.dp))
             TextButton(
                 onClick = {
-                    navController.navigate(NavigationRoutes.LOGIN) // Assuming you have a login route defined
+                    navController.navigate(NavigationRoutes.LOGIN)
                 },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !isLoading
             ) {
-                Text(text = "¿Ya tenes una cuenta? Inicia sesion acá")
+                Text(text = stringResource(R.string.signup_login_prompt))
             }
         }
     }

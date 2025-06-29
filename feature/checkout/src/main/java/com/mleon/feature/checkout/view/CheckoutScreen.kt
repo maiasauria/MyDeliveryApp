@@ -23,10 +23,9 @@ fun CheckoutScreen(
     val cartItems = cartState.value.cartItems.toList()
     val subTotalAmount = cartItems.sumOf { it.product.price * it.quantity }
     val shippingCost = 10.0 // Temporary fixed shipping cost
-    val totalAmount = subTotalAmount + shippingCost // Total amount calculation
-    val shippingAddress = "Calle123" // Placeholder for shipping address
+    val totalAmount = subTotalAmount + shippingCost
+    val shippingAddress = "Calle123" // TODO Reemplazar con el address del usuario
 
-    val cartItemDtos = cartItems.map { it.toDto() }
 
     LaunchedEffect(uiState.orderConfirmed) {
         if (uiState.orderConfirmed) {
@@ -48,7 +47,7 @@ fun CheckoutScreen(
         paymentMethod = uiState.paymentMethod,
         onConfirmOrder = {
             checkoutViewModel.confirmOrder(
-                cartItemDtos,
+                cartItems.map { it.toDto() },
                 shippingAddress,
                 uiState.paymentMethod,
                 totalAmount,
@@ -56,8 +55,5 @@ fun CheckoutScreen(
         },
         isLoading = uiState.isLoading,
         errorMessage = uiState.errorMessage,
-        onNavigateToOrders = {
-            navController.navigate(NavigationRoutes.PRODUCTS) // Navigate to orders screen
-        },
     )
 }

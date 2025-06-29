@@ -11,19 +11,21 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mleon.core.model.CartItem
-import com.mleon.core.model.enums.Categories
 import com.mleon.core.model.Product
+import com.mleon.core.model.enums.Categories
+import com.mleon.feature.cart.R
 import com.mleon.utils.toCurrencyFormat
+import com.mleon.utils.ui.HorizontalLoadingIndicator
 import com.mleon.utils.ui.ListDivider
 import com.mleon.utils.ui.ScreenTitle
 
@@ -32,23 +34,22 @@ fun CartView(
     cartItems: List<CartItem>,
     totalPrice: Double,
     isLoading: Boolean,
-    errorMessage: String?,
     onQuantityChange: (product: Product, quantity: Int) -> Unit,
     onRemoveFromCart: (product: Product) -> Unit,
     onCheckoutClick: () -> Unit
     ) {
     Column(modifier = Modifier.padding(16.dp)) {
-        ScreenTitle("Carrito")
+        ScreenTitle(stringResource(id = R.string.screen_title))
 
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f), // Take available space, allow content below
+                .weight(1f), // Usar espacio disponible
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             if (isLoading) {
                 item {
-                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                    HorizontalLoadingIndicator()
                 }
             }
             //Elementos del carrito
@@ -68,7 +69,7 @@ fun CartView(
             item {
                 Spacer(modifier = Modifier.height(18.dp))
                 Text(
-                    text = "Resumen del Pedido",
+                    text = stringResource(id = R.string.order_summary),
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
                 )
             }
@@ -80,7 +81,7 @@ fun CartView(
             }
             item {
                 Text(
-                    text = "Total de Productos: $${totalPrice.toCurrencyFormat()}",
+                    text = "${stringResource(id = R.string.prod_totals)} ${totalPrice.toCurrencyFormat()}",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -95,8 +96,8 @@ fun CartView(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "Total: $${totalPrice.toCurrencyFormat()}",
-                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                text = "${stringResource(id = R.string.totals)}${totalPrice.toCurrencyFormat()}",
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                 modifier = Modifier.weight(1f)
             )
             Button(
@@ -104,7 +105,7 @@ fun CartView(
                 modifier = Modifier.padding(start = 8.dp),
                 enabled = cartItems.isNotEmpty() && !isLoading
             ) {
-                Text("Ir a Pagar")
+                Text(stringResource(id = R.string.btn_action_cart))
             }
         }
     }
@@ -140,7 +141,6 @@ fun CartViewPreview() {
         ),
         totalPrice = 40.0,
         isLoading = false,
-        errorMessage = null,
         onQuantityChange = { _, _ -> },
         onRemoveFromCart = {},
         onCheckoutClick = {}

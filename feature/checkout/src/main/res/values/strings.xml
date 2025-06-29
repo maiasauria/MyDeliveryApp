@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="checkout_title">Confirmación del pedido</string>
+    <string name="checkout_total_products">Total: %1$d productos.</string>
+    <string name="checkout_subtotal">Subtotal: $%1$s</string>
+    <string name="checkout_shipping_cost">Costo de envio: $%1$s</string>
+    <string name="checkout_total">Total: $%1$s</string>
+    <string name="checkout_shipping_address">Direccion de envio: %1$s</string>
+    <string name="checkout_credit_card_tooltip">Estamos trabajando en la integración de pagos con tarjeta de crédito. Por favor, elegi otro método de pago por ahora.</string>
+    <string name="checkout_info">Info</string>
+    <string name="checkout_error">Error: %1$s</string>
+    <string name="checkout_confirm_order">Confirmar el pedido</string>
+</resources>

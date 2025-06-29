@@ -16,8 +16,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mleon.feature.cart.R
 
 @Composable
 fun EmptyCartView(onContinueShoppingClick: () -> Unit) {
@@ -34,7 +36,7 @@ fun EmptyCartView(onContinueShoppingClick: () -> Unit) {
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Tu carrito está vacío",
+                text = stringResource(id = R.string.empty_cart),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(vertical = 16.dp)
             )
@@ -43,7 +45,7 @@ fun EmptyCartView(onContinueShoppingClick: () -> Unit) {
                 onClick = onContinueShoppingClick,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Explorar Productos")
+                Text(stringResource(id = R.string.btn_action_emptycart))
             }
         }
     }

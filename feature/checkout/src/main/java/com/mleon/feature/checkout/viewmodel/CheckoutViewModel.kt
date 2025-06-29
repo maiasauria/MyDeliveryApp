@@ -38,8 +38,7 @@ class CheckoutViewModel @Inject constructor(
     ) {
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             Log.d(
-                "CheckoutViewModel",
-                "confirmOrder called with cartItems: $cartItems, shippingAddress: $shippingAddress, paymentMethod: $paymentMethod, total: $total",
+                "CheckoutViewModel", "confirmOrder called with cartItems: $cartItems, shippingAddress: $shippingAddress, paymentMethod: $paymentMethod, total: $total",
             )
 
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }

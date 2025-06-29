@@ -41,8 +41,11 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.mleon.core.model.Product
-import com.mleon.utils.R
+import com.mleon.utils.R as UtilsR
+import com.mleon.feature.cart.R as CartR
 import com.mleon.utils.toCurrencyFormat
+import androidx.compose.ui.res.stringResource
+import com.mleon.feature.cart.R
 
 
 @Composable
@@ -73,14 +76,15 @@ fun CartProductCard(
                 modifier = Modifier
                     .height(100.dp)
                     .width(100.dp)
+                    .padding(end = 8.dp)
                     .clip(RoundedCornerShape(10.dp)),
                 contentScale = ContentScale.Crop,
-                error = painterResource(R.drawable.ic_launcher_background),
-                placeholder = painterResource(R.drawable.ic_launcher_background)
+                error = painterResource(UtilsR.drawable.ic_launcher_background),
+                placeholder = painterResource(UtilsR.drawable.ic_launcher_background)
             )
             Column(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(4.dp)
                     .fillMaxWidth()
                     .fillMaxHeight()
             ) {
@@ -124,7 +128,7 @@ fun CartProductCard(
                             ) {
                                 Icon(
                                     imageVector = Icons.Filled.Remove,
-                                    contentDescription = "Remove",
+                                    contentDescription = stringResource(id = CartR.string.remove),
                                     tint = Color.White,
                                     modifier = Modifier.align(Alignment.Center)
                                 )
@@ -148,7 +152,7 @@ fun CartProductCard(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Add,
-                                    contentDescription = "Add",
+                                    contentDescription = stringResource(id = CartR.string.add),
                                     tint = Color.White,
                                     modifier = Modifier.align(Alignment.Center)
                                 )
@@ -182,13 +186,13 @@ fun RemoveFromCartButton(
         if (isLoading) {
             Icon(
                 imageVector = Icons.Default.Delete,
-                contentDescription = "Removing",
+                contentDescription = stringResource(id = CartR.string.removing),
                 tint = Color.Gray
             )
         } else {
             Icon(
                 imageVector = Icons.Default.Delete,
-                contentDescription = "Remove from cart",
+                contentDescription = stringResource(id = CartR.string.remove_from_cart),
             )
         }
     }
@@ -217,7 +221,7 @@ fun ProductCardCart(
                     .data(product.imageUrl)
                     .crossfade(true)
                     .build(),
-                placeholder = painterResource(R.drawable.ic_launcher_background),
+                placeholder = painterResource(UtilsR.drawable.ic_launcher_background),
                 contentDescription = product.name,
                 modifier = Modifier
                     .height(110.dp)
@@ -225,7 +229,7 @@ fun ProductCardCart(
                     .padding(end = 8.dp)
                     .clip(RoundedCornerShape(10.dp)),
                 contentScale = ContentScale.Crop,
-                error = painterResource(R.drawable.ic_launcher_background)
+                error = painterResource(UtilsR.drawable.ic_launcher_background)
             )
 
             Column(
@@ -271,7 +275,7 @@ fun ProductCardCart(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Add,
-                                contentDescription = "Add",
+                                contentDescription = stringResource(id = R.string.add),
                                 tint = Color.White,
                                 modifier = Modifier.align(Alignment.Center)
                             )

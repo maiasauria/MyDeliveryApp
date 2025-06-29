@@ -12,7 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
-
+import com.mleon.core.navigation.NavigationRoutes
 
 @Composable
 fun YappBottomBar(
@@ -31,10 +31,10 @@ fun YappBottomBar(
     }
 }
 sealed class BottomBarDestination(val route: String, val icon: ImageVector, val label: String) {
-    object Cart : BottomBarDestination("cart", Icons.Filled.ShoppingCart, "Carrito")
-    object Home : BottomBarDestination("products", Icons.Filled.Home, "Productos")
-    object Orders : BottomBarDestination("orders", Icons.Filled.Receipt, "Pedidos")
-    object Profile : BottomBarDestination("profile", Icons.Filled.Person, "Perfil")
+    object Cart : BottomBarDestination(NavigationRoutes.CART, Icons.Filled.ShoppingCart, "Carrito")
+    object Home : BottomBarDestination(NavigationRoutes.PRODUCTS, Icons.Filled.Home, "Productos")
+    object Orders : BottomBarDestination(NavigationRoutes.ORDERS, Icons.Filled.Receipt, "Pedidos")
+    object Profile : BottomBarDestination(NavigationRoutes.PROFILE, Icons.Filled.Person, "Perfil")
     companion object {
         val items = listOf( Home, Cart, Orders, Profile)
     }
@@ -44,7 +44,7 @@ sealed class BottomBarDestination(val route: String, val icon: ImageVector, val 
 @Composable
 fun YappBottomBarPreview() {
 YappBottomBar(
-    currentRoute = "home",
+    currentRoute = NavigationRoutes.PRODUCTS,
     onItemClick = {}
     )
 }

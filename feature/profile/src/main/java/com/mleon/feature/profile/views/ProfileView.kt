@@ -1,6 +1,6 @@
 package com.mleon.feature.profile.views
 
-import android.R
+
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,9 +24,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
+import com.mleon.feature.profile.R
 import com.mleon.utils.ui.ScreenTitle
 import com.mleon.utils.ui.ValidateEmailField
 import com.mleon.utils.ui.ValidateTextField
@@ -68,11 +70,12 @@ fun ProfileView(
                 .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        ScreenTitle("Perfil")
+        ScreenTitle(stringResource(R.string.profile_title))
+
 
         UserImage(
             userImageUrl = userImageUrl,
-            onClick = onRequestGallery, // Default: tap image to pick from gallery
+            onClick = onRequestGallery, //al tocar la imagen, se abre el selector de imagen de la galeria
             modifier = Modifier.align(Alignment.CenterHorizontally),
         )
         Row(
@@ -80,16 +83,16 @@ fun ProfileView(
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Button(onClick = onRequestCamera, enabled = !isLoading) {
-                Text("Sacar una foto")
+                Text(stringResource(R.string.profile_take_photo))
             }
             Button(onClick = onRequestGallery, enabled = !isLoading) {
-                Text("Subir una foto")
+                Text(stringResource(R.string.profile_upload_photo))
             }
         }
         ValidateTextField(
             value = name,
             onValueChange = onNameChange,
-            label = "Nombre",
+            label = stringResource(R.string.profile_name_label),
             isError = errorMessageName.isNotEmpty(),
             errorMessage = errorMessageName,
             enabled = !isLoading,
@@ -98,7 +101,7 @@ fun ProfileView(
         ValidateTextField(
             value = lastname,
             onValueChange = onLastnameChange,
-            label = "Apellido",
+            label = stringResource(R.string.profile_lastname_label),
             isError = errorMessageLastname.isNotEmpty(),
             errorMessage = errorMessageLastname,
             enabled = !isLoading,
@@ -107,7 +110,7 @@ fun ProfileView(
         ValidateEmailField(
             value = email,
             onValueChange = onEmailChange,
-            label = "Email",
+            label = stringResource(R.string.profile_email_label),
             isError = errorMessageEmail.isNotEmpty(),
             errorMessage = errorMessageEmail,
             enabled = !isLoading,
@@ -116,7 +119,7 @@ fun ProfileView(
         ValidateTextField(
             value = address,
             onValueChange = onAddressChange,
-            label = "Direccion",
+            label = stringResource(R.string.profile_address_label),
             isError = errorMessageAddress.isNotEmpty(),
             errorMessage = errorMessageAddress,
             enabled = !isLoading,
@@ -127,7 +130,7 @@ fun ProfileView(
             modifier = Modifier.align(Alignment.End),
             enabled = !isLoading && isFormValid,
         ) {
-            Text("Guardar")
+            Text(stringResource(R.string.profile_save))
         }
 
         if (isLoading) {
@@ -138,7 +141,7 @@ fun ProfileView(
             AlertDialog(
                 onDismissRequest = { /* Do nothing */ },
                 confirmButton = {},
-                title = { Text("Cargando Imagen") },
+                title = { Text(stringResource(R.string.profile_loading_image_title)) },
                 text = {
                     Column(
                         modifier =
@@ -149,7 +152,8 @@ fun ProfileView(
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         CircularProgressIndicator()
-                        Text("Por favor, espera mientras se carga la imagen.")
+                        Text(stringResource(R.string.profile_loading_image_text))
+
                     }
                 },
             )
@@ -172,14 +176,15 @@ fun UserImage(
         if (userImageUrl.isNotEmpty()) {
             Image(
                 painter = rememberAsyncImagePainter(model = userImageUrl),
-                contentDescription = "Profile Image",
+                contentDescription = stringResource(R.string.profile_image_content_desc),
+
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
             )
         } else {
             Icon(
                 painter = painterResource(id = R.drawable.ic_menu_camera),
-                contentDescription = "Add Image",
+                contentDescription = stringResource(R.string.profile_add_image_content_desc),
                 modifier =
                     Modifier
                         .fillMaxSize()

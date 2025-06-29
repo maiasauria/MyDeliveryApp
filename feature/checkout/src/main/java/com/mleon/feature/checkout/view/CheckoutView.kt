@@ -1,4 +1,3 @@
-// feature/checkout/src/main/java/com/mleon/feature/checkout/view/CheckoutView.kt
 package com.mleon.feature.checkout.view
 
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +16,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.RadioButton
@@ -33,12 +31,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mleon.core.model.CartItem
-import com.mleon.core.model.enums.PaymentMethod
 import com.mleon.core.model.Product
+import com.mleon.core.model.enums.PaymentMethod
+import com.mleon.feature.checkout.R
 import com.mleon.utils.toCurrencyFormat
+import com.mleon.utils.ui.HorizontalLoadingIndicator
 import com.mleon.utils.ui.ListDivider
 import com.mleon.utils.ui.ScreenTitle
 import kotlinx.coroutines.launch
@@ -57,7 +58,6 @@ fun CheckoutView(
     subtotalAmount: Double = 0.0,
     shippingCost: Double = 0.0,
     totalAmount: Double = 0.0,
-    onNavigateToOrders: () -> Unit,
 ) {
     var selectedPaymentMethod by remember { mutableStateOf<String?>(null) }
 
@@ -71,53 +71,15 @@ fun CheckoutView(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
-            ScreenTitle("Confirmación del pedido")
-
-            // Display the list of products
-//            LazyColumn(
-//                modifier = Modifier.fillMaxWidth(),
-//                verticalArrangement = Arrangement.spacedBy(4.dp),
-//            ) {
+            ScreenTitle(stringResource(id = R.string.checkout_title))
 
             if (isLoading) {
-//                    item {
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-//                    }
+                HorizontalLoadingIndicator()
             }
-//
-//                items(cartItems) { item ->
-//                    Row(
-//                        verticalAlignment = Alignment.CenterVertically,
-//                        modifier = Modifier
-//                            .padding(8.dp)
-//                            .fillMaxWidth(),
-//                    ) {
-//                        AsyncImage(
-//                            model = ImageRequest.Builder(LocalContext.current)
-//                                .data(item.product.imageUrl)
-//                                .crossfade(true)
-//                                .build(),
-//                            contentDescription = item.product.name,
-//                            modifier = Modifier
-//                                .height(60.dp)
-//                                .width(60.dp)
-//                                .clip(RoundedCornerShape(10.dp)),
-//                            contentScale = ContentScale.Crop,
-//                            error = painterResource(R.drawable.ic_launcher_background),
-//                            placeholder = painterResource(R.drawable.ic_launcher_background)
-//                        )
-//                        Spacer(modifier = Modifier.width(8.dp))
-//                        Column {
-//                            Text(text = "${item.product.name} x ${item.quantity}")
-//                            Text(text = "Subtotal: \$${(item.product.price * item.quantity.toDouble()).toCurrencyFormat()}")
-//                        }
-//                    }
-//                }
-//            }
 
             // Mostrar la cantidad total de productos (cart * cantidad)
             Text(
-                text = "Total: ${cartItems.sumOf { it.quantity }} productos.",
+                text = stringResource(id = R.string.checkout_total_products, cartItems.sumOf { it.quantity }),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(vertical = 8.dp),
             )
@@ -125,10 +87,10 @@ fun CheckoutView(
             Spacer(modifier = Modifier.height(12.dp))
             ListDivider()
             Spacer(modifier = Modifier.height(12.dp))
-            Text(text = "Subtotal: $${(subtotalAmount.toCurrencyFormat())}")
-            Text(text = "Costo de envio: $${(shippingCost.toCurrencyFormat())}")
-            Text(text = "Total: $${(totalAmount.toCurrencyFormat())}")
-            Text(text = "Direccion de envio: $shippingAddress")
+            Text(text = stringResource(id = R.string.checkout_subtotal, subtotalAmount.toCurrencyFormat()))
+            Text(text = stringResource(id = R.string.checkout_shipping_cost, shippingCost.toCurrencyFormat()))
+            Text(text = stringResource(id = R.string.checkout_total, totalAmount.toCurrencyFormat()))
+            Text(text = stringResource(id = R.string.checkout_shipping_address, shippingAddress))
 
             Spacer(modifier = Modifier.height(12.dp))
             ListDivider()
@@ -152,8 +114,7 @@ fun CheckoutView(
                         positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
                         tooltip = {
                             PlainTooltip {
-                                Text(
-                                    "Estamos trabajando en la integración de pagos con tarjeta de crédito. Por favor, elegi otro método de pago por ahora.",
+                                Text(stringResource(id = R.string.checkout_credit_card_tooltip)
                                 )
                             }
                         },
@@ -193,8 +154,7 @@ fun CheckoutView(
 
             if (errorMessage != null) {
                 Text(
-                    text = "Error: $errorMessage",
-                    color = MaterialTheme.colorScheme.error,
+                    text = stringResource(id = R.string.checkout_error, errorMessage),                    color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(bottom = 8.dp),
                 )
             }
@@ -208,7 +168,7 @@ fun CheckoutView(
             if (isLoading) {
                 CircularProgressIndicator()
             } else {
-                Text("Confirmar el pedido")
+                Text(stringResource(id = R.string.checkout_confirm_order))
             }
         }
     }
@@ -237,6 +197,5 @@ private fun CheckoutViewPreview() {
         subtotalAmount = 100.0,
         shippingCost = 20.0,
         totalAmount = 120.0,
-        onNavigateToOrders = {},
     )
 }

@@ -14,14 +14,22 @@ import com.mleon.feature.profile.views.ProfileScreen
 import com.mleon.feature.signup.view.SignupScreen
 import com.mleon.login.view.LoginScreen
 
+/**
+ * AppNavigation es la función que define las rutas de navegación de la aplicación.
+ * Utiliza NavHost para gestionar las diferentes pantallas y sus transiciones.
+ *
+ * @param navController El controlador de navegación que se utiliza para navegar entre las diferentes pantallas de la aplicación.
+ *  */
+
 @Composable
 fun AppNavigation(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = NavigationRoutes.LOGIN
+        startDestination = NavigationRoutes.LOGIN,
     ) {
         // Aquí definimos las rutas de navegación
-        composable(route = NavigationRoutes.LOGIN) { //a que ruta apuntamos
+        composable(route = NavigationRoutes.LOGIN) {
+            // a que ruta apuntamos
             LoginScreen(navController) // Pasamos el navController a LoginScreen
         }
         composable(route = NavigationRoutes.SIGNUP) {
@@ -45,6 +53,7 @@ fun AppNavigation(navController: NavHostController) {
     }
 }
 
+// Funcion de extensión para navegar a una ruta específica
 fun NavController.navigateToRoute(route: String) {
     this.navigate(route) {
         popUpTo(this@navigateToRoute.graph.startDestinationId) { // Limpia la pila de navegación hasta el destino inicial

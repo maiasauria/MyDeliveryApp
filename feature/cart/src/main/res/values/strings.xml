@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="remove">Eliminar</string>
+    <string name="add">Agregar</string>
+    <string name="removing">Eliminando</string>
+    <string name="remove_from_cart">Eliminar del carrito</string>
+    <string name="add_to_cart">Agregar al carrito</string>
+    <string name="currency_format">$%1$s</string>
+    <string name="screen_title">"Mi Carrito</string>
+    <string name="prod_totals">Total de Productos: $</string>
+    <string name="totals">Subtotal: $</string>
+    <string name="btn_action_cart">Ir a pagar</string>
+    <string name="btn_action_emptycart">Explorar productos</string>
+    <string name="empty_cart">Tu carrito está vacío</string>
+    <string name="order_summary">Resumen del Pedido</string>
+</resources>

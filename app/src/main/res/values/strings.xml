@@ -1,13 +1,3 @@
 <resources>
-    <string name="app_name">MyDeliveryApp</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="cre_una_cuenta">Creá una cuenta</string>
-    <string name="iniciar_sesion">Iniciar Sesión</string>
-    <string name="password">Contraseña</string>
-    <string name="email">E-mail</string>
-    <string name="search">Buscar</string>
-    <string name="EMAIL_INVALID">"El email no es válido"</string>
+    <string name="app_name">Yapp</string>
 </resources>

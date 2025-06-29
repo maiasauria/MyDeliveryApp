@@ -41,10 +41,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mleon.core.model.enums.Categories
 import com.mleon.core.model.Product
+import com.mleon.feature.productlist.R
+import com.mleon.utils.ui.HorizontalLoadingIndicator
 import com.mleon.utils.ui.ListDivider
 import com.mleon.utils.ui.ProductCard
 
@@ -84,17 +87,15 @@ fun ProductListView(
                 onCategorySelection = onCategorySelection,
             )
 
-            // TODO sacar a una función aparte
             LazyColumn(
                 modifier =
                     Modifier
                         .fillMaxSize()
                         .padding(0.dp),
-                //          verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 item {
                     if (isLoading) {
-                        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                        HorizontalLoadingIndicator()
                     }
                 }
 
@@ -181,7 +182,7 @@ fun ProductsBottomSheet(
                         .fillMaxWidth()
                         .padding(16.dp),
             ) {
-                Text("Ordenar por precio", style = MaterialTheme.typography.titleLarge)
+                Text(stringResource(R.string.productlist_order_by_price), style = MaterialTheme.typography.titleLarge)
                 ListDivider()
                 OutlinedButton(
                     onClick = {
@@ -195,8 +196,9 @@ fun ProductsBottomSheet(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text("Precio Ascendente")
-                        Icon(Icons.Filled.ArrowUpward, contentDescription = "Orden Ascendente")
+                        Text(stringResource(R.string.productlist_price_ascending))
+                        Icon(Icons.Filled.ArrowUpward, contentDescription = stringResource(R.string.productlist_order_ascending_content_desc))
+
                     }
                 }
                 OutlinedButton(
@@ -211,8 +213,9 @@ fun ProductsBottomSheet(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text("Precio Descendente")
-                        Icon(Icons.Filled.ArrowDownward, contentDescription = "Orden Descendente")
+                        Text(stringResource(R.string.productlist_price_descending))
+                        Icon(Icons.Filled.ArrowDownward, contentDescription = stringResource(R.string.productlist_order_descending_content_desc))
+
                     }
                 }
             }
@@ -237,8 +240,8 @@ fun SearchAndFiltersBar(
         TextField(
             value = searchQuery,
             onValueChange = onSearchQueryChange,
-            label = { Text("Buscar") },
-            placeholder = { Text("Buscar productos...") },
+            label = { Text(stringResource(R.string.productlist_search_label)) },
+            placeholder = { Text(stringResource(R.string.productlist_search_placeholder)) },
             modifier =
                 Modifier
                     .defaultMinSize(minHeight = 48.dp)
@@ -248,7 +251,8 @@ fun SearchAndFiltersBar(
                     IconButton(onClick = { onSearchQueryChange("") }) {
                         Icon(
                             imageVector = Icons.Filled.Close,
-                            contentDescription = "Limpiar la búsqueda",
+                            contentDescription = stringResource(R.string.productlist_clear_search_content_desc),
+
                         )
                     }
                 }
@@ -257,7 +261,7 @@ fun SearchAndFiltersBar(
         IconButton(onClick = onOpenFilters) {
             Icon(
                 Icons.Filled.ImportExport,
-                contentDescription = "Filtrar productos",
+                contentDescription = stringResource(R.string.productlist_filter_products_content_desc),
                 modifier = Modifier,
             )
         }

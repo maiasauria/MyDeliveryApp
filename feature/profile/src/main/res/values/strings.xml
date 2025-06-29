@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_title">Perfil</string>
+    <string name="profile_take_photo">Sacar una foto</string>
+    <string name="profile_upload_photo">Subir una foto</string>
+    <string name="profile_name_label">Nombre</string>
+    <string name="profile_lastname_label">Apellido</string>
+    <string name="profile_email_label">Email</string>
+    <string name="profile_address_label">Dirección</string>
+    <string name="profile_save">Guardar</string>
+    <string name="profile_loading_image_title">Cargando Imagen</string>
+    <string name="profile_loading_image_text">Por favor, espera mientras se carga la imagen.</string>
+    <string name="profile_image_content_desc">Profile Image</string>
+    <string name="profile_add_image_content_desc">Add Image</string>
+</resources>

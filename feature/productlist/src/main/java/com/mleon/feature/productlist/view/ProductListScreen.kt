@@ -29,7 +29,7 @@ fun ProductListScreen(
     val sheetState = rememberModalBottomSheetState()
 
     //Cart message
-    val cartMessage = uiState.cartMessage ?: ""
+    val cartMessage = uiState.cartMessage
     LaunchedEffect(cartMessage) {
         if (cartMessage.isNotEmpty()) {
             Toast.makeText(context, cartMessage, Toast.LENGTH_SHORT).show()
