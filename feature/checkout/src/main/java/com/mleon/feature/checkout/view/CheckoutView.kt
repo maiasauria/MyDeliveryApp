@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mleon.core.model.CartItem
@@ -41,6 +42,7 @@ import com.mleon.feature.checkout.R
 import com.mleon.utils.toCurrencyFormat
 import com.mleon.utils.ui.HorizontalLoadingIndicator
 import com.mleon.utils.ui.ListDivider
+import com.mleon.utils.ui.ScreenSubTitle
 import com.mleon.utils.ui.ScreenTitle
 import kotlinx.coroutines.launch
 
@@ -78,6 +80,7 @@ fun CheckoutView(
             }
 
             // Mostrar la cantidad total de productos (cart * cantidad)
+            ScreenSubTitle(stringResource(id = R.string.checkout_total_items))
             Text(
                 text = stringResource(id = R.string.checkout_total_products, cartItems.sumOf { it.quantity }),
                 style = MaterialTheme.typography.bodyLarge,
@@ -87,13 +90,15 @@ fun CheckoutView(
             Spacer(modifier = Modifier.height(12.dp))
             ListDivider()
             Spacer(modifier = Modifier.height(12.dp))
-            Text(text = stringResource(id = R.string.checkout_subtotal, subtotalAmount.toCurrencyFormat()))
-            Text(text = stringResource(id = R.string.checkout_shipping_cost, shippingCost.toCurrencyFormat()))
-            Text(text = stringResource(id = R.string.checkout_total, totalAmount.toCurrencyFormat()))
-            Text(text = stringResource(id = R.string.checkout_shipping_address, shippingAddress))
+
+            ScreenSubTitle(stringResource(id = R.string.checkout_shipping_address))
+            Text(text = shippingAddress)
 
             Spacer(modifier = Modifier.height(12.dp))
             ListDivider()
+            Spacer(modifier = Modifier.height(12.dp))
+
+            ScreenSubTitle(stringResource(id = R.string.checkout_payment_method_title))
 
             // Payment Method Selection
             Column(
@@ -113,10 +118,7 @@ fun CheckoutView(
                     TooltipBox(
                         positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
                         tooltip = {
-                            PlainTooltip {
-                                Text(stringResource(id = R.string.checkout_credit_card_tooltip)
-                                )
-                            }
+                            PlainTooltip { Text(stringResource(id = R.string.checkout_credit_card_tooltip)) }
                         },
                         state = tooltipState,
                     ) {
@@ -150,11 +152,25 @@ fun CheckoutView(
                 }
             }
 
+            Spacer(modifier = Modifier.height(12.dp))
+            ListDivider()
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(text = stringResource(id = R.string.checkout_subtotal, subtotalAmount.toCurrencyFormat()))
+            Text(text = stringResource(id = R.string.checkout_shipping_cost, shippingCost.toCurrencyFormat()))
+            Text(text = stringResource(id = R.string.checkout_total, totalAmount.toCurrencyFormat()),
+                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold))
+
+            Spacer(modifier = Modifier.height(12.dp))
+            ListDivider()
+
+
             Spacer(modifier = Modifier.height(24.dp))
 
             if (errorMessage != null) {
                 Text(
-                    text = stringResource(id = R.string.checkout_error, errorMessage),                    color = MaterialTheme.colorScheme.error,
+                    text = stringResource(id = R.string.checkout_error, errorMessage),
+                    color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(bottom = 8.dp),
                 )
             }

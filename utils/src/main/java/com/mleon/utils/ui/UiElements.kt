@@ -70,3 +70,13 @@ fun ScreenTitle(title: String) {
     )
     Spacer(modifier = Modifier.height(16.dp))
 }
+
+@Composable
+fun ScreenSubTitle(title: String) {
+
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleLarge,
+    )
+    Spacer(modifier = Modifier.height(16.dp))
+}
