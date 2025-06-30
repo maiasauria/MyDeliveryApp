@@ -1,6 +1,5 @@
 package com.mleon.core.data.repository.impl
 
-import android.util.Log
 import com.mleon.core.data.datasource.ProductDataSource
 import com.mleon.core.data.datasource.local.dao.ProductDao
 import com.mleon.core.data.datasource.local.entities.ProductEntity
@@ -18,43 +17,53 @@ class ProductRepositoryImpl @Inject constructor(
 ) : ProductRepository {
 
     override suspend fun getProducts(): List<Product> {
-        Log.d("ProductRepositoryImpl", "Fetching products...")
+
         return withContext(Dispatchers.IO) {
             try {
-                // Fetch products from source
+                // Traigo los productos desde la fuente
                 val products = productDataSource.getProducts()
 
-                // Save products to local database
-                val productEntities = products.map { product ->
-                    ProductEntity(
-                        id = product.id,
-                        name = product.name,
-                        description = product.description,
-                        price = product.price,
-                        imageUrl = product.imageUrl ?: "", // Handle null imageUrl
-                        categories = product.category // Convert List<Categories> to List<String>
+                // Me fijo en Room si ya existen productos con los mismos IDs
+                val existingIds = productDao.getAllProducts().map { it.id }.toSet()
 
-                    )
+                // Mapeo solo los nuevos productos que no están en la base de datos
+                val newProductEntities = products
+                    .filter { product -> product.id !in existingIds }
+                    .map { product ->
+                        ProductEntity(
+                            id = product.id,
+                            name = product.name,
+                            description = product.description,
+                            price = product.price,
+                            imageUrl = product.imageUrl ?: "",
+                            categories = product.category
+                        )
+                    }
+
+                // Inserto solo los nuevos productos en la base de datos
+                if (newProductEntities.isNotEmpty()) {
+                    productDao.insertProducts(newProductEntities)
                 }
-                productDao.insertProducts(productEntities)
 
-                // Return the products
+                // Devuelvo los productos que traje de la fuente
+                // TODO deberia traer los productos de room?
                 products
 
             } catch (e: Exception) {
-                // If API fails, fallback to local database
-                productDao.getAllProducts().map { entity ->
-                    Product(
-                        id = entity.id,
-                        name = entity.name,
-                        description = entity.description,
-                        price = entity.price,
-                        imageUrl = entity.imageUrl,
-                        includesDrink = false, //TODO: Implementar
-                        category = entity.categories
-                    )
+                // Si la API falla, traigo los productos de la base de datos
+                // Comentado porque estaba rompiendo la app al iniciar
+//                productDao.getAllProducts().map { entity ->
+//                    Product(
+//                        id = entity.id,
+//                        name = entity.name,
+//                        description = entity.description,
+//                        price = entity.price,
+//                        imageUrl = entity.imageUrl,
+//                        includesDrink = false, //TODO: Implementar
+//                        category = entity.categories
+//                    )
+                emptyList<Product>()
                 }
             }
         }
     }
-}

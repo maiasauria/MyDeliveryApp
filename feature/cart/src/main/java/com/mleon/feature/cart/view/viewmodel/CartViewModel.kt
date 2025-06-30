@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mleon.core.data.datasource.local.entities.CartItemEntity
+import com.mleon.core.data.datasource.local.entities.toCartItem
 import com.mleon.core.data.repository.interfaces.CartItemRepository
 import com.mleon.core.model.CartItem
 import com.mleon.core.model.Product
@@ -12,16 +13,16 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
- private val cartItemRepository: CartItemRepository
+    private val cartItemRepository: CartItemRepository,
 ) : ViewModel() {
-    private val _cartState =
-        MutableStateFlow(CartState()) // MutableStateFlow es un flujo que puede ser modificado
+    private val _cartState = MutableStateFlow(CartState()) // flujo que puede ser modificado
     val cartState = _cartState.asStateFlow()
 
     private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
@@ -29,52 +30,86 @@ class CartViewModel @Inject constructor(
         _cartState.update { it.copy(errorMessage = "Ocurrió un error inesperado. Intenta nuevamente.") }
     }
 
-    fun addToCart(product: Product) {
-        viewModelScope.launch(Dispatchers.IO + exceptionHandler) { //creamos una funcion suspendida. Dispatchers especifica que esta rutina esta ehcha para procesode IO.
-            _cartState.update { it.copy(isLoading = true) }
+    init {
+        loadCartItems()
+    }
 
+    fun addToCart(product: Product) =
+        launchWithLoading {
             val existingCartItem = cartItemRepository.getCartItemByProductId(product.id)
-            if(existingCartItem != null) {
-                // Si el producto ya está en el carrito, incrementamos la cantidad
+            if (existingCartItem != null) { // Si el producto ya está en el carrito, incrementamos la cantidad
                 val updatedCartItem = existingCartItem.copy(quantity = existingCartItem.quantity + 1)
                 cartItemRepository.updateCartItem(updatedCartItem)
+            } else { // Si no está en el carrito, lo agregamos
+                cartItemRepository.insertCartItem(
+                    // TODO esto deberia manejarlo el repositorio, no el viewmodel.
+                    CartItemEntity(productId = product.id, quantity = 1),
+                )
+            }
+            updateCartState(fetchCartItemsFromDb())
+        }
+
+    fun editQuantity(
+        product: Product,
+        quantity: Int,
+    ) = launchWithLoading {
+        val existingCartItem = cartItemRepository.getCartItemByProductId(product.id)
+        if (existingCartItem != null) {
+            if (quantity > 0) {
+                val updatedCartItem = existingCartItem.copy(quantity = quantity)
+                cartItemRepository.updateCartItem(updatedCartItem)
             } else {
-                // Si no está en el carrito, lo agregamos
-                cartItemRepository.insertCartItem(CartItemEntity(productId = product.id, quantity = 1))
+                cartItemRepository.deleteCartItem(existingCartItem.id)
             }
+        }
+        updateCartState(fetchCartItemsFromDb())
+    }
 
-            try {
-                _cartState.update { state ->
-                    val existingItem = state.cartItems.find { it.product == product }
-                    val updatedList = if (existingItem != null) {
-                        state.cartItems.map {
-                            if (it.product == product) it.copy(quantity = it.quantity + 1) else it
-                        }
-                    } else {
-                        state.cartItems + CartItem(product, 1)
-                    }
-                    val totalPrice = updatedList.sumOf { it.product.price * it.quantity }
-                    state.copy(cartItems = updatedList, totalPrice = totalPrice)
-                }
-            } catch (e: Exception) {
-                _cartState.update { it.copy(errorMessage = e.message) }
-            } finally {
-                _cartState.update { it.copy(isLoading = false) }
-            }
+    fun removeFromCart(product: Product) =
+        launchWithLoading {
+            val existingCartItem = cartItemRepository.getCartItemByProductId(product.id)
+            if (existingCartItem != null) { cartItemRepository.deleteCartItem(existingCartItem.id) }
+            updateCartState(fetchCartItemsFromDb())
+        }
+
+    fun clearCart() =
+        launchWithLoading {
+            cartItemRepository.deleteAllCartItems()
+            updateCartState(emptyList())
+        }
+
+    private fun loadCartItems() =
+        launchWithLoading {
+            updateCartState(fetchCartItemsFromDb())
+        }
+
+    // Fetch cart items from DB (suspend function)
+    // No tiene try catch porque se maneja en la funcion que la invoca.
+    // Tampoco abre una corutina, es suspend, se llama desde la corrutina.
+    private suspend fun fetchCartItemsFromDb(): List<CartItem> {
+        val cartItemsWithProducts = cartItemRepository.getAllCartItemsWithProducts()
+        val items = cartItemsWithProducts.first()
+        return items.map { it.toCartItem() }
+    }
+
+    // Actualiza el estado del carrito con los elementos y el precio total
+    private fun updateCartState(cartItems: List<CartItem>) {
+        val totalPrice = cartItems.sumOf { it.product.price * it.quantity }
+        _cartState.update { state ->
+            state.copy(cartItems = cartItems, totalPrice = totalPrice)
         }
     }
 
-    fun editQuantity(product: Product, quantity: Int) {
+    // Funcion helper para lanzar corutinas con manejo de excepciones y estado de carga
+    // Esta funcion se encarga de lanzar una corutina, actualizar el estado de carga y manejar excepciones.
+    // Le enviamos un bloque de codigo que se ejecutara dentro de la corutina.
+    // block: suspend () -> Unit es una función que no tiene parámetros ni devuelve nada.
+    private fun launchWithLoading(block: suspend () -> Unit) {
+        // creamos una funcion suspendida. Dispatchers especifica que esta rutina esta ehcha para procesode IO.
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            _cartState.update { it.copy(isLoading = true) }
+            _cartState.update { it.copy(isLoading = true, errorMessage = null) }
             try {
-                _cartState.update { state ->
-                    val updatedList = state.cartItems.map {
-                        if (it.product == product) it.copy(quantity = quantity) else it
-                    }.filter { it.quantity > 0 }
-                    val totalPrice = updatedList.sumOf { it.product.price * it.quantity }
-                    state.copy(cartItems = updatedList, totalPrice = totalPrice)
-                }
+                block()
             } catch (e: Exception) {
                 _cartState.update { it.copy(errorMessage = e.message) }
             } finally {
@@ -82,35 +117,4 @@ class CartViewModel @Inject constructor(
             }
         }
     }
-
-    fun removeFromCart(product: Product) {
-        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            try {
-                _cartState.update { it.copy(isLoading = true) }
-                _cartState.update { state ->
-                    val updatedList = state.cartItems.filter { it.product != product }
-                    val totalPrice = updatedList.sumOf { it.product.price * it.quantity }
-                    state.copy(cartItems = updatedList, totalPrice = totalPrice)
-                }
-            } catch (e: Exception) {
-                _cartState.update { it.copy(errorMessage = e.message) }
-            } finally {
-                _cartState.update { it.copy(isLoading = false) }
-            }
-        }
-    }
-
-    fun clearCart() {
-        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            _cartState.update { it.copy(isLoading = true) }
-            try {
-                _cartState.update { CartState() } // Resetea el estado del carrito
-            } catch (e: Exception) {
-                _cartState.update { it.copy(errorMessage = e.message) }
-            } finally {
-                _cartState.update { it.copy(isLoading = false) }
-            }
-        }
-    }
-
 }

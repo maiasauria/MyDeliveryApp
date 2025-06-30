@@ -9,7 +9,6 @@ data class CartItemWithProductEntity (
     @Relation(
         parentColumn = "productId",
         entityColumn = "id")
-
             val productEntity: ProductEntity,
 )
 

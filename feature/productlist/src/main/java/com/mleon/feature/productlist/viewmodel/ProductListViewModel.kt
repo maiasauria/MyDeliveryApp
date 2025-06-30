@@ -27,7 +27,7 @@ class ProductListViewModel
                 ProductListState(
                     products =
                         listOf(
-                            Product("0", "", "", 0.0, true, "", listOf()),
+                     //       Product("0", "", "", 0.0, true, "", listOf()),
                         ),
                 ),
             )
@@ -106,7 +106,7 @@ class ProductListViewModel
             println("Product added to cart: ${product.name}")
             _productState.update { state ->
                 state.copy(
-                    cartMessage = "Producto ${product.name} agregado al carrito",
+                    cartMessage = "${product.name} agregado al carrito",
                 )
             }
         }

@@ -11,6 +11,6 @@ interface CartItemRepository {
     suspend fun insertCartItem(cartItem: CartItemEntity)
     suspend fun updateCartItem(cartItem: CartItemEntity)
     suspend fun deleteCartItem(cartItemId: Int)
-    suspend fun deleteCartItems()
+    suspend fun deleteAllCartItems()
     suspend fun insertCartItems(cartItems: List<CartItemEntity>)
 }

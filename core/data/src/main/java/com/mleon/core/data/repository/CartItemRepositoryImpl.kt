@@ -16,6 +16,6 @@ class CartItemRepositoryImpl @Inject constructor(
     override suspend fun insertCartItem(cartItem: CartItemEntity) = cartItemDao.insertCartItem(cartItem)
     override suspend fun updateCartItem(cartItem: CartItemEntity) = cartItemDao.updateCartItem(cartItem)
     override suspend fun deleteCartItem(cartItemId: Int) = cartItemDao.deleteCartItem(cartItemId)
-    override suspend fun deleteCartItems() = cartItemDao.deleteCartItems()
+    override suspend fun deleteAllCartItems() = cartItemDao.deleteCartItems()
     override suspend fun insertCartItems(cartItems: List<CartItemEntity>) = cartItemDao.insertCartItems(cartItems)
 }

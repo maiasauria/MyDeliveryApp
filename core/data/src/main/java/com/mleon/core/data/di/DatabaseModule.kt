@@ -1,15 +1,16 @@
 package com.mleon.core.data.di
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Room
 import com.mleon.core.data.datasource.local.AppDatabase
-import com.mleon.core.data.datasource.local.AppDatabase.Companion.DATABASE_NAME
 import com.mleon.core.data.datasource.local.dao.ProductDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import java.util.concurrent.Executors
 import javax.inject.Singleton
 
 @Module
@@ -21,11 +22,11 @@ object DatabaseModule {
     fun provideDatabase(
         @ApplicationContext context: Context
     ): AppDatabase {
-        return Room.databaseBuilder(
-            context,
-            AppDatabase::class.java,
-            DATABASE_NAME
-        ).build()
+        return Room.databaseBuilder(context, AppDatabase::class.java, "db")
+            .setQueryCallback({ sqlQuery, bindArgs ->
+                Log.d("RoomQuery", "SQL: $sqlQuery, Args: $bindArgs")
+            }, Executors.newSingleThreadExecutor())
+            .build()
     }
 
     //No tienen Singleton porque no los necesitamos durante toda la vida de la app

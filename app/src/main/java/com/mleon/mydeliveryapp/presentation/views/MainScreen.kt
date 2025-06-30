@@ -6,6 +6,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import com.mleon.core.navigation.NavigationRoutes
 import com.mleon.mydeliveryapp.navigation.AppNavigation
 import com.mleon.mydeliveryapp.navigation.navigateToRoute
 import com.mleon.utils.ui.YappBottomBar
@@ -21,10 +22,13 @@ import com.mleon.utils.ui.YappBottomBar
 fun MainScreen(navController: NavHostController, currentRoute: String?) {
     Scaffold(
         bottomBar = {
-            YappBottomBar(
-                currentRoute = currentRoute,
-                onItemClick = { route -> navController.navigateToRoute(route) }
-            )
+            // Solo muestra la barra inferior si no estamos en las pantallas de Login o Signup
+           if (currentRoute != NavigationRoutes.LOGIN && currentRoute != NavigationRoutes.SIGNUP) {
+                YappBottomBar(
+                    currentRoute = currentRoute,
+                    onItemClick = { route -> navController.navigateToRoute(route) }
+                )
+            }
         }
     ) { innerPadding ->
         Column(Modifier.padding(innerPadding)) {
