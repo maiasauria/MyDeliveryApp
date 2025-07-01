@@ -28,24 +28,11 @@ private const val ERROR_INVALID_PASSWORD = "Contraseña incorrecta"
 
 class UserRemoteDataSource(
     private val apiService: UsersApiService,
-) : UserDataSource {
-    override suspend fun registerUser(
-        name: String,
-        lastname: String,
-        email: String,
-        password: String
-    ): RegisterResult =
+) : UserDataSource { override suspend fun registerUser(name: String, lastname: String, email: String, password: String): RegisterResult =
         try {
             val userDto = UserDto(
-                name = name,
-                lastname = lastname,
-                email = email,
-                password = password,
-                address = "",
-                userImageUrl = null
-            )
+                name = name, lastname = lastname, email = email, password = password, address = "", userImageUrl = null)
             val response = apiService.registerUser(userDto)
-
             handleRegisterResponse(userDto, response)
         } catch (e: HttpException) {
             handleRegisterHttpException(e)
@@ -54,16 +41,18 @@ class UserRemoteDataSource(
             RegisterResult.Error(errorMessage = ERROR_REGISTER_USER)
         }
 
-    override suspend fun loginUser(email: String, password: String): LoginResult =
-        try {
-            val response = apiService.loginUser(LoginRequest(email, password))
-            handleLoginResponse(response)
+    override suspend fun loginUser(email: String, password: String): LoginResult {
+        return try {
+            val loginRequest = LoginRequest(email, password)
+            val responseBody: LoginResponse = apiService.loginUser(loginRequest)
+            handleLoginResponse(responseBody)
         } catch (e: HttpException) {
             handleLoginHttpException(e)
         } catch (e: Exception) {
-            Log.e("UserRepositoryApi", "Error during login: ${e.message}")
-            LoginResult(user = null, message = ERROR_LOGIN)
+            Log.e("UserRemoteDataSource", "General Exception during login: ${e.message}", e)
+            return LoginResult.Error(errorMessage = "Error inesperado al iniciar sesión: ${e.localizedMessage ?: ERROR_UNKNOWN}")
         }
+    }
 
     override suspend fun getUserByEmail(email: String): User? =
         try {
@@ -93,11 +82,16 @@ class UserRemoteDataSource(
     // Funciones auxiliares para manejar las respuestas y excepciones
 
     // Maneja los resultados de inicio de sesión
-    private fun handleLoginResponse(response: LoginResponse): LoginResult {
-        if (response.user != null) {
-            return LoginResult(response.user.toUser(), message = LOGIN_OK)
+    private fun handleLoginResponse(responseBody: LoginResponse): LoginResult {
+        if (responseBody.user != null) {
+            val domainUser: User = responseBody.user.toUser()
+            return LoginResult.Success(
+                message = responseBody.message,
+                user = domainUser
+            )
         }
-        return LoginResult(user = null, message = ERROR_LOGIN)
+        Log.w("UserRemoteDataSource", "Login HTTP call successful but no user data in response body.")
+        return LoginResult.Error( errorMessage = ERROR_LOGIN)
     }
 
     private fun handleLoginHttpException(e: HttpException): LoginResult {
@@ -112,7 +106,7 @@ class UserRemoteDataSource(
             500 -> ERROR_INTERNAL_SERVER
             else -> ERROR_LOGIN
         }
-        return LoginResult(user = null, message = errorMsg)
+        return LoginResult.Error(errorMessage = errorMsg, errorCode = code)
     }
 
     // Maneja los resultados de registro

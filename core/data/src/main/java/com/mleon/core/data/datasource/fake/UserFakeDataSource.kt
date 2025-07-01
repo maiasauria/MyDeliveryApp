@@ -47,15 +47,13 @@ class UserFakeDataSource
         ): LoginResult {
             Log.d("UserRepositoryImpl", "Attempting login for email: $email")
             val dbUser = users.find { it.email == email && it.password == password }
-            return if (dbUser != null) {
-                LoginResult(
+            return if (dbUser != null) { LoginResult.Success(
                     user = dbUser.toUser(),
-                    message = "Login successful",
+                    message = "Sesion iniciada",
                 )
             } else {
-                LoginResult(
-                    user = null,
-                    message = "Invalid email or password",
+                LoginResult.Error(
+                    errorMessage = "Email o contraseña inválidos",
                 )
             }
         }

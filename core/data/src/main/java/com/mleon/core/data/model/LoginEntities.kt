@@ -13,10 +13,10 @@ data class LoginResponse(
     val user: RemoteUser?
 )
 
-data class LoginResult(
-    val user: User?,
-    val message: String?
-)
+sealed class LoginResult {
+    data class Success(val message: String, val user: User) : LoginResult()
+    data class Error(val errorMessage: String, val errorCode: Int? = null) : LoginResult()
+}
 
 sealed class RegisterResult {
     data class Success(val message: String, val user: User) : RegisterResult()

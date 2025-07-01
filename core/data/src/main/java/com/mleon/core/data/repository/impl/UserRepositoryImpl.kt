@@ -10,7 +10,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
-    private val userDataSource: UserDataSource,
+    private val userDataSource: UserDataSource, //interfaz, no implementacion. la provee Hilt.
 ) : UserRepository {
     override suspend fun registerUser(name: String, lastname: String, email: String, password: String) : RegisterResult =
         withContext(Dispatchers.IO) { // Use withContext to ensure the operation runs on the IO dispatcher

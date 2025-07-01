@@ -6,8 +6,9 @@ import android.util.Patterns
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mleon.core.data.domain.LoginUserParams
+import com.mleon.core.data.domain.LoginUserUseCase
 import com.mleon.core.data.model.LoginResult
-import com.mleon.core.data.repository.interfaces.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -20,8 +21,9 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val sharedPreferences: SharedPreferences,
-    private val userRepository: UserRepository
-) : ViewModel() {
+    private val loginUserUseCase: LoginUserUseCase,
+
+    ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState
 
@@ -39,9 +41,7 @@ class LoginViewModel @Inject constructor(
         validateForm()
 
         if (!_uiState.value.isFormValid) {
-            _uiState.update {
-                it.copy(errorMessageLogin = "Por favor, completa todos los campos correctamente.")
-            }
+            _uiState.update { it.copy(errorMessageLogin = "Por favor, completa todos los campos correctamente.") }
             return
         }
 
@@ -49,12 +49,8 @@ class LoginViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             try {
-                val result = userRepository.loginUser(
-                    email = _uiState.value.email,
-                    password = _uiState.value.password
-                )
+                val result = loginUserUseCase(LoginUserParams(email = _uiState.value.email, password = _uiState.value.password))
                 handleLoginResult(result)
-
             } catch (e: Exception) {
                 _uiState.update { it.copy(errorMessageLogin = "Error: ${e.message}") }
             } finally {
@@ -81,25 +77,27 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun handleLoginResult(result: LoginResult) {
-        if (result.user != null) {
-            val user = result.user
-            val userEmail = user?.email ?: ""
-            sharedPreferences.edit { putString("user_email", userEmail) }
-
-            _uiState.update {
-                it.copy(
-                    loginSuccess = true,
-                    errorMessageLogin = "",
-                    password = ""
-                )
+        when (result) {
+            is LoginResult.Success -> {
+                _uiState.update {
+                    it.copy(
+                        loginSuccess = true,
+                        errorMessageLogin = "", // Limpiar errores previos
+                        password = "", // Limpiar contraseña del estado por seguridad
+                    )
+                }
+                sharedPreferences.edit { putString("user_email", result.user.email) }
+                Log.d("LoginViewModel", "Login successful for user: ${result.user.email}, Name: ${result.user.name}")
             }
-        } else {
-            _uiState.update {
-                it.copy(
-                    loginSuccess = false,
-                    errorMessageLogin = result.message ?: "Error desconocido. Intenta de nuevo.",
-                    isFormValid = false
-                )
+            is LoginResult.Error -> {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        loginSuccess = false,
+                        errorMessageLogin = result.errorMessage
+                    )
+                }
+                Log.w("LoginViewModel", "Login failed: ${result.errorMessage} (Code: ${result.errorCode})")
             }
         }
     }
