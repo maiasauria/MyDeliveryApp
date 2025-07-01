@@ -29,15 +29,29 @@ private const val ERROR_INVALID_PASSWORD = "Contraseña incorrecta"
 class UserRemoteDataSource(
     private val apiService: UsersApiService,
 ) : UserDataSource {
-    override suspend fun registerUser(user: UserDto): RegisterResult =
+    override suspend fun registerUser(
+        name: String,
+        lastname: String,
+        email: String,
+        password: String
+    ): RegisterResult =
         try {
-            val response = apiService.registerUser(user)
-            handleRegisterResponse(user, response)
+            val userDto = UserDto(
+                name = name,
+                lastname = lastname,
+                email = email,
+                password = password,
+                address = "",
+                userImageUrl = null
+            )
+            val response = apiService.registerUser(userDto)
+
+            handleRegisterResponse(userDto, response)
         } catch (e: HttpException) {
             handleRegisterHttpException(e)
         } catch (e: Exception) {
             Log.e("UserRemoteDataSource", "Error during registration: ${e.message}")
-            RegisterResult(user = null, message = ERROR_REGISTER_USER)
+            RegisterResult.Error(errorMessage = ERROR_REGISTER_USER)
         }
 
     override suspend fun loginUser(email: String, password: String): LoginResult =
@@ -103,16 +117,17 @@ class UserRemoteDataSource(
 
     // Maneja los resultados de registro
     private fun handleRegisterResponse(user: UserDto, response: RegisterResponse): RegisterResult {
-        // Si la respuesta HTTP fue exitosa, pero no hay un mensaje
-        if (response.message != null) {
-            Log.e("UserRepositoryApi", "Error during registration: ${response.message}")
-            return RegisterResult(user = null, message = ERROR_REGISTER_USER)
-        }
         // Si la respuesta contiene los campos esperados, creamos el objeto User
         if (response.email != null && response.name != null && response.lastname != null) {
-            return RegisterResult(user = user.toUser(), message = REGISTER_OK)
+            return RegisterResult.Success(user = user.toUser(), message = REGISTER_OK)
         }
-        return RegisterResult(user = null, message = ERROR_REGISTER_USER)
+        // Si la respuesta HTTP fue exitosa, pero hay un mensaje
+         if (response.message != null) {
+            Log.e("UserRepositoryApi", "Error during registration: ${response.message}")
+            return RegisterResult.Error(errorMessage = response.message)
+        }
+        // Generic error
+        return RegisterResult.Error(errorMessage = ERROR_REGISTER_USER)
     }
 
     private fun handleRegisterHttpException(e: HttpException): RegisterResult {
@@ -121,6 +136,7 @@ class UserRemoteDataSource(
         val message = JSONObject(errorBody ?: "{}").optString("message", ERROR_UNKNOWN)
         Log.e("UserRepositoryApi", "HTTP error during registration: $code - $message")
         // Maneja los errores HTTP específicos
+        // Si el error es 400, 409, 404 o 500, devolvemos un mensaje específico
         val errorMsg = when (code) {
             400 -> ERROR_BAD_REQUEST
             409 -> ERROR_CONFLICT
@@ -128,7 +144,6 @@ class UserRemoteDataSource(
             500 -> ERROR_INTERNAL_SERVER
             else -> ERROR_REGISTER_USER
             }
-        // Si el error es 400, 409, 404 o 500, devolvemos un mensaje específico
-        return RegisterResult(user = null, message = errorMsg)
+        return RegisterResult.Error(errorCode = code, errorMessage = errorMsg)
     }
 }

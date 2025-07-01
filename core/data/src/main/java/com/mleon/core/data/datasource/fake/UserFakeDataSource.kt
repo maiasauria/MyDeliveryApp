@@ -6,7 +6,6 @@ import com.mleon.core.data.model.LoginResult
 import com.mleon.core.data.model.RegisterResult
 import com.mleon.core.model.DatabaseUser
 import com.mleon.core.model.User
-import com.mleon.core.model.dtos.UserDto
 import com.mleon.core.model.toUser
 import javax.inject.Inject
 
@@ -20,26 +19,27 @@ class UserFakeDataSource
             )
         private var nextId = 3
 
-        override suspend fun registerUser(user: UserDto): RegisterResult {
-            if (users.any { it.email == user.email }) {
-                return RegisterResult(
-                    user = null,
-                    message = "Email already exists",
-                )
-            }
-            val dbUser =
-                DatabaseUser(
-                    id = nextId++,
-                    name = user.name,
-                    email = user.email,
-                    password = user.password,
-                )
-            users.add(dbUser)
-            return RegisterResult(
-                user = dbUser.toUser(),
-                message = "User registered successfully",
-            )
+    override suspend fun registerUser(
+        name: String,
+        lastname: String,
+        email: String,
+        password: String
+    ): RegisterResult {
+        if (users.any { it.email == email }) {
+            return RegisterResult.Error(errorMessage = "Email already exists")
         }
+        val dbUser = DatabaseUser(
+            id = nextId++,
+            name = name,
+            email = email,
+            password = password,
+        )
+        users.add(dbUser)
+        return RegisterResult.Success(
+            user = dbUser.toUser(),
+            message = "User registered successfully"
+        )
+    }
 
         override suspend fun loginUser(
             email: String,

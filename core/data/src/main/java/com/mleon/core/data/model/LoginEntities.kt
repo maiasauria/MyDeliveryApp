@@ -18,10 +18,10 @@ data class LoginResult(
     val message: String?
 )
 
-data class RegisterResult(
-    val user: User?,
-    val message: String?
-)
+sealed class RegisterResult {
+    data class Success(val message: String, val user: User) : RegisterResult()
+    data class Error(val errorMessage: String, val errorCode: Int? = null) : RegisterResult()
+}
 
 data class RegisterResponse(
     val _id: String? = null,

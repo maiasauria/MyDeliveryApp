@@ -5,7 +5,6 @@ import com.mleon.core.data.model.LoginResult
 import com.mleon.core.data.model.RegisterResult
 import com.mleon.core.data.repository.interfaces.UserRepository
 import com.mleon.core.model.User
-import com.mleon.core.model.dtos.UserDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -13,9 +12,9 @@ import javax.inject.Inject
 class UserRepositoryImpl @Inject constructor(
     private val userDataSource: UserDataSource,
 ) : UserRepository {
-    override suspend fun registerUser(user: UserDto): RegisterResult =
-        withContext(Dispatchers.IO) {
-            userDataSource.registerUser(user)
+    override suspend fun registerUser(name: String, lastname: String, email: String, password: String) : RegisterResult =
+        withContext(Dispatchers.IO) { // Use withContext to ensure the operation runs on the IO dispatcher
+             userDataSource.registerUser(name = name, lastname = lastname, email = email, password = password)
         }
 
     override suspend fun loginUser(

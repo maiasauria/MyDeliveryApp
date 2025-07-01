@@ -6,14 +6,14 @@ import android.util.Patterns
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mleon.core.data.domain.RegisterUserParams
+import com.mleon.core.data.domain.RegisterUserUseCase
 import com.mleon.core.data.model.RegisterResult
-import com.mleon.core.data.repository.interfaces.UserRepository
-import com.mleon.core.model.dtos.UserDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,11 +22,12 @@ import javax.inject.Inject
 class SignupViewModel
     @Inject
     constructor(
-        private val userRepository: UserRepository,
         private val sharedPreferences: SharedPreferences,
+        private val registerUserUseCase: RegisterUserUseCase,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(SignupUiState())
-        val uiState: StateFlow<SignupUiState> = _uiState
+    //_uiState.asStateFlow(): expone solo la interfaz inmutable (StateFlow), evitando que otras clases modifiquen el estado. TODO revisar el resto.
+        val uiState: StateFlow<SignupUiState> = _uiState.asStateFlow()
 
         fun onEmailChange(email: String) {
             _uiState.update { it.copy(email = email) }
@@ -53,24 +54,31 @@ class SignupViewModel
             validateForm()
         }
 
-        private val exceptionHandler =
-            CoroutineExceptionHandler { _, exception ->
-                println("Error occurred: ${exception.message}")
-            }
+        private val exceptionHandler = CoroutineExceptionHandler { _, exception -> println("Error occurred: ${exception.message}") }
 
         fun onSignupButtonClick() {
             validateForm()
+
+            // Fail first: Si no es valido, no continuar con el registro
             if (!_uiState.value.isFormValid) {
                 _uiState.update { it.copy(errorMessageSignup = "Por favor, completa todos los campos correctamente.") }
                 return
             }
 
-            _uiState.update { it.copy(isLoading = true, errorMessageSignup = "") }
+            _uiState.update { it.copy(isLoading = true, errorMessageSignup = "", signupSuccess = false) }
 
-            viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+            //No indico el dispatcher porque el caso de uso ya lo maneja internamente
+            viewModelScope.launch(exceptionHandler) {
                 try {
-                    val userDto = createUserDto()
-                    val result = userRepository.registerUser(userDto)
+                    val currentState = _uiState.value // Obtiene el estado actual una vez
+                    val params = RegisterUserParams(
+                        name = currentState.name,
+                        lastname = currentState.lastname,
+                        email = currentState.email,
+                        password = currentState.password
+                    )
+                    val result = registerUserUseCase(params)
+
                     handleRegistrationResult(result)
                 } catch (e: Exception) {
                     _uiState.update {
@@ -96,70 +104,39 @@ class SignupViewModel
             _uiState.update {
                 it.copy(
                     errorMessageName = if (!isNameValid && currentState.name.isNotEmpty()) "El nombre no puede estar vacío" else "",
-                    errorMessageLastname =
-                        if (!isLastnameValid && currentState.lastname.isNotEmpty()) {
-                            "El apellido no puede estar vacío"
-                        } else {
-                            ""
-                        },
+                    errorMessageLastname = if (!isLastnameValid && currentState.lastname.isNotEmpty()) { "El apellido no puede estar vacío" } else { "" },
                     errorMessageEmail = if (!isEmailValid && currentState.email.isNotEmpty()) "Email inválido" else "",
-                    errorMessagePassword =
-                        if (!isPasswordValid && currentState.password.isNotEmpty()) {
-                            "La contraseña debe tener entre 8 y 12 caracteres"
-                        } else {
-                            ""
-                        },
-                    errorMessagePasswordConfirm =
-                        if (!isPasswordConfirmValid && currentState.passwordConfirm.isNotEmpty()) {
-                            "Las contraseñas no coinciden"
-                        } else {
-                            ""
-                        },
+                    errorMessagePassword = if (!isPasswordValid && currentState.password.isNotEmpty()) { "La contraseña debe tener entre 8 y 12 caracteres" } else { "" },
+                    errorMessagePasswordConfirm = if (!isPasswordConfirmValid && currentState.passwordConfirm.isNotEmpty()) { "Las contraseñas no coinciden" } else { "" },
                     isFormValid = isNameValid && isLastnameValid && isEmailValid && isPasswordValid && isPasswordConfirmValid,
                 )
             }
         }
 
-        private fun createUserDto(): UserDto {
-            // Accede al estado actual una vez para construir el DTO
-            val currentState = _uiState.value
-            return UserDto(
-                name = currentState.name,
-                email = currentState.email,
-                password = currentState.password,
-                lastname = currentState.lastname,
-                address = "",
-                userImageUrl = null,
-            )
-        }
-
-        private fun handleRegistrationResult(result: RegisterResult) {
-            if (result.user != null) {
-                // Si el registro fue exitoso, actualiza el estado de la UI
+    private fun handleRegistrationResult(result: RegisterResult) {
+        when (result) {
+            is RegisterResult.Success -> {
                 _uiState.update {
                     it.copy(
                         signupSuccess = true,
-                        errorMessageSignup = "",
+                        errorMessageSignup = "", // Limpiar errores previos
                         password = "",
-                        passwordConfirm = "",
+                        passwordConfirm = ""
                     )
-                }
-                val user = result.user
-                val userEmail = user?.email ?: ""
 
-                // Guarda el email del usuario en SharedPreferences
-                sharedPreferences.edit { putString("user_email", userEmail) }
-                Log.d("SignupViewModel", "User registered successfully: $userEmail")
-            } else {
+                }
+                sharedPreferences.edit { putString("user_email", result.user.email) }
+                Log.d("SignupViewModel", "User registered successfully: $result.user.email")
+            }
+            is RegisterResult.Error -> {
                 _uiState.update {
                     it.copy(
                         signupSuccess = false,
-                        errorMessageSignup =
-                            result.message
-                                ?: "Error desconocido al registrar usuario.",
-                        isFormValid = false,
+                        errorMessageSignup = result.errorMessage
                     )
                 }
+                Log.w("SignupViewModel", "Registration failed: ${result.errorMessage}")
             }
         }
+    }
     }
