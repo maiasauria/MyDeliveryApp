@@ -4,8 +4,10 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.mleon.core.data.datasource.local.entities.OrderEntity
+import com.mleon.core.data.datasource.local.entities.OrderWithItemsEntity
 
 @Dao
 interface OrderDao {
@@ -26,4 +28,8 @@ interface OrderDao {
 
     @Query("SELECT * FROM orders")
     suspend fun getAllOrders(): List<OrderEntity>
+
+    @Transaction // Room will resolve the relation using the data class OrderWithItemsEntity
+    @Query("SELECT * FROM orders")
+    fun getAllOrdersWithItems(): List<OrderWithItemsEntity>
 }

@@ -2,6 +2,7 @@ package com.mleon.mydeliveryapp.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -54,9 +55,9 @@ fun AppNavigation(navController: NavHostController) {
 }
 
 // Funcion de extensión para navegar a una ruta específica
-fun NavController.navigateToRoute(route: String) {
+    fun NavController.navigateToRoute(route: String) {
     this.navigate(route) {
-        popUpTo(this@navigateToRoute.graph.startDestinationId) { // Limpia la pila de navegación hasta el destino inicial
+        popUpTo(this@navigateToRoute.graph.findStartDestination().id) { // Limpia la pila de navegación hasta el destino inicial
             saveState = true // Guarda el estado de la pantalla actual
         }
         launchSingleTop = true // Evita crear múltiples instancias de la misma pantalla

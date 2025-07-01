@@ -35,7 +35,6 @@ data class OrderItemEntity(
     val orderId: String,
     val productId: String,
     val quantity: Int = 1,
-    val price: Double,
 )
 
 
@@ -43,8 +42,7 @@ fun CartItem.toOrderItemEntity(orderId: String): OrderItemEntity {
     return OrderItemEntity(
         orderId = orderId,
         productId = this.product.id,
-        quantity = this.quantity,
-        price = this.product.price
+        quantity = this.quantity
     )
 }
 

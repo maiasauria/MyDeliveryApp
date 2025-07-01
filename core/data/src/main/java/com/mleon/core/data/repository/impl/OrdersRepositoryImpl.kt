@@ -3,6 +3,7 @@ package com.mleon.core.data.repository.impl
 import com.mleon.core.data.datasource.OrderDataSource
 import com.mleon.core.data.datasource.local.dao.OrderDao
 import com.mleon.core.data.datasource.local.dao.OrderItemDao
+import com.mleon.core.data.datasource.local.entities.toModel
 import com.mleon.core.data.datasource.local.entities.toOrderItemEntity
 import com.mleon.core.data.model.OrderResponse
 import com.mleon.core.data.model.toDto
@@ -46,7 +47,8 @@ class OrderRepositoryImpl @Inject constructor(
 
     override suspend fun getOrders(): List<Order> =
         withContext(Dispatchers.IO) {
-            orderDataSource.getOrders()
+            // orderDataSource.getOrders()
+            orderDao.getAllOrdersWithItems().map { it.toModel() }
         }
 
 }

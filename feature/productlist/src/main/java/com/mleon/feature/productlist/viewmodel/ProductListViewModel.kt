@@ -35,7 +35,6 @@ constructor(
 
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             try {
-
                 // Traigo los productos desde el UseCase
                 allProducts = getProductsUseCase() // Actualizo la lista completa de productos
                 _productState.update {
@@ -56,19 +55,17 @@ constructor(
     }
 
     fun onSearchTextChange(query: String) {
-        _productState.update { state ->
-            state.copy(
-                searchQuery = query,
-                products = filterProducts()
-            )
-        }
+        //TODO revisar porque estoy haciendo dos updates seguidos.
+        _productState.update { it.copy(searchQuery = query) }
+        _productState.update { it.copy(products = filterProducts()) }
     }
 
     fun onCategorySelection(category: Categories?) {
+        //TODO idem aca
+        _productState.update { it.copy( selectedCategory = category) }
         _productState.update { state ->
             state.copy(
                 products = filterProducts(), //No le paso parametros porque ya los tengo en el estado
-                selectedCategory = category
             )
         }
     }
@@ -109,7 +106,6 @@ constructor(
     }
 
     fun onAddToCartButtonClick(product: Product) {
-        println("Product added to cart: ${product.name}")
         _productState.update { state ->
             state.copy(
                 cartMessage = "${product.name} agregado al carrito",

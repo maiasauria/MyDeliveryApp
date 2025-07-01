@@ -27,7 +27,6 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
@@ -37,15 +36,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mleon.core.model.enums.Categories
 import com.mleon.core.model.Product
+import com.mleon.core.model.enums.Categories
 import com.mleon.feature.productlist.R
 import com.mleon.utils.ui.HorizontalLoadingIndicator
 import com.mleon.utils.ui.ListDivider
@@ -68,8 +66,6 @@ fun ProductListView(
     onAddToCart: (Product) -> Unit,
 ) {
 
-    val scope = rememberCoroutineScope()
-
     Box(
         modifier =
             Modifier
@@ -78,6 +74,7 @@ fun ProductListView(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             SearchAndFiltersBar(
+                searchQuery = searchQuery,
                 onSearchQueryChange = onSearchQueryChange,
                 onOpenFilters = {
                     onShowBottomSheetChange(true)     },

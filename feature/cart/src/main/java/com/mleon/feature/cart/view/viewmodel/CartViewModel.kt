@@ -25,8 +25,12 @@ class CartViewModel @Inject constructor(
     private val _cartState = MutableStateFlow(CartState()) // flujo que puede ser modificado
     val cartState = _cartState.asStateFlow()
 
-    private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
-        Log.e("CartViewModel", "Coroutine error", exception)
+    private val exceptionHandler = CoroutineExceptionHandler { coroutineContext, exception ->
+        Log.e(
+            "CartViewModel",
+            "GLOBAL CoroutineExceptionHandler CAUGHT: Context: $coroutineContext",
+            exception
+        )
         _cartState.update { it.copy(errorMessage = "Ocurrió un error inesperado. Intenta nuevamente.") }
     }
 
@@ -34,13 +38,13 @@ class CartViewModel @Inject constructor(
         loadCartItems()
     }
 
-    fun addToCart(product: Product) =
+    fun addToCart(product: Product) {
         launchWithLoading {
             val existingCartItem = cartItemRepository.getCartItemByProductId(product.id)
-            if (existingCartItem != null) { // Si el producto ya está en el carrito, incrementamos la cantidad
+            if (existingCartItem != null) {
                 val updatedCartItem = existingCartItem.copy(quantity = existingCartItem.quantity + 1)
                 cartItemRepository.updateCartItem(updatedCartItem)
-            } else { // Si no está en el carrito, lo agregamos
+            } else {
                 cartItemRepository.insertCartItem(
                     // TODO esto deberia manejarlo el repositorio, no el viewmodel.
                     CartItemEntity(productId = product.id, quantity = 1),
@@ -48,40 +52,48 @@ class CartViewModel @Inject constructor(
             }
             updateCartState(fetchCartItemsFromDb())
         }
+    }
 
     fun editQuantity(
         product: Product,
         quantity: Int,
-    ) = launchWithLoading {
-        val existingCartItem = cartItemRepository.getCartItemByProductId(product.id)
-        if (existingCartItem != null) {
-            if (quantity > 0) {
-                val updatedCartItem = existingCartItem.copy(quantity = quantity)
-                cartItemRepository.updateCartItem(updatedCartItem)
-            } else {
-                cartItemRepository.deleteCartItem(existingCartItem.id)
-            }
-        }
-        updateCartState(fetchCartItemsFromDb())
-    }
-
-    fun removeFromCart(product: Product) =
+    ) {
         launchWithLoading {
             val existingCartItem = cartItemRepository.getCartItemByProductId(product.id)
-            if (existingCartItem != null) { cartItemRepository.deleteCartItem(existingCartItem.id) }
+            if (existingCartItem != null) {
+                if (quantity > 0) {
+                    val updatedCartItem = existingCartItem.copy(quantity = quantity)
+                    cartItemRepository.updateCartItem(updatedCartItem)
+                } else {
+                    cartItemRepository.deleteCartItem(existingCartItem.id)
+                }
+            }
             updateCartState(fetchCartItemsFromDb())
         }
+    }
 
-    fun clearCart() =
+    fun removeFromCart(product: Product) {
+        launchWithLoading {
+            val existingCartItem = cartItemRepository.getCartItemByProductId(product.id)
+            if (existingCartItem != null) {
+                cartItemRepository.deleteCartItem(existingCartItem.id)
+            }
+            updateCartState(fetchCartItemsFromDb())
+        }
+    }
+
+    fun clearCart() {
         launchWithLoading {
             cartItemRepository.deleteAllCartItems()
             updateCartState(emptyList())
         }
+    }
 
-    private fun loadCartItems() =
+    private fun loadCartItems() {
         launchWithLoading {
             updateCartState(fetchCartItemsFromDb())
         }
+    }
 
     // Fetch cart items from DB (suspend function)
     // No tiene try catch porque se maneja en la funcion que la invoca.
@@ -108,13 +120,9 @@ class CartViewModel @Inject constructor(
         // creamos una funcion suspendida. Dispatchers especifica que esta rutina esta ehcha para procesode IO.
         viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
             _cartState.update { it.copy(isLoading = true, errorMessage = null) }
-            try {
-                block()
-            } catch (e: Exception) {
-                _cartState.update { it.copy(errorMessage = e.message) }
-            } finally {
-                _cartState.update { it.copy(isLoading = false) }
-            }
+            block()
+            _cartState.update { it.copy(isLoading = false) }
+
         }
     }
 }

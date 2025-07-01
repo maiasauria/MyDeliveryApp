@@ -21,9 +21,7 @@ fun CheckoutScreen(
     LaunchedEffect(uiState.orderConfirmed) {
         if (uiState.orderConfirmed) {
             cartViewModel.clearCart()
-            navController.navigate(NavigationRoutes.ORDERS) {
-                popUpTo(NavigationRoutes.CART) { inclusive = true }
-            }
+            navController.navigate(NavigationRoutes.ORDERS)
         }
     }
 
