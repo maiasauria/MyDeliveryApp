@@ -27,3 +27,13 @@ fun ProductEntity.toProduct(): Product {
         category = categories
     )
 }
+fun Product.toProductEntity(): ProductEntity {
+    return ProductEntity(
+        id = id,
+        name = name,
+        description = description,
+        price = price,
+        imageUrl = imageUrl ?: "",
+        categories = category
+    )
+}

@@ -2,7 +2,8 @@ package com.mleon.core.data.repository.impl
 
 import com.mleon.core.data.datasource.ProductDataSource
 import com.mleon.core.data.datasource.local.dao.ProductDao
-import com.mleon.core.data.datasource.local.entities.ProductEntity
+import com.mleon.core.data.datasource.local.entities.toProduct
+import com.mleon.core.data.datasource.local.entities.toProductEntity
 import com.mleon.core.data.repository.interfaces.ProductRepository
 import com.mleon.core.model.Product
 import kotlinx.coroutines.Dispatchers
@@ -29,25 +30,15 @@ class ProductRepositoryImpl @Inject constructor(
                 // Mapeo solo los nuevos productos que no están en la base de datos
                 val newProductEntities = products
                     .filter { product -> product.id !in existingIds }
-                    .map { product ->
-                        ProductEntity(
-                            id = product.id,
-                            name = product.name,
-                            description = product.description,
-                            price = product.price,
-                            imageUrl = product.imageUrl ?: "",
-                            categories = product.category
-                        )
-                    }
+                    .map { it.toProductEntity() }
 
                 // Inserto solo los nuevos productos en la base de datos
                 if (newProductEntities.isNotEmpty()) {
                     productDao.insertProducts(newProductEntities)
                 }
 
-                // Devuelvo los productos que traje de la fuente
-                // TODO deberia traer los productos de room?
-                products
+                // Devuelvo los productos que tiene Room
+                productDao.getAllProducts().map { it. toProduct() }
 
             } catch (e: Exception) {
                 // Si la API falla, traigo los productos de la base de datos
