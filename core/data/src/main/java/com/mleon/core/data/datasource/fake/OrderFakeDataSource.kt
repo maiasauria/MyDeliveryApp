@@ -17,7 +17,7 @@ class OrderFakeDataSource
             mutableListOf<Order>(
                 Order(
                     orderId = "1",
-                    productIds =
+                    orderItems =
                         listOf(
                             CartItem(
                                 product =
@@ -53,7 +53,7 @@ class OrderFakeDataSource
                 ),
                 Order(
                     orderId = "2",
-                    productIds =
+                    orderItems =
                         listOf(
                             CartItem(
                                 product =
@@ -82,7 +82,7 @@ class OrderFakeDataSource
             val newOrder =
                 Order(
                     orderId = "3",
-                    productIds =
+                    orderItems =
                         listOf(
                             CartItem(
                                 product =
@@ -106,7 +106,7 @@ class OrderFakeDataSource
             orders.add(newOrder)
             return OrderResponse(
                 orderId = newOrder.orderId,
-                productIds = newOrder.productIds.map { it.toDto() },
+                productIds = newOrder.orderItems.map { it.toDto() },
                 total = newOrder.total,
                 timestamp = newOrder.timestamp,
             )

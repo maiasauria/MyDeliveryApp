@@ -8,7 +8,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.mleon.feature.orders.viewmodel.OrdersViewModel
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun OrdersListScreen(
     viewModel: OrdersViewModel = hiltViewModel()

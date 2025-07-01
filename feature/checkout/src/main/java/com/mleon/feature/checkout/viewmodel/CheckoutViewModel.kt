@@ -69,7 +69,7 @@ class CheckoutViewModel @Inject constructor(
                 val request =
                     Order(
                         orderId = randomUUID().toString(),
-                        productIds = cartItems,
+                        orderItems = cartItems,
                         shippingAddress = _uiState.value.shippingAddress, // TODO: Replace with actual user address
                         paymentMethod = _uiState.value.paymentMethod.apiValue,
                         total = total,

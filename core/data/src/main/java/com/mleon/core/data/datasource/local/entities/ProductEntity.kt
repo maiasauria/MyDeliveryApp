@@ -15,7 +15,7 @@ data class ProductEntity(
     val categories: List<Categories>,
 )
 
-fun ProductEntity.toProduct(): Product {
+fun ProductEntity.toModel(): Product {
     return Product(
         id = id,
         name = name,

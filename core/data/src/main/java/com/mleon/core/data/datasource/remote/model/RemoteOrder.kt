@@ -46,7 +46,7 @@ fun RemoteCartItem.toCartItem(): CartItem {
 fun RemoteOrder.toOrder(): Order =
     Order(
         orderId = orderId,
-        productIds = productIds.map { it.toCartItem() },
+        orderItems = productIds.map { it.toCartItem() },
         shippingAddress = shippingAddress,
         paymentMethod = paymentMethod,
         total = total,

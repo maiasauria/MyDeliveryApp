@@ -79,7 +79,7 @@ fun OrderCard(order: Order, position: Int) {
             Text(
                 stringResource(
                     R.string.orders_quantity,
-                    order.productIds.sumOf { it.quantity }
+                    order.orderItems.sumOf { it.quantity }
                 ),
             )
             Text(

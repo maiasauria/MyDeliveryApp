@@ -14,7 +14,7 @@ data class CartItemWithProductEntity (
 
 fun CartItemWithProductEntity.toCartItem(): CartItem {
     return CartItem(
-        product = productEntity.toProduct(),
+        product = productEntity.toModel(),
         quantity = cartItemEntity.quantity
     )
 }

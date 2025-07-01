@@ -25,7 +25,7 @@ class OrderRepositoryImpl @Inject constructor(
             val orderEntity = order.toEntity()
             orderDao.insertOrder(orderEntity)
 
-            val orderItems = order.productIds.map { it.toOrderItemEntity(order.orderId) }
+            val orderItems = order.orderItems.map { it.toOrderItemEntity(order.orderId) }
             orderItemDao.insertOrderItems(orderItems)
 
             val orderRequest = order.toDto()

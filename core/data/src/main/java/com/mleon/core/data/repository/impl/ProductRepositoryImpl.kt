@@ -2,7 +2,7 @@ package com.mleon.core.data.repository.impl
 
 import com.mleon.core.data.datasource.ProductDataSource
 import com.mleon.core.data.datasource.local.dao.ProductDao
-import com.mleon.core.data.datasource.local.entities.toProduct
+import com.mleon.core.data.datasource.local.entities.toModel
 import com.mleon.core.data.datasource.local.entities.toProductEntity
 import com.mleon.core.data.repository.interfaces.ProductRepository
 import com.mleon.core.model.Product
@@ -38,7 +38,7 @@ class ProductRepositoryImpl @Inject constructor(
                 }
 
                 // Devuelvo los productos que tiene Room
-                productDao.getAllProducts().map { it. toProduct() }
+                productDao.getAllProducts().map { it. toModel() }
 
             } catch (e: Exception) {
                 // Si la API falla, traigo los productos de la base de datos

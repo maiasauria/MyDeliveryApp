@@ -6,7 +6,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -21,7 +20,6 @@ fun SignupScreen(
     val uiState by signupViewModel.uiState.collectAsState()
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(uiState.signupSuccess, uiState.errorMessageSignup) {
         if (uiState.signupSuccess && uiState.errorMessageSignup.isEmpty()) {
