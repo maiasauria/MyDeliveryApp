@@ -6,7 +6,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.mleon.core.model.dtos.toDto
 import com.mleon.core.navigation.NavigationRoutes
 import com.mleon.feature.cart.view.viewmodel.CartViewModel
 import com.mleon.feature.checkout.viewmodel.CheckoutViewModel
@@ -19,14 +18,6 @@ fun CheckoutScreen(
 ) {
     val uiState by checkoutViewModel.uiState.collectAsState()
 
-    val cartState = cartViewModel.cartState.collectAsState()
-    val cartItems = cartState.value.cartItems.toList()
-    val subTotalAmount = cartItems.sumOf { it.product.price * it.quantity }
-    val shippingCost = 10.0 // Temporary fixed shipping cost
-    val totalAmount = subTotalAmount + shippingCost
-    val shippingAddress = "Calle123" // TODO Reemplazar con el address del usuario
-
-
     LaunchedEffect(uiState.orderConfirmed) {
         if (uiState.orderConfirmed) {
             cartViewModel.clearCart()
@@ -36,23 +27,15 @@ fun CheckoutScreen(
         }
     }
 
-    // TODO pasar lo que queda a State
     CheckoutView(
-        cartItems = cartItems,
-        subtotalAmount = subTotalAmount,
-        shippingCost = shippingCost,
-        totalAmount = totalAmount,
+        cartItems = uiState.cartItems,
+        subtotalAmount = uiState.subTotalAmount,
+        shippingCost = uiState.shippingCost,
+        totalAmount = uiState.totalAmount,
         isOrderValid = uiState.validOrder,
-        shippingAddress = shippingAddress,
+        shippingAddress = uiState.shippingAddress,
         paymentMethod = uiState.paymentMethod,
-        onConfirmOrder = {
-            checkoutViewModel.confirmOrder(
-                cartItems.map { it.toDto() },
-                shippingAddress,
-                uiState.paymentMethod,
-                totalAmount,
-            )
-        },
+        onConfirmOrder = checkoutViewModel::confirmOrder,
         isLoading = uiState.isLoading,
         errorMessage = uiState.errorMessage,
     )

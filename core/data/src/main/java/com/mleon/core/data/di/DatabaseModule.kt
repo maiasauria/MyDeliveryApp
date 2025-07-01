@@ -40,5 +40,8 @@ object DatabaseModule {
     //fun provideOrderHistoryDao(database: AppDatabase) = database.orderHistoryDao()
 
     @Provides
+    fun provideOrderDao(database: AppDatabase) = database.orderDao()
+
+    @Provides
     fun provideOrderItemDao(database: AppDatabase) = database.orderItemDao()
 }
