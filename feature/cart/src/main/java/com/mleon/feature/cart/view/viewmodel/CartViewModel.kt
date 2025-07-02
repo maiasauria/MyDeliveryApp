@@ -3,9 +3,11 @@ package com.mleon.feature.cart.view.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mleon.core.data.datasource.local.entities.CartItemEntity
-import com.mleon.core.data.datasource.local.entities.toCartItem
-import com.mleon.core.data.repository.interfaces.CartItemRepository
+import com.mleon.core.data.domain.cart.AddProductToCartUseCase
+import com.mleon.core.data.domain.cart.ClearCartUseCase
+import com.mleon.core.data.domain.cart.EditCartItemQuantityUseCase
+import com.mleon.core.data.domain.cart.GetCartItemsWithProductsUseCase
+import com.mleon.core.data.domain.cart.RemoveCartItemUseCase
 import com.mleon.core.model.CartItem
 import com.mleon.core.model.Product
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,15 +15,19 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-    private val cartItemRepository: CartItemRepository,
-) : ViewModel() {
+    private val addProductToCartUseCase: AddProductToCartUseCase,
+    private val editCartItemQuantityUseCase: EditCartItemQuantityUseCase,
+    private val clearCartUseCase: ClearCartUseCase,
+    private val getCartItemsWithProductsUseCase: GetCartItemsWithProductsUseCase,
+    private val removeCartItemUseCase: RemoveCartItemUseCase,
+
+    ) : ViewModel() {
     private val _cartState = MutableStateFlow(CartState()) // flujo que puede ser modificado
     val cartState = _cartState.asStateFlow()
 
@@ -40,51 +46,28 @@ class CartViewModel @Inject constructor(
 
     fun addToCart(product: Product) {
         launchWithLoading {
-            val existingCartItem = cartItemRepository.getCartItemByProductId(product.id)
-            if (existingCartItem != null) {
-                val updatedCartItem = existingCartItem.copy(quantity = existingCartItem.quantity + 1)
-                cartItemRepository.updateCartItem(updatedCartItem)
-            } else {
-                cartItemRepository.insertCartItem(
-                    // TODO esto deberia manejarlo el repositorio, no el viewmodel.
-                    CartItemEntity(productId = product.id, quantity = 1),
-                )
-            }
+            addProductToCartUseCase(product)
             updateCartState(fetchCartItemsFromDb())
         }
     }
 
-    fun editQuantity(
-        product: Product,
-        quantity: Int,
-    ) {
+    fun editQuantity(product: Product, quantity: Int) {
         launchWithLoading {
-            val existingCartItem = cartItemRepository.getCartItemByProductId(product.id)
-            if (existingCartItem != null) {
-                if (quantity > 0) {
-                    val updatedCartItem = existingCartItem.copy(quantity = quantity)
-                    cartItemRepository.updateCartItem(updatedCartItem)
-                } else {
-                    cartItemRepository.deleteCartItem(existingCartItem.id)
-                }
-            }
+            editCartItemQuantityUseCase(product, quantity)
             updateCartState(fetchCartItemsFromDb())
         }
     }
 
     fun removeFromCart(product: Product) {
         launchWithLoading {
-            val existingCartItem = cartItemRepository.getCartItemByProductId(product.id)
-            if (existingCartItem != null) {
-                cartItemRepository.deleteCartItem(existingCartItem.id)
-            }
+            removeCartItemUseCase(product.id)
             updateCartState(fetchCartItemsFromDb())
         }
     }
 
     fun clearCart() {
         launchWithLoading {
-            cartItemRepository.deleteAllCartItems()
+            clearCartUseCase()
             updateCartState(emptyList())
         }
     }
@@ -98,11 +81,7 @@ class CartViewModel @Inject constructor(
     // Fetch cart items from DB (suspend function)
     // No tiene try catch porque se maneja en la funcion que la invoca.
     // Tampoco abre una corutina, es suspend, se llama desde la corrutina.
-    private suspend fun fetchCartItemsFromDb(): List<CartItem> {
-        val cartItemsWithProducts = cartItemRepository.getAllCartItemsWithProducts()
-        val items = cartItemsWithProducts.first()
-        return items.map { it.toCartItem() }
-    }
+    private suspend fun fetchCartItemsFromDb(): List<CartItem> = getCartItemsWithProductsUseCase()
 
     // Actualiza el estado del carrito con los elementos y el precio total
     private fun updateCartState(cartItems: List<CartItem>) {
