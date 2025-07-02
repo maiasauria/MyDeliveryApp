@@ -11,9 +11,12 @@ activityCompose = "1.10.1"
 activity = "1.10.1"
 
 # Material & Icons
+kotlinxCoroutinesTest = "1.10.2"
 material = "1.12.0"
 
 # Navigation
+mockitoCore = "5.11.0"
+mockitoKotlin = "5.2.1"
 navigation = "2.9.0"
 
 # Lifecycle
@@ -45,6 +48,7 @@ espressoCore = "3.6.1"
 
 # KSP
 ksp = "2.1.21-2.0.1"
+junitJunit = "4.12"
 
 
 [libraries]
@@ -69,6 +73,7 @@ androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text
 androidx-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
@@ -102,6 +107,8 @@ coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCo
 androidx-media3-common-ktx = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3CommonKtx" }
 
 # Retrofit & Networking
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "loggingInterceptor" }
@@ -114,6 +121,7 @@ androidx-legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+junit-junit = { group = "junit", name = "junit", version.ref = "junitJunit" }
 
 
 [plugins]

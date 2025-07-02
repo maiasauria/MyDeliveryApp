@@ -71,10 +71,14 @@ dependencies {
     //Coil
     implementation(libs.coil.compose)
 
-   //Testing
+    //Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.kotlinx.coroutines.test)
+
 
     // Project Modules
     implementation(project(":core:model"))

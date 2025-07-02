@@ -23,7 +23,7 @@ class OrdersViewModel @Inject constructor(
         CoroutineExceptionHandler { _, exception ->
             Log.e("OrdersViewModel", "Coroutine error", exception)
             _uiState.value = _uiState.value.copy(
-                isLoading = false,
+                isLoading = false, // TODO vaciar la lista?
                 error = "Ocurrió un error inesperado. Intenta nuevamente."
             )
         }

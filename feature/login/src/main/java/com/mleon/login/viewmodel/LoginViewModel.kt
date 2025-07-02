@@ -2,7 +2,6 @@ package com.mleon.login.viewmodel
 
 import android.content.SharedPreferences
 import android.util.Log
-import android.util.Patterns
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -61,7 +60,9 @@ class LoginViewModel @Inject constructor(
 
     private fun validateForm() {
         _uiState.update { currentState ->
-            val isEmailValid = Patterns.EMAIL_ADDRESS.matcher(currentState.email).matches()
+
+            //val isEmailValid = Patterns.EMAIL_ADDRESS.matcher(currentState.email).matches()
+            val isEmailValid = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$").matches(currentState.email)
             val isPasswordValid = currentState.password.length in 8..12
 
             val isFormValid = isEmailValid && isPasswordValid
