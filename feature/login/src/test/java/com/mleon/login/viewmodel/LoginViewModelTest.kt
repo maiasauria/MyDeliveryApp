@@ -1,8 +1,7 @@
-package com.mleon.login
+package com.mleon.login.viewmodel
 
 import android.content.SharedPreferences
 import com.mleon.core.data.domain.LoginUserUseCase
-import com.mleon.login.viewmodel.LoginViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher

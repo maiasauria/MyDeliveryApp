@@ -34,8 +34,13 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import com.mleon.core.model.Product
 import com.mleon.core.model.enums.Categories
 import com.mleon.feature.productlist.R
-import com.mleon.utils.ui.HorizontalLoadingIndicator
 import com.mleon.utils.ui.ListDivider
 import com.mleon.utils.ui.ProductCard
 
@@ -54,57 +58,44 @@ import com.mleon.utils.ui.ProductCard
 fun ProductListView(
     selectedCategory: Categories? = null,
     searchQuery: String = "",
-    isLoading: Boolean = false,
     products: List<Product> = emptyList(),
-    showBottomSheet: Boolean,
-    onShowBottomSheetChange: (Boolean) -> Unit,
-    sheetState: SheetState,
     onSearchQueryChange: (String) -> Unit,
     onCategorySelection: (Categories?) -> Unit,
     onOrderByPriceDescending: () -> Unit,
     onOrderByPriceAscending: () -> Unit,
     onAddToCart: (Product) -> Unit,
+    isAddingToCart: Boolean = false,
 ) {
-
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
     Box(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp),
+        modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             SearchAndFiltersBar(
                 searchQuery = searchQuery,
                 onSearchQueryChange = onSearchQueryChange,
-                onOpenFilters = {
-                    onShowBottomSheetChange(true)     },
+                onOpenFilters = { showBottomSheet = true },
             )
             FiltersRow(
                 selectedCategory = selectedCategory,
                 onCategorySelection = onCategorySelection,
             )
-
             LazyColumn(
                 modifier =
                     Modifier
                         .fillMaxSize()
                         .padding(0.dp),
             ) {
-                item {
-                    if (isLoading) {
-                        HorizontalLoadingIndicator()
-                    }
-                }
-
                 itemsIndexed(products) { index, product ->
                     AnimatedVisibility(
                         visible = true,
-                        enter = fadeIn(animationSpec = tween(2300, 50), initialAlpha = 0.3f),
+                        enter = fadeIn(animationSpec = tween(500, 50), initialAlpha = 0.3f),
                     ) {
                         ProductCard(
                             product = product,
                             onAddToCart = { onAddToCart(product) },
-                            isLoading = isLoading,
+                            isLoading = isAddingToCart,
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         ListDivider()
@@ -117,7 +108,7 @@ fun ProductListView(
                 ProductsBottomSheet(
                     sheetState = sheetState,
                     showSheet = showBottomSheet,
-                    onDismissRequest = { onShowBottomSheetChange(false)},
+                    onDismissRequest =  { showBottomSheet = false },
                     onOrderByPriceDescending = onOrderByPriceDescending,
                     onOrderByPriceAscending = onOrderByPriceAscending,
                 )

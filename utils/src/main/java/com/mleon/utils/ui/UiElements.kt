@@ -31,7 +31,7 @@ import com.mleon.utils.R
 @Composable
 fun LogoImage() {
     Image(
-        painter = painterResource(id = com.mleon.utils.R.drawable.main_logo),
+        painter = painterResource(id = R.drawable.main_logo),
         contentDescription = "Logo",
         modifier =
             Modifier

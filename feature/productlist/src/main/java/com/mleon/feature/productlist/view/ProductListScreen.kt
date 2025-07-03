@@ -1,65 +1,81 @@
 package com.mleon.feature.productlist.view
 
 import android.widget.Toast
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mleon.feature.cart.view.viewmodel.CartViewModel
+import com.mleon.feature.productlist.viewmodel.ProductListUiState
 import com.mleon.feature.productlist.viewmodel.ProductListViewModel
+import com.mleon.utils.ui.ErrorScreen
+import com.mleon.utils.ui.HorizontalLoadingIndicator
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductListScreen(
     productListViewModel: ProductListViewModel = hiltViewModel(),
     cartViewModel: CartViewModel = hiltViewModel()
 ) {
-    val uiState by productListViewModel.productState.collectAsState()
 
-    val context = LocalContext.current
+    val uiState by productListViewModel.uiState.collectAsState()
 
-    var showBottomSheet by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
-
-    //Cart message
-    val cartMessage = uiState.cartMessage
-    LaunchedEffect(cartMessage) {
-        if (cartMessage.isNotEmpty()) {
-            Toast.makeText(context, cartMessage, Toast.LENGTH_SHORT).show()
-            productListViewModel.clearCartMessage()
-        }
+    // Only launch once when the Composable enters the composition
+    LaunchedEffect(Unit) {
+        productListViewModel.loadProducts()
     }
 
-// Error message
-    val errorMessage = uiState.error?.message ?: ""
-    LaunchedEffect(errorMessage) {
-        if (errorMessage.isNotEmpty()) {
-            Toast.makeText(context, "Error: $errorMessage", Toast.LENGTH_LONG).show()
+    when (uiState) {
+        is ProductListUiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                HorizontalLoadingIndicator()
+            }
+        }
+
+        is ProductListUiState.Success -> {
+            val successState = uiState as ProductListUiState.Success
+            val context = LocalContext.current
+            val cartMessage = successState.cartMessage
+            LaunchedEffect(cartMessage) {
+                if (cartMessage.isNotEmpty()) {
+                    Toast.makeText(context, cartMessage, Toast.LENGTH_SHORT).show()
+                    productListViewModel.clearCartMessage()
+                }
+            }
+
+            ProductListView(
+                selectedCategory = successState.selectedCategory,
+                searchQuery = successState.searchQuery,
+                products = successState.products,
+                onSearchQueryChange = { productListViewModel.onSearchTextChange(it) },
+                onCategorySelection = { productListViewModel.onCategorySelection(it) },
+                onOrderByPriceDescending = { productListViewModel.onOrderByPriceDescending() },
+                onOrderByPriceAscending = { productListViewModel.onOrderByPriceAscending() },
+                onAddToCart = {
+                    cartViewModel.addToCart(it)
+                    productListViewModel.onAddToCartButtonClick(it) },
+                isAddingToCart = successState.isAddingToCart,
+            )
+        }
+        is ProductListUiState.Error -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                ErrorScreen(
+                    errorMessage = (uiState as ProductListUiState.Error).error.message ?: "Ocurrió un error inesperado. Intenta nuevamente.",
+                    onRetry = { productListViewModel.loadProducts() }
+                )
+            }
         }
     }
-
-    ProductListView(
-        selectedCategory = uiState.selectedCategory,
-        searchQuery = uiState.searchQuery,
-        isLoading = uiState.isLoading,
-        products = uiState.products,
-        showBottomSheet = showBottomSheet,
-        onShowBottomSheetChange = { showBottomSheet = it },
-        sheetState = sheetState,
-        onSearchQueryChange = { productListViewModel.onSearchTextChange(it) },
-        onCategorySelection = { productListViewModel.onCategorySelection(it) },
-        onOrderByPriceDescending = { productListViewModel.onOrderByPriceDescending() },
-        onOrderByPriceAscending = { productListViewModel.onOrderByPriceAscending() },
-        onAddToCart = {
-            cartViewModel.addToCart(it)
-            productListViewModel.onAddToCartButtonClick(it)
-        }
-    )
 }
+

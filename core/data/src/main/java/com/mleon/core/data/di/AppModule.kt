@@ -7,6 +7,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 // Dependencias para la aplicacion
@@ -20,4 +22,6 @@ object AppModule {
         @ApplicationContext appContext: Context,
     ): SharedPreferences = appContext.getSharedPreferences("my_prefs", Context.MODE_PRIVATE)
 
+    @Provides
+    fun provideCoroutineDispatcher(): CoroutineDispatcher = Dispatchers.IO
 }
