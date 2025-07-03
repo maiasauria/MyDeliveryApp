@@ -32,7 +32,7 @@ class CheckoutViewModelTest {
         givenCartItems(listOf(mockCartItem()))
         givenOrderSuccess(mockOrder())
 
-        val  viewModel = CheckoutViewModel(getCartItemsWithProductsUseCase, createOrderUseCase, StandardTestDispatcher(testScheduler))
+        val viewModel = CheckoutViewModel(getCartItemsWithProductsUseCase, createOrderUseCase, StandardTestDispatcher(testScheduler))
         viewModel.confirmOrder()
         Assert.assertTrue(viewModel.uiState.value is CheckoutUiState.Loading)
     }
