@@ -41,8 +41,15 @@ constructor(
         viewModelScope.launch(dispatcher + exceptionHandler) {
             try {
                 allProducts = getProductsUseCase()
-                updateSuccessState()
+                Log.d("ProductListViewModel", "Products loaded: ${allProducts.size}")
+
+                if (allProducts.isEmpty()) {
+                    _uiState.value = ProductListUiState.Error(Exception("No se encontraron productos."))
+                } else {
+                    updateSuccessState()
+                }
             } catch (e: Exception) {
+                Log.e("ProductListViewModel", "Error loading products", e)
                 _uiState.value = ProductListUiState.Error(e)
             }
         }
@@ -102,6 +109,7 @@ constructor(
     }
 
     private fun updateSuccessState() {
+        Log.d("ProductListViewModel", "Updating success state with searchQuery: $searchQuery, selectedCategory: $selectedCategory, cartMessage: $cartMessage")
         val filteredProducts = filterProducts()
         _uiState.value = ProductListUiState.Success(
             products = filteredProducts,

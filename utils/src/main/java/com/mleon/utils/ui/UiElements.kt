@@ -1,5 +1,11 @@
 package com.mleon.utils.ui
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,9 +21,16 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -27,6 +40,7 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.mleon.utils.R
+import kotlinx.coroutines.delay
 
 @Composable
 fun LogoImage() {
@@ -106,4 +120,65 @@ fun ImageLoader(
         error = painterResource(R.drawable.ic_launcher_background),
         placeholder = painterResource(R.drawable.ic_launcher_background),
     )
+}
+
+
+@Composable
+fun YappLoadingIndicator(
+    color: Color = MaterialTheme.colorScheme.primary,
+    ballDiameter: Float = 40f,
+    horizontalSpace: Float = 20f,
+    animationDuration: Int = 600,
+    minAlpha: Float = 0f,
+    maxAlpha: Float = 1f
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        val dotsCount = 3
+
+        val scales: List<Float> = (0 until dotsCount).map { index ->
+            var scale by remember { mutableStateOf(maxAlpha) }
+
+            LaunchedEffect(key1 = Unit) {
+
+                delay(animationDuration / dotsCount * index.toLong())
+                animate(
+                    initialValue = minAlpha,
+                    targetValue = maxAlpha,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(
+                            durationMillis = animationDuration,
+                            easing = LinearEasing
+                        ),
+                        repeatMode = RepeatMode.Reverse,
+                    ),
+                ) { value, _ ->
+                    scale = value
+                }
+            }
+            scale
+        }
+
+        Canvas(modifier = Modifier) {
+            for (index in 0 until dotsCount) {
+
+                val xOffset = ballDiameter + horizontalSpace
+
+                drawCircle(
+                    color = color,
+                    radius = (ballDiameter / 2) * scales[index],
+                    center = Offset(
+                        x = when {
+                            index < dotsCount / 2 -> -(center.x + xOffset)
+                            index == dotsCount / 2 -> center.x
+                            else -> center.x + xOffset
+                        },
+                        y = 0f
+                    )
+                )
+            }
+        }
+    }
 }

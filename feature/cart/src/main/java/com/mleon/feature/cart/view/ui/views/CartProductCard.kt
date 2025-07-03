@@ -1,4 +1,4 @@
-package com.mleon.feature.cart.view.ui.views
+ package com.mleon.feature.cart.view.ui.views
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -30,9 +30,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,14 +43,14 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.mleon.core.model.Product
-import com.mleon.utils.R as UtilsR
-import com.mleon.feature.cart.R as CartR
-import com.mleon.utils.toCurrencyFormat
-import androidx.compose.ui.res.stringResource
 import com.mleon.feature.cart.R
+import com.mleon.utils.toCurrencyFormat
+import com.mleon.utils.ui.ImageLoader
+import com.mleon.feature.cart.R as CartR
+import com.mleon.utils.R as UtilsR
 
 
-@Composable
+ @Composable
 fun CartProductCard(
     modifier: Modifier = Modifier,
     product: Product,
@@ -69,95 +71,47 @@ fun CartProductCard(
                 .height(110.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current).data(product.imageUrl)
-                    .crossfade(true).build(),
+            ImageLoader(url = product.imageUrl ?: "",
                 contentDescription = product.name,
-                modifier = Modifier
-                    .height(100.dp)
-                    .width(100.dp)
-                    .padding(end = 8.dp)
-                    .clip(RoundedCornerShape(10.dp)),
-                contentScale = ContentScale.Crop,
-                error = painterResource(UtilsR.drawable.ic_launcher_background),
-                placeholder = painterResource(UtilsR.drawable.ic_launcher_background)
+                modifier = Modifier.height(100.dp).width(100.dp),
             )
+
             Column(
                 modifier = Modifier
                     .padding(4.dp)
                     .fillMaxWidth()
                     .fillMaxHeight()
             ) {
-                Text(
-                    text = product.name,
-                    modifier = Modifier.padding(bottom = 4.dp),
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-
+                CardTitle(productName = product.name)
                 Spacer(modifier = Modifier.weight(1f))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        modifier = Modifier.width(64.dp),
-                        text = "\$${product.price.toCurrencyFormat()}",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+
+                    ProductPrice(product.price)
+
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(
-                            onClick = {
-                                if (quantity > 1) {
-                                    onQuantityChange(product, quantity - 1)
-                                }
-                            },
+
+                        QuantityButton(
+                            onClick = { if (quantity > 1) { onQuantityChange(product, quantity - 1) } },
                             enabled = quantity > 1 && !isLoading,
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(35.dp)
-                                    .background(
-                                        MaterialTheme.colorScheme.primary,
-                                        shape = CircleShape
-                                    )
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.Remove,
-                                    contentDescription = stringResource(id = CartR.string.remove),
-                                    tint = Color.White,
-                                    modifier = Modifier.align(Alignment.Center)
-                                )
-                            }
-                        }
+                            contentDescription = stringResource(id = CartR.string.remove),
+                            icon = Icons.Filled.Remove
+                        )
                         Text(
                             text = quantity.toString(),
                             modifier = Modifier.padding(horizontal = 8.dp)
                         )
-                        IconButton(
+                        QuantityButton(
                             onClick = { onQuantityChange(product, quantity + 1) },
-                            enabled = !isLoading
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(35.dp)
-                                    .background(
-                                        MaterialTheme.colorScheme.primary,
-                                        shape = CircleShape
-                                    )
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = stringResource(id = CartR.string.add),
-                                    tint = Color.White,
-                                    modifier = Modifier.align(Alignment.Center)
-                                )
-                            }
-                        }
+                            enabled = !isLoading,
+                            contentDescription = stringResource(id = CartR.string.add),
+                            icon = Icons.Default.Add
+                        )
                     }
                     RemoveFromCartButton(
                         modifier = Modifier.padding(start = 8.dp),
@@ -169,6 +123,55 @@ fun CartProductCard(
         }
     }
 }
+
+ @Composable
+fun CardTitle(productName: String = "") {
+        Text(
+            text = productName,
+            modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
+            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+
+ @Composable
+ fun ProductPrice(price: Double = 0.0) {
+     Text(
+         modifier = Modifier.width(64.dp),
+         text = "\$${price.toCurrencyFormat()}",
+         style = MaterialTheme.typography.bodyMedium
+     )
+    }
+
+
+ @Composable
+fun QuantityButton(
+     enabled: Boolean = false,
+     onClick: () -> Unit = {},
+     contentDescription: String = "",
+     icon: ImageVector) {
+        IconButton(
+            onClick = onClick,
+            enabled = enabled
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(35.dp)
+                    .background(
+                        MaterialTheme.colorScheme.primary,
+                        shape = CircleShape
+                    )
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = contentDescription,
+                    tint = Color.White,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
+        }
+    }
 
 @Composable
 fun RemoveFromCartButton(
@@ -301,20 +304,5 @@ fun CartProductCardPreview() {
         ),
         isLoading = false,
         quantity = 2
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ProductCardCartPreview() {
-    ProductCardCart(
-        product = Product(
-            id = "1",
-            name = "Producto de prueba con un nombre largo",
-            description = "Description del producto de prueba con un nombre largo",
-            price = 19.99,
-            imageUrl = "https://via.placeholder.com/150",
-            includesDrink = true,
-        )
     )
 }

@@ -15,7 +15,8 @@ import com.mleon.feature.cart.view.viewmodel.CartViewModel
 import com.mleon.feature.productlist.viewmodel.ProductListUiState
 import com.mleon.feature.productlist.viewmodel.ProductListViewModel
 import com.mleon.utils.ui.ErrorScreen
-import com.mleon.utils.ui.HorizontalLoadingIndicator
+import com.mleon.utils.ui.YappLoadingIndicator
+import kotlinx.coroutines.delay
 
 @Composable
 fun ProductListScreen(
@@ -27,6 +28,7 @@ fun ProductListScreen(
 
     // Only launch once when the Composable enters the composition
     LaunchedEffect(Unit) {
+        delay(1000) // Optional delay for better UX
         productListViewModel.loadProducts()
     }
 
@@ -36,7 +38,7 @@ fun ProductListScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                HorizontalLoadingIndicator()
+                YappLoadingIndicator()
             }
         }
 
@@ -50,7 +52,6 @@ fun ProductListScreen(
                     productListViewModel.clearCartMessage()
                 }
             }
-
             ProductListView(
                 selectedCategory = successState.selectedCategory,
                 searchQuery = successState.searchQuery,

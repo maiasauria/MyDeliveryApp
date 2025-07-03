@@ -15,7 +15,7 @@ import com.mleon.feature.cart.view.viewmodel.CartViewModel
 import com.mleon.feature.checkout.viewmodel.CheckoutUiState
 import com.mleon.feature.checkout.viewmodel.CheckoutViewModel
 import com.mleon.utils.ui.ErrorScreen
-import com.mleon.utils.ui.HorizontalLoadingIndicator
+import com.mleon.utils.ui.YappLoadingIndicator
 
 @Composable
 fun CheckoutScreen(
@@ -53,12 +53,7 @@ fun CheckoutScreen(
             )
         }
         is CheckoutUiState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                HorizontalLoadingIndicator()
-            }
+            YappLoadingIndicator()
         }
         is CheckoutUiState.Error -> {
             val errorState = uiState as CheckoutUiState.Error

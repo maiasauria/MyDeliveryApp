@@ -2,10 +2,12 @@ package com.mleon.feature.cart.view.viewmodel
 
 import com.mleon.core.model.CartItem
 
-data class CartState(
-    val cartItems: List<CartItem> = emptyList(),
-    val isLoading: Boolean = false,
-    val errorMessage: String? = null,
-    val subtotal: Double = 0.0,
-    val totalPrice: Double = 0.0
-)
+sealed class CartUiState {
+    object Loading : CartUiState()
+    data class Success(
+        val cartItems: List<CartItem>,
+        val total: Double,
+        val cartMessage: String = ""
+    ) : CartUiState()
+    data class Error(val message: String) : CartUiState()
+}

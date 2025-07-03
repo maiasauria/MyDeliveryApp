@@ -19,9 +19,9 @@ import androidx.compose.ui.unit.dp
 import com.mleon.core.model.Order
 import com.mleon.core.model.enums.PaymentMethod
 import com.mleon.feature.orders.R
-import com.mleon.utils.ui.HorizontalLoadingIndicator
 import com.mleon.utils.ui.ListDivider
 import com.mleon.utils.ui.ScreenTitle
+import com.mleon.utils.ui.YappLoadingIndicator
 
 @Composable
 fun OrdersListView(
@@ -38,7 +38,7 @@ fun OrdersListView(
         Box(modifier = Modifier.weight(1f, fill = false)) {
             when {
                 isLoading -> {
-                    HorizontalLoadingIndicator()
+                    YappLoadingIndicator()
                 }
                 error != null && error.isNotEmpty() -> {
                     Text(

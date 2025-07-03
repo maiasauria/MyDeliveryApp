@@ -25,7 +25,6 @@ import com.mleon.core.model.Product
 import com.mleon.core.model.enums.Categories
 import com.mleon.feature.cart.R
 import com.mleon.utils.toCurrencyFormat
-import com.mleon.utils.ui.HorizontalLoadingIndicator
 import com.mleon.utils.ui.ListDivider
 import com.mleon.utils.ui.ScreenTitle
 
@@ -47,11 +46,6 @@ fun CartView(
                 .weight(1f), // Usar espacio disponible
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (isLoading) {
-                item {
-                    HorizontalLoadingIndicator()
-                }
-            }
             //Elementos del carrito
             itemsIndexed(cartItems) { index, cartItem ->
                 CartProductCard(
