@@ -1,49 +1,30 @@
 package com.mleon.feature.productlist.viewmodel
 
+import com.mleon.core.data.domain.GetProductsUseCase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.setMain
+import org.junit.Before
+import org.junit.Test
+
 class ProductListViewModelTest {
 
-// GIVEN getProductsUseCase returns empty list
-// WHEN ProductListViewModel is initialized
-// THEN productState contains empty products list
+    private lateinit var getProductsUseCase: GetProductsUseCase
+    private lateinit var productListViewModel: ProductListViewModel
 
-// GIVEN getProductsUseCase returns products
-// WHEN ProductListViewModel is initialized
-// THEN productState contains all products & products saved to room?
+    private val testDispatcher = StandardTestDispatcher()
 
-// GIVEN products loaded
-// WHEN onSearchTextChange is called with matching query
-// THEN productState contains filtered products
+    @Before
+    fun setUp() {
+        Dispatchers.setMain(testDispatcher)
+        productListViewModel = ProductListViewModel(getProductsUseCase)
+    }
 
-// GIVEN products loaded
-// WHEN onSearchTextChange is called with empty query
-// THEN productState contains all products
-
-// GIVEN products loaded
-// WHEN onCategorySelection is called with a category
-// THEN productState contains products of that category
-
-// GIVEN products loaded
-// WHEN onCategorySelection is called with null
-// THEN productState contains all products
-
-// GIVEN filtered products
-// WHEN onOrderByPriceAscending is called
-// THEN productState contains products sorted by ascending price
-
-// GIVEN filtered products
-// WHEN onOrderByPriceDescending is called
-// THEN productState contains products sorted by descending price
-
-// GIVEN product selected
-// WHEN onAddToCartButtonClick is called
-// THEN productState contains cart message with product name
-
-// GIVEN cart message is set
-// WHEN clearCartMessage is called
-// THEN productState cart message is empty
-
-// GIVEN products filtered by category and search
-// WHEN both filters are applied
-// THEN productState contains products matching both filters
-
+    @Test
+    fun `test initial state`() {
+        // Verify that the initial state is correct
+        assert(productListViewModel.productState.value.products.isEmpty())
+        assert(!productListViewModel.uiState.value.isLoading)
+        assert(productListViewModel.uiState.value.errorMessage.isEmpty())
+    }
 }

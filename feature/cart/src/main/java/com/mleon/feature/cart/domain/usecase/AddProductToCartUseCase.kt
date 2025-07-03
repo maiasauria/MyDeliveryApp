@@ -1,4 +1,4 @@
-package com.mleon.core.data.domain.cart
+package com.mleon.feature.cart.domain.usecase
 
 import com.mleon.core.data.datasource.local.entities.CartItemEntity
 import com.mleon.core.data.repository.interfaces.CartItemRepository

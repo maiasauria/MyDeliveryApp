@@ -4,9 +4,9 @@ import android.util.Log
 import com.mleon.core.data.datasource.UserDataSource
 import com.mleon.core.data.model.LoginResult
 import com.mleon.core.data.model.RegisterResult
-import com.mleon.core.model.DatabaseUser
+import com.mleon.core.data.datasource.fake.model.DatabaseUser
 import com.mleon.core.model.User
-import com.mleon.core.model.toUser
+import com.mleon.core.data.datasource.fake.model.toUser
 import javax.inject.Inject
 
 class UserFakeDataSource
