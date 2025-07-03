@@ -1,7 +1,10 @@
 package com.mleon.feature.orders.view
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,19 +18,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mleon.core.model.Order
 import com.mleon.core.model.enums.PaymentMethod
 import com.mleon.feature.orders.R
 import com.mleon.utils.ui.ListDivider
 import com.mleon.utils.ui.ScreenTitle
-import com.mleon.utils.ui.YappLoadingIndicator
 
 @Composable
 fun OrdersListView(
     orders: List<Order>,
-    isLoading: Boolean,
-    error: String?
 ) {
     Column(
         modifier = Modifier
@@ -36,25 +38,12 @@ fun OrdersListView(
     ) {
         ScreenTitle(stringResource(R.string.orders_title))
         Box(modifier = Modifier.weight(1f, fill = false)) {
-            when {
-                isLoading -> {
-                    YappLoadingIndicator()
-                }
-                error != null && error.isNotEmpty() -> {
-                    Text(
-                        text = stringResource(R.string.orders_error, error),
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-                else -> {
-                    LazyColumn {
-                        itemsIndexed(orders) { index, order ->
-                            OrderCard(order = order, position = index + 1)
-                            if (index < orders.lastIndex) {
-                                ListDivider(modifier = Modifier.padding(vertical = 4.dp))
-                            }
-                        }
+            LazyColumn {
+                itemsIndexed(orders) { index, order ->
+                    OrderCard(order = order, position = index + 1)
+                    if (index < orders.lastIndex) {
+                        Spacer(modifier = Modifier.padding(vertical = 8.dp))
+                        ListDivider()
                     }
                 }
             }
@@ -62,19 +51,35 @@ fun OrdersListView(
     }
 }
 
+
 @Composable
 fun OrderCard(order: Order, position: Int) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
 
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+            Row (modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,) {
+                Text(
+                    text = stringResource(R.string.orders_title_card, position),
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                )
+                Text(
+                    stringResource(R.string.orders_total, order.total)
+                )
+            }
+
             Text(
-                text = stringResource(R.string.orders_title_card, position),
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                style = MaterialTheme.typography.bodySmall,
+                text = stringResource(
+                    R.string.orders_date,
+                    java.text.SimpleDateFormat("yyyy-MM-dd HH:mm")
+                        .format(java.util.Date(order.timestamp))
+                )
             )
             Text(
                 stringResource(
@@ -87,24 +92,14 @@ fun OrderCard(order: Order, position: Int) {
                     R.string.orders_shipping_address,
                     order.shippingAddress
                 ),
-            )
-            Text(
-                stringResource(
-                    R.string.orders_total,
-                    order.total
-                )
-            )
-            Text(
-                stringResource(
-                    R.string.orders_date,
-                    java.text.SimpleDateFormat("yyyy-MM-dd HH:mm").format(java.util.Date(order.timestamp))
-                )
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }
 }
 
-
+@Preview(showBackground = true)
 @Composable
 fun OrdersListViewPreview() {
     OrdersListView(
@@ -116,9 +111,14 @@ fun OrdersListViewPreview() {
                 total = 100.0,
                 timestamp = System.currentTimeMillis(),
                 paymentMethod = PaymentMethod.CREDIT_CARD.displayName
+            ),Order(
+                orderId = "1",
+                orderItems = listOf(),
+                shippingAddress = "123 Main St",
+                total = 100.0,
+                timestamp = System.currentTimeMillis(),
+                paymentMethod = PaymentMethod.CREDIT_CARD.displayName
             )
-        ),
-        isLoading = false,
-        error = null
+        )
     )
 }

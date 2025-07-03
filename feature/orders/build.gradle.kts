@@ -48,6 +48,7 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.11.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation ("io.mockk:mockk:1.13.10")
 
     //Material Design
     implementation(libs.androidx.material3.android)

@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mleon.core.data.repository.interfaces.OrderRepository
+import com.mleon.feature.orders.domain.usecase.GetOrdersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,36 +16,25 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OrdersViewModel @Inject constructor(
-    private val repository: OrderRepository
+    private val getOrdersUseCase: GetOrdersUseCase,
+    private val dispatcher: CoroutineDispatcher,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(OrdersUiState())
+
+    private val _uiState = MutableStateFlow<OrdersUiState>(OrdersUiState.Loading)
     val uiState: StateFlow<OrdersUiState> = _uiState
 
-    private val exceptionHandler =
-        CoroutineExceptionHandler { _, exception ->
-            Log.e("OrdersViewModel", "Coroutine error", exception)
-            _uiState.value = _uiState.value.copy(
-                isLoading = false, // TODO vaciar la lista?
-                error = "Ocurrió un error inesperado. Intenta nuevamente."
-            )
-        }
+    private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
+        Log.e("OrdersViewModel", "Coroutine error", exception)
+        _uiState.value = OrdersUiState.Error(
+            Exception(exception.message ?: "Ocurrió un error inesperado. Intenta nuevamente.")
+        )
+    }
 
-    fun fetchOrders() {
-        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-            try {
-                val orders = repository.getOrders()
-                _uiState.value = _uiState.value.copy(
-                    orders = orders,
-                    isLoading = false,
-                    error = null
-                )
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    error = e.message
-                )
-            }
+    fun loadOrders() {
+        viewModelScope.launch(dispatcher + exceptionHandler) {
+            _uiState.value = OrdersUiState.Loading
+            val orders = getOrdersUseCase()
+            _uiState.value = OrdersUiState.Success(orders)
         }
     }
 }

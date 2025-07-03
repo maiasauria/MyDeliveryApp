@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import com.mleon.core.navigation.NavigationRoutes
 import com.mleon.feature.cart.view.ui.views.CartScreen
 import com.mleon.feature.checkout.view.CheckoutScreen
-import com.mleon.feature.orders.view.OrdersListScreen
+import com.mleon.feature.orders.view.OrdersScreen
 import com.mleon.feature.productlist.view.ProductListScreen
 import com.mleon.feature.profile.views.ProfileScreen
 import com.mleon.feature.signup.view.SignupScreen
@@ -46,7 +46,7 @@ fun AppNavigation(navController: NavHostController) {
             ProfileScreen()
         }
         composable(route = NavigationRoutes.ORDERS) {
-            OrdersListScreen()
+            OrdersScreen()
         }
         composable(route = NavigationRoutes.CHECKOUT) {
             CheckoutScreen(navController)

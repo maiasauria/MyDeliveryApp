@@ -2,8 +2,10 @@ package com.mleon.feature.orders.viewmodel
 
 import com.mleon.core.model.Order
 
-data class OrdersUiState(
-    val orders: List<Order> = emptyList(),
-    val isLoading: Boolean = false,
-    val error: String? = null
-)
+sealed class OrdersUiState {
+    object Loading : OrdersUiState()
+    data class Success(
+        val orders: List<Order>
+    ) : OrdersUiState()
+    data class Error(val error: Exception) : OrdersUiState()
+}
