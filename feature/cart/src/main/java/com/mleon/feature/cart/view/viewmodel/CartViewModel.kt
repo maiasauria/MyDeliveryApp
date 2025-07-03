@@ -3,13 +3,13 @@ package com.mleon.feature.cart.view.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mleon.core.model.CartItem
+import com.mleon.core.model.Product
 import com.mleon.feature.cart.domain.usecase.AddProductToCartUseCase
 import com.mleon.feature.cart.domain.usecase.ClearCartUseCase
 import com.mleon.feature.cart.domain.usecase.EditCartItemQuantityUseCase
 import com.mleon.feature.cart.domain.usecase.GetCartItemsWithProductsUseCase
 import com.mleon.feature.cart.domain.usecase.RemoveCartItemUseCase
-import com.mleon.core.model.CartItem
-import com.mleon.core.model.Product
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers

@@ -3,95 +3,104 @@ package com.mleon.feature.checkout.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mleon.core.data.datasource.local.entities.toCartItem
-import com.mleon.core.data.repository.interfaces.CartItemRepository
-import com.mleon.core.data.repository.interfaces.OrderRepository
+import com.mleon.core.data.model.OrderResponse
 import com.mleon.core.model.Order
 import com.mleon.core.model.enums.PaymentMethod
+import com.mleon.feature.cart.domain.usecase.GetCartItemsWithProductsUseCase
+import com.mleon.feature.checkout.domain.usecase.CreateOrderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID.randomUUID
 import javax.inject.Inject
 
+
 @HiltViewModel
 class CheckoutViewModel @Inject constructor(
-    private val orderRepository: OrderRepository,
-    private val cartItemRepository: CartItemRepository,
+    private val getCartItemsWithProductsUseCase: GetCartItemsWithProductsUseCase,
+    private val createOrderUseCase: CreateOrderUseCase,
+    private val dispatcher: CoroutineDispatcher,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(CheckoutUiState())
-    val uiState: StateFlow<CheckoutUiState> = _uiState
 
-    private val exceptionHandler =
-        CoroutineExceptionHandler { _, exception ->
-            Log.e("CheckoutViewModel", "Coroutine error", exception)
-            _uiState.update { it.copy(errorMessage = "Ocurrió un error inesperado. Intenta nuevamente.") }
-        }
+    private val _uiState = MutableStateFlow<CheckoutUiState>(CheckoutUiState.Loading)
+    val uiState= _uiState.asStateFlow()
 
-    init {
-        getCartItems()
+    private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
+        Log.e("CheckoutViewModel", "Coroutine error", exception)
+        _uiState.value = CheckoutUiState.Error(
+            exception as? Exception ?: Exception("Ocurrió un error inesperado. Intenta nuevamente.")
+        )
     }
 
-    private fun getCartItems() {
-        viewModelScope.launch {
-            val cartItems = cartItemRepository.getAllCartItemsWithProducts().first().map { it.toCartItem() }
-            Log.d("CheckoutViewModel", "Cart items fetched: $cartItems")
-
-            _uiState.update {
-                it.copy(
-                    cartItems = cartItems,
-                    validOrder = cartItems.isNotEmpty(),
-                    subTotalAmount = cartItems.sumOf { it.product.price * it.quantity },
-                    shippingCost = 10.0, // Fixed shipping cost
-                    totalAmount = cartItems.sumOf { item -> item.product.price * item.quantity } + 10.0 // Adding shipping cost
-                )
-            }
-            Log.d("CheckoutViewModel", "UI state updated with cart items: ${_uiState.value}")
-        }
-    }
-
-    fun confirmOrder(
-    ) {
-        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
-
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+    fun getCartItems() {
+        _uiState.value = CheckoutUiState.Loading
+        viewModelScope.launch(dispatcher + exceptionHandler) {
 
             try {
-                val cartItems = _uiState.value.cartItems
-                val total = cartItems.sumOf { it.product.price * it.quantity } + _uiState.value.shippingCost // Costo de envío fijo.
+                val cartItems = getCartItemsWithProductsUseCase()
+                val subTotal = cartItems.sumOf { it.product.price * it.quantity }
+                val shippingCost = 10.0
+                val total = subTotal + shippingCost
 
-                Log.d("CheckoutViewModel", "Cart items to be sent: $cartItems")
-                val request =
-                    Order(
-                        orderId = randomUUID().toString(),
-                        orderItems = cartItems,
-                        shippingAddress = _uiState.value.shippingAddress, // TODO: Replace with actual user address
-                        paymentMethod = _uiState.value.paymentMethod.apiValue,
-                        total = total,
-                        timestamp = System.currentTimeMillis(),
-                    )
-
-                val result = orderRepository.createOrder(request)
-                Log.d("CheckoutViewModel", "Order created successfully: $result")
-                if (result != null) {
-                    _uiState.update { it.copy(isLoading = false, orderConfirmed = true) }
-                }
+                _uiState.value = CheckoutUiState.Success(
+                    cartItems = cartItems,
+                    paymentMethod = PaymentMethod.CASH,
+                    shippingAddress = "Calle Falsa 123",
+                    shippingCost = shippingCost,
+                    totalAmount = total,
+                    subTotalAmount = subTotal,
+                    orderConfirmed = false,
+                    validOrder = cartItems.isNotEmpty()
+                )
             } catch (e: Exception) {
-                _uiState.update { it.copy(errorMessage = e.message) }
-            } finally {
-                _uiState.update { it.copy(isLoading = false) }
+                _uiState.value = CheckoutUiState.Error(e)
             }
         }
     }
 
-    // Todavia no está en uso, falta validar TJ
+    fun confirmOrder() {
+        val currentState = _uiState.value
+        if (currentState !is CheckoutUiState.Success) return
+
+        viewModelScope.launch(dispatcher + exceptionHandler) {
+            _uiState.value = CheckoutUiState.Loading
+            try {
+                val order = Order(
+                    orderId = randomUUID().toString(),
+                    orderItems = currentState.cartItems,
+                    shippingAddress = currentState.shippingAddress,
+                    paymentMethod = currentState.paymentMethod.apiValue,
+                    total = currentState.totalAmount,
+                    timestamp = System.currentTimeMillis(),
+                )
+
+                when (val response = createOrderUseCase(order)) {
+                    is OrderResponse.Success -> {
+                        _uiState.value = currentState.copy(orderConfirmed = true)
+                    }
+                    is OrderResponse.Error -> {
+                        _uiState.value = CheckoutUiState.Error(Exception(response.message))
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.value = CheckoutUiState.Error(e)
+            }
+        }
+    }
+
     fun onPaymentMethodSelection(paymentMethod: PaymentMethod) {
-        Log.d("CheckoutViewModel", "onPaymentMethodSelection called with paymentMethod: $paymentMethod",)
-        _uiState.update { it.copy(paymentMethod = paymentMethod, validOrder = true) }
+        _uiState.update { state ->
+            if (state is CheckoutUiState.Success) {
+                state.copy(paymentMethod = paymentMethod, validOrder = true)
+            } else {
+                state
+            }
+        }
     }
 }

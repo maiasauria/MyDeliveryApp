@@ -5,7 +5,6 @@ import com.mleon.core.model.Order
 import com.mleon.core.model.dtos.CartItemDto
 import com.mleon.core.model.dtos.toDto
 
-
 data class OrderDto(
     val orderId: String,
     val productIds: List<CartItemDto>,
@@ -37,9 +36,15 @@ fun Order.toEntity(): OrderEntity {
     )
 }
 
-data class OrderResponse(
+data class OrderApiResponse(
     val orderId: String,
     val productIds: List<CartItemDto>,
     val total: Double,
     val timestamp: Long
 )
+
+sealed class OrderResponse {
+    data class Success(val order: Order) : OrderResponse()
+    data class Error(val message: String, val code: Int? = null) : OrderResponse()
+}
+

@@ -1,29 +1,107 @@
 package com.mleon.feature.checkout.viewmodel
 
+import com.mleon.core.data.model.OrderResponse
+import com.mleon.core.model.CartItem
+import com.mleon.core.model.Order
+import com.mleon.feature.cart.domain.usecase.GetCartItemsWithProductsUseCase
+import com.mleon.feature.checkout.domain.usecase.CreateOrderUseCase
+import io.mockk.coEvery
+import io.mockk.mockk
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
+import kotlinx.coroutines.test.runTest
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Test
+
+
 class CheckoutViewModelTest {
+    private lateinit var createOrderUseCase: CreateOrderUseCase
+    private lateinit var getCartItemsWithProductsUseCase: GetCartItemsWithProductsUseCase
 
-// GIVEN cartItemRepository returns empty list
-// WHEN CheckoutViewModel is initialized
-// THEN uiState contains empty cartItems and validOrder is false
-//Esto no deberia pasar.
+    @Before
+    fun setUp() {
+        createOrderUseCase = mockk()
+        getCartItemsWithProductsUseCase = mockk()
+    }
 
-// GIVEN cartItemRepository returns cart items
-// WHEN CheckoutViewModel is initialized
-// THEN uiState contains cartItems, validOrder is true, and amounts are calculated
+    @Test
+    fun `uiState is Loading when confirmOrder is called`() = runTest {
+        givenCartItems(listOf(mockCartItem()))
+        givenOrderSuccess(mockOrder())
 
-// GIVEN valid cart items in uiState
-// WHEN confirmOrder is called and orderRepository succeeds
-// THEN uiState sets isLoading true, then orderConfirmed true and isLoading false
+        val  viewModel = CheckoutViewModel(getCartItemsWithProductsUseCase, createOrderUseCase, StandardTestDispatcher(testScheduler))
+        viewModel.confirmOrder()
+        Assert.assertTrue(viewModel.uiState.value is CheckoutUiState.Loading)
+    }
 
-// GIVEN valid cart items in uiState
-// WHEN confirmOrder is called and orderRepository throws exception
-// THEN uiState sets errorMessage and isLoading false
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `uiState is Success when confirmOrder succeeds`() = runTest {
+        val cartItems = listOf(mockCartItem())
+        givenCartItems(cartItems)
+        givenOrderSuccess(mockOrder())
 
-// GIVEN any state
-// WHEN onPaymentMethodSelection is called
-// THEN uiState updates paymentMethod and validOrder is true
+        val viewModel = CheckoutViewModel(getCartItemsWithProductsUseCase, createOrderUseCase, StandardTestDispatcher(testScheduler))
 
-// GIVEN confirmOrder is called
-// WHEN exception occurs in coroutine
-// THEN uiState sets errorMessage to generic error message
+        viewModel.getCartItems()
+        advanceUntilIdle()
+        runCurrent()
+        println("After getCartItems: ${viewModel.uiState.value}")
+
+        viewModel.confirmOrder()
+        advanceUntilIdle()
+        runCurrent()
+        thenUiStateIsSuccess(viewModel, cartItems.size)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `uiState is Error when confirmOrder fails`() = runTest {
+        val cartItems = listOf(mockCartItem())
+        givenCartItems(cartItems)
+        givenOrderError("Order failed")
+
+        val viewModel = CheckoutViewModel(getCartItemsWithProductsUseCase, createOrderUseCase, StandardTestDispatcher(testScheduler))
+
+        viewModel.getCartItems()
+        advanceUntilIdle()
+
+        assert(viewModel.uiState.value is CheckoutUiState.Success)
+
+        viewModel.confirmOrder()
+        advanceUntilIdle()
+
+        thenUiStateIsError(viewModel, "Order failed")
+    }
+
+    private fun givenCartItems(cartItems: List<CartItem>) {
+        coEvery { getCartItemsWithProductsUseCase() } returns cartItems
+    }
+
+    private fun givenOrderSuccess(order: Order) {
+        coEvery { createOrderUseCase(any()) } returns OrderResponse.Success(order)
+    }
+
+    private fun givenOrderError(message: String) {
+        coEvery { createOrderUseCase(any()) } returns OrderResponse.Error(message)
+    }
+
+    private fun mockCartItem(): CartItem = mockk(relaxed = true)
+    private fun mockOrder(): Order = mockk(relaxed = true)
+    private fun thenUiStateIsSuccess(viewModel: CheckoutViewModel, expectedCount: Int) {
+        val state = viewModel.uiState.value
+        println("Actual state: $state")
+        assert(state is CheckoutUiState.Success)
+    }
+    private fun thenUiStateIsError(viewModel: CheckoutViewModel, expectedMessage: String) {
+        val state = viewModel.uiState.value
+        println("Actual state: $state")
+        assert(state is CheckoutUiState.Error)
+        Assert.assertEquals(expectedMessage, (state as CheckoutUiState.Error).error.message)
+    }
+
+
 }

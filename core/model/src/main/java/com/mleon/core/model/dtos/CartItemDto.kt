@@ -2,6 +2,7 @@ package com.mleon.core.model.dtos
 
 import com.mleon.core.model.CartItem
 
+//Esta clase no tiene ID del producto, no se usa en la app.
 data class CartItemDto(
     val name: String,
     val description: String,

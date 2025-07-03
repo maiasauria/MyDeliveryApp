@@ -40,7 +40,6 @@ import com.mleon.core.model.Product
 import com.mleon.core.model.enums.PaymentMethod
 import com.mleon.feature.checkout.R
 import com.mleon.utils.toCurrencyFormat
-import com.mleon.utils.ui.HorizontalLoadingIndicator
 import com.mleon.utils.ui.ListDivider
 import com.mleon.utils.ui.ScreenSubTitle
 import com.mleon.utils.ui.ScreenTitle
@@ -53,13 +52,11 @@ fun CheckoutView(
     shippingAddress: String,
     paymentMethod: PaymentMethod,
     onConfirmOrder: () -> Unit,
-    isLoading: Boolean,
-    isOrderValid: Boolean = false,
     onPaymentMethodSelection: (PaymentMethod) -> Unit = {},
-    errorMessage: String?,
     subtotalAmount: Double = 0.0,
     shippingCost: Double = 0.0,
     totalAmount: Double = 0.0,
+    isOrderValid: Boolean = false,
 ) {
     var selectedPaymentMethod by remember { mutableStateOf<String?>(null) }
 
@@ -74,10 +71,6 @@ fun CheckoutView(
     ) {
         Column {
             ScreenTitle(stringResource(id = R.string.checkout_title))
-
-            if (isLoading) {
-                HorizontalLoadingIndicator()
-            }
 
             // Mostrar la cantidad total de productos (cart * cantidad)
             ScreenSubTitle(stringResource(id = R.string.checkout_total_items))
@@ -164,28 +157,16 @@ fun CheckoutView(
             Spacer(modifier = Modifier.height(12.dp))
             ListDivider()
 
-
             Spacer(modifier = Modifier.height(24.dp))
 
-            if (errorMessage != null) {
-                Text(
-                    text = stringResource(id = R.string.checkout_error, errorMessage),
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(bottom = 8.dp),
-                )
-            }
         }
 
         Button(
             onClick = onConfirmOrder,
-            enabled = !isLoading, //&& isOrderValid,
+            enabled = isOrderValid,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            if (isLoading) {
-                CircularProgressIndicator()
-            } else {
                 Text(stringResource(id = R.string.checkout_confirm_order))
-            }
         }
     }
 }
@@ -208,8 +189,6 @@ private fun CheckoutViewPreview() {
         shippingAddress = "Calle 123",
         paymentMethod = PaymentMethod.CASH,
         onConfirmOrder = {},
-        isLoading = false,
-        errorMessage = null,
         subtotalAmount = 100.0,
         shippingCost = 20.0,
         totalAmount = 120.0,

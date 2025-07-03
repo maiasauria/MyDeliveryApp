@@ -2,7 +2,7 @@ package com.mleon.core.data.datasource.fake
 
 import com.mleon.core.data.datasource.OrderDataSource
 import com.mleon.core.data.model.OrderDto
-import com.mleon.core.data.model.OrderResponse
+import com.mleon.core.data.model.OrderApiResponse
 import com.mleon.core.model.CartItem
 import com.mleon.core.model.Order
 import com.mleon.core.model.Product
@@ -78,7 +78,7 @@ class OrderFakeDataSource
 
         override suspend fun getOrders(): List<Order> = orders
 
-        override suspend fun createOrder(request: OrderDto): OrderResponse {
+        override suspend fun createOrder(request: OrderDto): OrderApiResponse {
             val newOrder =
                 Order(
                     orderId = "3",
@@ -104,7 +104,7 @@ class OrderFakeDataSource
                     timestamp = System.currentTimeMillis() - 86400000, // 1 day ago
                 )
             orders.add(newOrder)
-            return OrderResponse(
+            return OrderApiResponse(
                 orderId = newOrder.orderId,
                 productIds = newOrder.orderItems.map { it.toDto() },
                 total = newOrder.total,

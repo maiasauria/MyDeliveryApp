@@ -32,4 +32,8 @@ interface OrderDao {
     @Transaction // Room will resolve the relation using the data class OrderWithItemsEntity
     @Query("SELECT * FROM orders")
     fun getAllOrdersWithItems(): List<OrderWithItemsEntity>
+
+    @Transaction
+    @Query("SELECT * FROM orders WHERE id = :orderId")
+    suspend fun getOrderItemsWithProductById(orderId: String): OrderWithItemsEntity?
 }

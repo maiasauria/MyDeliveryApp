@@ -4,7 +4,7 @@ import android.util.Log
 import com.mleon.core.data.datasource.OrderDataSource
 import com.mleon.core.data.datasource.remote.model.toOrder
 import com.mleon.core.data.model.OrderDto
-import com.mleon.core.data.model.OrderResponse
+import com.mleon.core.data.model.OrderApiResponse
 import com.mleon.core.data.remote.OrderApiService
 import com.mleon.core.model.Order
 import javax.inject.Inject
@@ -23,5 +23,5 @@ class OrderRemoteDataSource
                         remoteOrder.toOrder()
                     }
 
-        override suspend fun createOrder(request: OrderDto): OrderResponse = apiService.createOrder(request)
+        override suspend fun createOrder(request: OrderDto): OrderApiResponse = apiService.createOrder(request)
     }
