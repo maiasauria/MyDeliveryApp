@@ -19,7 +19,7 @@ class ProductRepositoryImpl @Inject constructor(
 
     override suspend fun getProducts(): List<Product> {
 
-        return withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) { // Cambia el contexto a IO para operaciones de base de datos y red
             try {
                 // Traigo los productos desde la fuente
                 val products = productDataSource.getProducts()

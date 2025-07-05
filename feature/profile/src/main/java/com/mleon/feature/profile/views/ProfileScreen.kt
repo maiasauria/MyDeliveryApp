@@ -6,34 +6,48 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import com.mleon.core.model.User
+import com.mleon.core.navigation.NavigationRoutes
+import com.mleon.feature.profile.viewmodel.ProfileUiState
 import com.mleon.feature.profile.viewmodel.ProfileViewModel
+import com.mleon.utils.ui.ErrorScreen
+import com.mleon.utils.ui.YappLoadingIndicator
 import java.io.File
 
+
 @Composable
-fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
-    val state = viewModel.uiState.collectAsState().value
+fun ProfileScreen(
+    navController: NavHostController,
+    viewModel: ProfileViewModel = hiltViewModel(),
+) {
+    val uiState = viewModel.uiState.collectAsState().value
     val context = LocalContext.current
 
     // Permission dialog state
-    var showPermissionDialog by remember { mutableStateOf(false) }
-    var permissionToRequest by remember { mutableStateOf("") }
+    var showPermissionDialog by rememberSaveable { mutableStateOf(false) }
+    var permissionToRequest by rememberSaveable { mutableStateOf("") }
     var pendingAction by remember { mutableStateOf<(() -> Unit)?>(null) }
-
-    // For camera photo URI
+    var showLogoutDialog by rememberSaveable { mutableStateOf(false) }
+    var showPreview by rememberSaveable { mutableStateOf(false) }
+    var userDraft by rememberSaveable { mutableStateOf<User?>(null) }
     var cameraImageUri by remember { mutableStateOf<Uri?>(null) }
+
 
     // Gallery launcher
     val galleryLauncher = rememberLauncherForActivityResult(
@@ -71,72 +85,118 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel()) {
         )
     }
 
-    LaunchedEffect(state.errorMessage) {
-        if (state.errorMessage.isNotEmpty()) {
-            Toast.makeText(context, state.errorMessage, Toast.LENGTH_LONG).show()
-        }
-    }
-    LaunchedEffect(state.isSaved) {
-        if (state.isSaved) {
-            Toast.makeText(context, "Perfil guardado", Toast.LENGTH_LONG).show()
-            viewModel.clearSavedFlag()
-        }
+    LaunchedEffect(Unit) {
+        viewModel.loadProfile()
     }
 
-    ProfileView(
-        onNameChange = viewModel::onNameChange,
-        onLastnameChange = viewModel::onLastnameChange,
-        onEmailChange = viewModel::onEmailChange,
-        onAddressChange = viewModel::onAddressChange,
-        onSave = viewModel::updateProfile,
-        onImageUriChange = viewModel::onImageUriChange,
-        name = state.name,
-        lastname = state.lastname,
-        email = state.email,
-        address = state.address,
-        userImageUrl = state.userImageUrl,
-        isLoading = state.isLoading,
-        isImageUploading = state.isImageUploading,
-        isFormValid = state.isFormValid,
-        errorMessageName = state.errorMessageName,
-        errorMessageLastname = state.errorMessageLastname,
-        errorMessageEmail = state.errorMessageEmail,
-        errorMessageAddress = state.errorMessageAddress,
-        onRequestCamera = {
-            permissionToRequest = Manifest.permission.CAMERA
-            showPermissionDialog = true
-            pendingAction = {
-                cameraImageUri = createImageUri(context)
-                cameraImageUri?.let { cameraLauncher.launch(it) }
-            }
-        },
-        onRequestGallery = {
-            galleryLauncher.launch("image/*")
+    when (uiState) {
+        is ProfileUiState.Loading -> {
+            YappLoadingIndicator()
         }
-    )
+
+        is ProfileUiState.Error -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                ErrorScreen(
+                    errorMessage = uiState.message,
+                    onRetry = { viewModel.loadProfile() }
+                )
+            }
+        }
+
+        is ProfileUiState.Success -> {
+            val state = uiState.data
+
+            LaunchedEffect(state.errorMessage) {
+                if (state.errorMessage.isNotEmpty()) {
+                    Toast.makeText(context, state.errorMessage, Toast.LENGTH_LONG).show()
+                }
+            }
+            LaunchedEffect(state.isSaved) {
+                if (state.isSaved) {
+                    Toast.makeText(context, "Perfil guardado", Toast.LENGTH_LONG).show()
+                    viewModel.clearSavedFlag()
+                }
+            }
+
+            ProfileView(
+                onNameChange = viewModel::onNameChange,
+                onLastnameChange = viewModel::onLastnameChange,
+                onEmailChange = viewModel::onEmailChange,
+                onAddressChange = viewModel::onAddressChange,
+                name = state.name,
+                lastname = state.lastname,
+                email = state.email,
+                address = state.address,
+                userImageUrl = state.userImageUrl,
+                isLoading = state.isLoading,
+                isFormValid = state.isFormValid,
+                errorMessageName = state.errorMessageName,
+                errorMessageLastname = state.errorMessageLastname,
+                errorMessageEmail = state.errorMessageEmail,
+                errorMessageAddress = state.errorMessageAddress,
+                onRequestCamera = {
+                    permissionToRequest = Manifest.permission.CAMERA
+                    showPermissionDialog = true
+                    pendingAction = {
+                        cameraImageUri = createImageUri(context)
+                        cameraImageUri?.let { cameraLauncher.launch(it) }
+                    }
+                },
+                onRequestGallery = {
+                    galleryLauncher.launch("image/*")
+                },
+                onLogoutRequest = { showLogoutDialog = true },
+                onShowPreview = { draft ->
+                    userDraft = draft
+                    showPreview = true
+                }
+            )
+        }
+    }
 
     // AlertDialog before requesting permission
+
     if (showPermissionDialog) {
-        AlertDialog(
-            onDismissRequest = { showPermissionDialog = false },
-            title = { Text("Permission Required") },
-            text = {
-                Text(
-                    if (permissionToRequest == Manifest.permission.CAMERA)
-                        "This app needs camera access to take photos."
-                    else
-                        "This app needs access to your gallery to select images."
-                )
+        PermissionDialog(
+            permissionToRequest = permissionToRequest,
+            onConfirm = {
+                showPermissionDialog = false
+                permissionLauncher.launch(permissionToRequest)
             },
-            confirmButton = {
-                TextButton(onClick = {
-                    showPermissionDialog = false
-                    permissionLauncher.launch(permissionToRequest)
-                }) { Text("Allow") }
-            },
-            dismissButton = {
-                TextButton(onClick = { showPermissionDialog = false }) { Text("Deny") }
-            }
+            onDismiss = { showPermissionDialog = false }
         )
     }
+
+    if (showPreview && userDraft != null) {
+        ProfilePreviewDialog(
+            userDraft = userDraft!!,
+            onConfirm = {
+                viewModel.updateProfile()
+                showPreview = false
+            },
+            onDismiss = { showPreview = false }
+        )
+    }
+
+    if (uiState is ProfileUiState.Success && uiState.data.isLoading) {
+        ImageUploadingDialog()
+    }
+
+    if (showLogoutDialog) {
+        LogoutDialog(
+            onConfirm = {
+                showLogoutDialog = false
+                viewModel.onLogoutClick()
+                navController.navigate(NavigationRoutes.LOGIN) {
+                    popUpTo(0) { inclusive = true }
+                }
+            },
+            onDismiss = { showLogoutDialog = false }
+        )
+    }
+
+
 }

@@ -1,6 +1,12 @@
 package com.mleon.feature.profile.viewmodel
 
-data class ProfileUiState(
+sealed class ProfileUiState {
+    object Loading : ProfileUiState()
+    data class Success(val data: ProfileFormState) : ProfileUiState()
+    data class Error(val message: String) : ProfileUiState()
+}
+
+data class ProfileFormState(
     val name: String = "",
     val isNameValid: Boolean = true,
     val errorMessageName: String = "",
@@ -15,7 +21,6 @@ data class ProfileUiState(
     val errorMessageAddress: String = "",
     val isFormValid: Boolean = false,
     val userImageUrl: String = "",
-    val nacionalidad: String = "",
     val isLoading: Boolean = false,
     val errorMessage: String = "",
     val isSaved: Boolean = false,

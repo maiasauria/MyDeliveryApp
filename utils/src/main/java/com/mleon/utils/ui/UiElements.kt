@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -78,14 +76,9 @@ fun FullScreenLoadingIndicator() {
     }
 }
 
-@Composable
-fun HorizontalLoadingIndicator() {
-    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-}
 
 @Composable
 fun ScreenTitle(title: String) {
-
     Text(
         text = title,
         style = MaterialTheme.typography.headlineMedium,
@@ -95,7 +88,6 @@ fun ScreenTitle(title: String) {
 
 @Composable
 fun ScreenSubTitle(title: String) {
-
     Text(
         text = title,
         style = MaterialTheme.typography.titleLarge,
@@ -122,63 +114,75 @@ fun ImageLoader(
     )
 }
 
+@Composable
+fun YappLoadingDots(modifier: Modifier = Modifier) {
+    val dotsCount = 3
+    val maxAlpha = 1f
+    val minAlpha = 0f
+    val ballDiameter = 40f
+    val horizontalSpace = 20f
+    val animationDuration = 600
+    val color = MaterialTheme.colorScheme.primary
+
+    val scales: List<Float> = (0 until dotsCount).map { index ->
+        var scale by remember { mutableStateOf(maxAlpha) }
+        LaunchedEffect(Unit) {
+            delay(animationDuration / dotsCount * index.toLong())
+            animate(
+                initialValue = minAlpha,
+                targetValue = maxAlpha,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(
+                        durationMillis = animationDuration,
+                        easing = LinearEasing
+                    ),
+                    repeatMode = RepeatMode.Reverse,
+                ),
+            ) { value, _ ->
+                scale = value
+            }
+        }
+        scale
+    }
+
+    Canvas(modifier = modifier) {
+        val xOffset = ballDiameter + horizontalSpace
+        for (index in 0 until dotsCount) {
+            drawCircle(
+                color = color,
+                radius = (ballDiameter / 2) * scales[index],
+                center = Offset(
+                    x = when {
+                        index < dotsCount / 2 -> -(center.x + xOffset)
+                        index == dotsCount / 2 -> center.x
+                        else -> center.x + xOffset
+                    },
+                    y = 0f
+                )
+            )
+        }
+    }
+}
 
 @Composable
-fun YappLoadingIndicator(
-    color: Color = MaterialTheme.colorScheme.primary,
-    ballDiameter: Float = 40f,
-    horizontalSpace: Float = 20f,
-    animationDuration: Int = 600,
-    minAlpha: Float = 0f,
-    maxAlpha: Float = 1f
-) {
+fun YappLoadingIndicator() {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f)),
         contentAlignment = Alignment.Center
     ) {
-        val dotsCount = 3
-
-        val scales: List<Float> = (0 until dotsCount).map { index ->
-            var scale by remember { mutableStateOf(maxAlpha) }
-
-            LaunchedEffect(key1 = Unit) {
-
-                delay(animationDuration / dotsCount * index.toLong())
-                animate(
-                    initialValue = minAlpha,
-                    targetValue = maxAlpha,
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(
-                            durationMillis = animationDuration,
-                            easing = LinearEasing
-                        ),
-                        repeatMode = RepeatMode.Reverse,
-                    ),
-                ) { value, _ ->
-                    scale = value
-                }
-            }
-            scale
-        }
-
-        Canvas(modifier = Modifier) {
-            for (index in 0 until dotsCount) {
-
-                val xOffset = ballDiameter + horizontalSpace
-
-                drawCircle(
-                    color = color,
-                    radius = (ballDiameter / 2) * scales[index],
-                    center = Offset(
-                        x = when {
-                            index < dotsCount / 2 -> -(center.x + xOffset)
-                            index == dotsCount / 2 -> center.x
-                            else -> center.x + xOffset
-                        },
-                        y = 0f
-                    )
-                )
-            }
-        }
+        YappLoadingDots()
+    }
+}
+@Composable
+fun YappSmallLoadingIndicator() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f)),
+        contentAlignment = Alignment.Center
+    ) {
+        YappLoadingDots()
     }
 }

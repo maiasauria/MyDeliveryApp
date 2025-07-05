@@ -7,7 +7,8 @@
     <string name="profile_lastname_label">Apellido</string>
     <string name="profile_email_label">Email</string>
     <string name="profile_address_label">Dirección</string>
-    <string name="profile_save">Guardar</string>
+    <string name="profile_save">Guardar cambios</string>
+    <string name="logout">Cerrar sesión</string>
     <string name="profile_loading_image_title">Cargando Imagen</string>
     <string name="profile_loading_image_text">Por favor, espera mientras se carga la imagen.</string>
     <string name="profile_image_content_desc">Profile Image</string>
