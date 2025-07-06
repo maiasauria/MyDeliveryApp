@@ -90,11 +90,12 @@ class CartViewModel @Inject constructor(
 
     fun clearCartMessage() {
         val state = _uiState.value
-        if (state is CartUiState.Success && state.cartMessage.isNotEmpty()) {
+        if (state is CartUiState.Success) {
             _uiState.value = state.copy(cartMessage = "")
         }
     }
 
+    // Carga los elementos del carrito y calcula el precio total
     fun loadCart() {
         _uiState.value = CartUiState.Loading
         viewModelScope.launch(dispatcher + exceptionHandler) {

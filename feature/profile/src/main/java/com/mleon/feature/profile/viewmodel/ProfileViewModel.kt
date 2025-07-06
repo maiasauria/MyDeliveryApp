@@ -127,7 +127,7 @@ constructor(
         if (current !is ProfileUiState.Success) return
         viewModelScope.launch(dispatcher + exceptionHandler) {
             _uiState.value = ProfileUiState.Success(current.data.copy(isImageUploading = true))
-            Log.d("ProfileViewModel", "Starting image upload for URI: $uri")
+           // Log.d("ProfileViewModel", "Starting image upload for URI: $uri")
             try {
               val imageUrl = uploadUserImageUseCase(uri)
                 _uiState.value = ProfileUiState.Success((_uiState.value as ProfileUiState.Success).data.copy(

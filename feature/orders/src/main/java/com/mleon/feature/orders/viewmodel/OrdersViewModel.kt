@@ -3,12 +3,10 @@ package com.mleon.feature.orders.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mleon.core.data.repository.interfaces.OrderRepository
 import com.mleon.feature.orders.domain.usecase.GetOrdersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -33,8 +31,12 @@ class OrdersViewModel @Inject constructor(
     fun loadOrders() {
         viewModelScope.launch(dispatcher + exceptionHandler) {
             _uiState.value = OrdersUiState.Loading
-            val orders = getOrdersUseCase()
-            _uiState.value = OrdersUiState.Success(orders)
+            try {
+                val orders = getOrdersUseCase()
+                _uiState.value = OrdersUiState.Success(orders)
+            } catch (e: Exception) {
+                _uiState.value = OrdersUiState.Error(e)
+            }
         }
     }
 }

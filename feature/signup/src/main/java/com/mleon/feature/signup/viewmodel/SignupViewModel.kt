@@ -2,7 +2,6 @@ package com.mleon.feature.signup.viewmodel
 
 import android.content.SharedPreferences
 import android.util.Log
-import android.util.Patterns
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,6 +9,7 @@ import com.mleon.core.data.domain.RegisterUserParams
 import com.mleon.core.data.domain.RegisterUserUseCase
 import com.mleon.core.data.model.RegisterResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,6 +24,7 @@ class SignupViewModel
     constructor(
         private val sharedPreferences: SharedPreferences,
         private val registerUserUseCase: RegisterUserUseCase,
+        private val dispatcher: CoroutineDispatcher = kotlinx.coroutines.Dispatchers.IO // Default dispatcher for background tasks
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(SignupUiState())
     //_uiState.asStateFlow(): expone solo la interfaz inmutable (StateFlow), evitando que otras clases modifiquen el estado. TODO revisar el resto.
@@ -57,18 +58,18 @@ class SignupViewModel
         private val exceptionHandler = CoroutineExceptionHandler { _, exception -> println("Error occurred: ${exception.message}") }
 
         fun onSignupButtonClick() {
+            _uiState.update { it.copy(isLoading = true, errorMessageSignup = "", signupSuccess = false) }
             validateForm()
 
             // Fail first: Si no es valido, no continuar con el registro
             if (!_uiState.value.isFormValid) {
-                _uiState.update { it.copy(errorMessageSignup = "Por favor, completa todos los campos correctamente.") }
+                _uiState.update { it.copy(errorMessageSignup = "Por favor, completa todos los campos correctamente.", isLoading = false, signupSuccess = false) }
                 return
             }
 
-            _uiState.update { it.copy(isLoading = true, errorMessageSignup = "", signupSuccess = false) }
-
             //No indico el dispatcher porque el caso de uso ya lo maneja internamente
-            viewModelScope.launch(exceptionHandler) {
+            viewModelScope.launch(dispatcher + exceptionHandler) {
+
                 try {
                     val currentState = _uiState.value // Obtiene el estado actual una vez
                     val params = RegisterUserParams(
@@ -83,8 +84,9 @@ class SignupViewModel
                 } catch (e: Exception) {
                     _uiState.update {
                         it.copy(
-                            errorMessageSignup = "Error: ${e.message}",
+                            errorMessageSignup = e.message ?: "Unknown error",
                             isFormValid = false,
+                            signupSuccess = false,
                         )
                     }
                 } finally {
@@ -97,7 +99,7 @@ class SignupViewModel
             val currentState = _uiState.value // Obtiene el estado actual una vez
             val isNameValid = currentState.name.isNotBlank() && currentState.name.length in 2..20
             val isLastnameValid = currentState.lastname.isNotBlank() && currentState.lastname.length in 2..20
-            val isEmailValid = Patterns.EMAIL_ADDRESS.matcher(currentState.email).matches()
+            val isEmailValid = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$").matches(currentState.email)
             val isPasswordValid = currentState.password.length in 8..12
             val isPasswordConfirmValid = currentState.password == currentState.passwordConfirm && currentState.passwordConfirm.isNotBlank()
 
@@ -135,7 +137,7 @@ class SignupViewModel
                         errorMessageSignup = result.errorMessage
                     )
                 }
-                Log.w("SignupViewModel", "Registration failed: ${result.errorMessage}")
+                Log.e("SignupViewModel", "Registration failed: ${result.errorMessage}")
             }
         }
     }

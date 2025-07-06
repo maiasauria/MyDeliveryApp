@@ -1,14 +1,20 @@
 package com.mleon.feature.orders.viewmodel
 
+import android.util.Log
 import com.mleon.core.model.Order
+import com.mleon.feature.orders.MainDispatcherRule
 import com.mleon.feature.orders.domain.usecase.GetOrdersUseCase
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -16,6 +22,17 @@ class OrdersViewModelTest {
 
     private lateinit var getOrdersUseCase: GetOrdersUseCase
     private val dispatcher = StandardTestDispatcher()
+
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
+    @Before
+    fun setUp() {
+        // Mockeamos el log para que no de error en las pruebas
+        mockkStatic(Log::class)
+        every { Log.e(any(), any(), any()) } returns 0
+        every { Log.d(any(), any(), any()) } returns 0
+    }
 
     @Test
     fun `uiState is Loading when loadOrders is called`() = runTest {

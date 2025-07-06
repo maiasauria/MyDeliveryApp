@@ -11,9 +11,7 @@ import com.mleon.feature.checkout.domain.usecase.CreateOrderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -45,7 +43,7 @@ class CheckoutViewModel @Inject constructor(
             try {
                 val cartItems = getCartItemsWithProductsUseCase()
                 val subTotal = cartItems.sumOf { it.product.price * it.quantity }
-                val shippingCost = 10.0
+                val shippingCost = 10.0 // Valor fijo temporalmente, se puede cambiar por una lógica más compleja
                 val total = subTotal + shippingCost
 
                 _uiState.value = CheckoutUiState.Success(
@@ -63,6 +61,7 @@ class CheckoutViewModel @Inject constructor(
             }
         }
     }
+
 
     fun confirmOrder() {
         val currentState = _uiState.value

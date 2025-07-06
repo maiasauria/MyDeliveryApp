@@ -9,8 +9,8 @@ import com.mleon.core.data.domain.LoginUserParams
 import com.mleon.core.data.domain.LoginUserUseCase
 import com.mleon.core.data.model.LoginResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -21,6 +21,7 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val sharedPreferences: SharedPreferences,
     private val loginUserUseCase: LoginUserUseCase,
+    private val dispatcher: CoroutineDispatcher
 
     ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -36,8 +37,9 @@ class LoginViewModel @Inject constructor(
         validateForm()
     }
 
+
     fun onLoginClick() {
-        validateForm()
+        validateForm() // Validar el formulario antes de intentar iniciar sesión
 
         if (!_uiState.value.isFormValid) {
             _uiState.update { it.copy(errorMessageLogin = "Por favor, completa todos los campos correctamente.") }
@@ -46,7 +48,7 @@ class LoginViewModel @Inject constructor(
 
         _uiState.update { it.copy(isLoading = true, errorMessageLogin = "") }
 
-        viewModelScope.launch(Dispatchers.IO + exceptionHandler) {
+        viewModelScope.launch(dispatcher + exceptionHandler) {
             try {
                 val result = loginUserUseCase(LoginUserParams(email = _uiState.value.email, password = _uiState.value.password))
                 handleLoginResult(result)
@@ -85,10 +87,11 @@ class LoginViewModel @Inject constructor(
                         loginSuccess = true,
                         errorMessageLogin = "", // Limpiar errores previos
                         password = "", // Limpiar contraseña del estado por seguridad
+                        isLoading = false,
                     )
                 }
                 sharedPreferences.edit { putString("user_email", result.user.email) }
-                Log.d("LoginViewModel", "Login successful for user: ${result.user.email}, Name: ${result.user.name}")
+                //Log.d("LoginViewModel", "Login successful for user: ${result.user.email}, Name: ${result.user.name}")
             }
             is LoginResult.Error -> {
                 _uiState.update {
@@ -98,7 +101,7 @@ class LoginViewModel @Inject constructor(
                         errorMessageLogin = result.errorMessage
                     )
                 }
-                Log.w("LoginViewModel", "Login failed: ${result.errorMessage} (Code: ${result.errorCode})")
+                Log.e("LoginViewModel", "Login failed: ${result.errorMessage} (Code: ${result.errorCode})")
             }
         }
     }

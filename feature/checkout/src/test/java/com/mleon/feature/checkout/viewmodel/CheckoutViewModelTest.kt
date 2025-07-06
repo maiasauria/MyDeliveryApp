@@ -77,6 +77,59 @@ class CheckoutViewModelTest {
         thenUiStateIsError(viewModel, "Order failed")
     }
 
+    @Test
+    fun `uiState is Error when getCartItems fails`() = runTest {
+        coEvery { getCartItemsWithProductsUseCase() } throws Exception("Cart error")
+        val viewModel = CheckoutViewModel(getCartItemsWithProductsUseCase, createOrderUseCase, StandardTestDispatcher(testScheduler))
+        viewModel.getCartItems()
+        advanceUntilIdle()
+        assert(viewModel.uiState.value is CheckoutUiState.Error)
+        Assert.assertEquals("Cart error", (viewModel.uiState.value as CheckoutUiState.Error).error.message)
+    }
+
+    @Test
+    fun `uiState is Error when confirmOrder throws exception`() = runTest {
+        val cartItems = listOf(mockCartItem())
+        givenCartItems(cartItems)
+        coEvery { createOrderUseCase(any()) } throws Exception("Exception in confirmOrder")
+        val viewModel = CheckoutViewModel(getCartItemsWithProductsUseCase, createOrderUseCase, StandardTestDispatcher(testScheduler))
+        viewModel.getCartItems()
+        advanceUntilIdle()
+        viewModel.confirmOrder()
+        advanceUntilIdle()
+        assert(viewModel.uiState.value is CheckoutUiState.Error)
+        Assert.assertEquals("Exception in confirmOrder", (viewModel.uiState.value as CheckoutUiState.Error).error.message)
+    }
+
+    @Test
+    fun `onPaymentMethodSelection updates payment method in Success state`() = runTest {
+        val cartItems = listOf(mockCartItem())
+        givenCartItems(cartItems)
+        givenOrderSuccess(mockOrder())
+        val viewModel = CheckoutViewModel(getCartItemsWithProductsUseCase, createOrderUseCase, StandardTestDispatcher(testScheduler))
+        viewModel.getCartItems()
+        advanceUntilIdle()
+        viewModel.onPaymentMethodSelection(com.mleon.core.model.enums.PaymentMethod.CREDIT_CARD)
+        val state = viewModel.uiState.value
+        assert(state is CheckoutUiState.Success)
+        Assert.assertEquals(com.mleon.core.model.enums.PaymentMethod.CREDIT_CARD, (state as CheckoutUiState.Success).paymentMethod)
+    }
+
+    @Test
+    fun `onPaymentMethodSelection does nothing if not Success state`() = runTest {
+        val viewModel = CheckoutViewModel(getCartItemsWithProductsUseCase, createOrderUseCase, StandardTestDispatcher(testScheduler))
+        viewModel.onPaymentMethodSelection(com.mleon.core.model.enums.PaymentMethod.CREDIT_CARD)
+        assert(viewModel.uiState.value is CheckoutUiState.Loading)
+    }
+
+    @Test
+    fun `confirmOrder does nothing if not Success state`() = runTest {
+        val viewModel = CheckoutViewModel(getCartItemsWithProductsUseCase, createOrderUseCase, StandardTestDispatcher(testScheduler))
+        viewModel.confirmOrder()
+        // Should remain in Loading state
+        assert(viewModel.uiState.value is CheckoutUiState.Loading)
+    }
+
     private fun givenCartItems(cartItems: List<CartItem>) {
         coEvery { getCartItemsWithProductsUseCase() } returns cartItems
     }
