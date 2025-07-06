@@ -64,7 +64,7 @@ constructor(
                 logoutUserUseCase()
             } catch (e: Exception) {
                 Log.e("ProfileViewModel", "Error during logout", e)
-                _uiState.value = ProfileUiState.Error("Error during logout: ${e.message}")
+                _uiState.value = ProfileUiState.Error("Error al cerrar sesión. Intenta nuevamente.")
             }
         }
     }
@@ -127,7 +127,7 @@ constructor(
         if (current !is ProfileUiState.Success) return
         viewModelScope.launch(dispatcher + exceptionHandler) {
             _uiState.value = ProfileUiState.Success(current.data.copy(isImageUploading = true))
-            Log.d("ProfileViewModel", "Starting image upload for URI: $uri")
+           // Log.d("ProfileViewModel", "Starting image upload for URI: $uri")
             try {
               val imageUrl = uploadUserImageUseCase(uri)
                 _uiState.value = ProfileUiState.Success((_uiState.value as ProfileUiState.Success).data.copy(

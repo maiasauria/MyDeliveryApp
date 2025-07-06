@@ -41,7 +41,7 @@ constructor(
         viewModelScope.launch(dispatcher + exceptionHandler) {
             try {
                 allProducts = getProductsUseCase()
-                Log.d("ProductListViewModel", "Products loaded: ${allProducts.size}")
+                //Log.d("ProductListViewModel", "Products loaded: ${allProducts.size}")
 
                 if (allProducts.isEmpty()) {
                     _uiState.value = ProductListUiState.Error(Exception("No se encontraron productos."))
@@ -97,7 +97,7 @@ constructor(
     fun onAddToCartButtonClick(product: Product) {
         val currentState = _uiState.value
         if (currentState is ProductListUiState.Success) {
-            _uiState.value = currentState.copy(isAddingToCart = true)
+            _uiState.value = currentState.copy(isAddingToCart = true) // Bloquea la UI mientras se agrega al carrito
         }
         cartMessage = "${product.name} agregado al carrito"
         updateSuccessState()
@@ -109,7 +109,7 @@ constructor(
     }
 
     private fun updateSuccessState() {
-        Log.d("ProductListViewModel", "Updating success state with searchQuery: $searchQuery, selectedCategory: $selectedCategory, cartMessage: $cartMessage")
+        //Log.d("ProductListViewModel", "Updating success state with searchQuery: $searchQuery, selectedCategory: $selectedCategory, cartMessage: $cartMessage")
         val filteredProducts = filterProducts()
         _uiState.value = ProductListUiState.Success(
             products = filteredProducts,

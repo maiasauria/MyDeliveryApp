@@ -32,6 +32,14 @@ class CartViewModelTest {
 
     @Test
     fun `uiState is Loading when loadCart is called`() = runTest {
+        viewModel = CartViewModel(
+            addProductToCartUseCase,
+            editCartItemQuantityUseCase,
+            clearCartUseCase,
+            getCartItemsWithProductsUseCase,
+            removeCartItemUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
         viewModel.loadCart()
         Assert.assertTrue(viewModel.uiState.value is CartUiState.Loading)
     }
@@ -154,6 +162,137 @@ class CartViewModelTest {
         val state = viewModel.uiState.value as CartUiState.Success
         Assert.assertTrue(state.cartItems.isEmpty())
         Assert.assertEquals(0.0, state.total, 0.01)
+    }
+
+    @Test
+    fun `addToCart sets Error state on exception`() = runTest {
+        val product = mockProduct("Burger")
+        coEvery { addProductToCartUseCase(product) } throws Exception("Add error")
+        viewModel = CartViewModel(
+            addProductToCartUseCase,
+            editCartItemQuantityUseCase,
+            clearCartUseCase,
+            getCartItemsWithProductsUseCase,
+            removeCartItemUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
+        viewModel.addToCart(product)
+        advanceUntilIdle()
+        val state = viewModel.uiState.value
+        Assert.assertTrue(state is CartUiState.Error)
+        Assert.assertEquals("Add error", (state as CartUiState.Error).message)
+    }
+
+    // Test: editQuantity sets Error state on exception
+    @Test
+    fun `editQuantity sets Error state on exception`() = runTest {
+        val product = mockProduct("Burger")
+        coEvery { editCartItemQuantityUseCase(product, 5) } throws Exception("Edit error")
+        viewModel = CartViewModel(
+            addProductToCartUseCase,
+            editCartItemQuantityUseCase,
+            clearCartUseCase,
+            getCartItemsWithProductsUseCase,
+            removeCartItemUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
+        viewModel.editQuantity(product, 5)
+        advanceUntilIdle()
+        val state = viewModel.uiState.value
+        Assert.assertTrue(state is CartUiState.Error)
+        Assert.assertEquals("Edit error", (state as CartUiState.Error).message)
+    }
+
+    // Test: removeFromCart sets Error state on exception
+    @Test
+    fun `removeFromCart sets Error state on exception`() = runTest {
+        val product = mockProduct("Burger")
+        coEvery { removeCartItemUseCase(product.id) } throws Exception("Remove error")
+        viewModel = CartViewModel(
+            addProductToCartUseCase,
+            editCartItemQuantityUseCase,
+            clearCartUseCase,
+            getCartItemsWithProductsUseCase,
+            removeCartItemUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
+        viewModel.removeFromCart(product)
+        advanceUntilIdle()
+        val state = viewModel.uiState.value
+        Assert.assertTrue(state is CartUiState.Error)
+        Assert.assertEquals("Remove error", (state as CartUiState.Error).message)
+    }
+
+    // Test: clearCart sets Error state on exception
+    @Test
+    fun `clearCart sets Error state on exception`() = runTest {
+        coEvery { clearCartUseCase() } throws Exception("Clear error")
+        viewModel = CartViewModel(
+            addProductToCartUseCase,
+            editCartItemQuantityUseCase,
+            clearCartUseCase,
+            getCartItemsWithProductsUseCase,
+            removeCartItemUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
+        viewModel.clearCart()
+        advanceUntilIdle()
+        val state = viewModel.uiState.value
+        Assert.assertTrue(state is CartUiState.Error)
+        Assert.assertEquals("Clear error", (state as CartUiState.Error).message)
+    }
+
+    // Test: clearCartMessage clears cartMessage in Success state
+    @Test
+    fun `clearCartMessage clears cartMessage in Success state`() = runTest {
+        val product = mockProduct("Pizza")
+        val items = listOf(mockCartItem(product = product))
+        // Stub for loadCart
+        coEvery { getCartItemsWithProductsUseCase() } returns items
+        // Stub for addToCart
+        coEvery { addProductToCartUseCase(product) } returns Unit
+        // Stub for getCartItemsWithProductsUseCase after addToCart
+        coEvery { getCartItemsWithProductsUseCase() } returns items
+        viewModel = CartViewModel(
+            addProductToCartUseCase,
+            editCartItemQuantityUseCase,
+            clearCartUseCase,
+            getCartItemsWithProductsUseCase,
+            removeCartItemUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
+        // Set state to Success with a message
+        viewModel.loadCart()
+        advanceUntilIdle()
+        viewModel.addToCart(product)
+        advanceUntilIdle()
+        val stateWithMessage = viewModel.uiState.value as CartUiState.Success
+        Assert.assertTrue(stateWithMessage.cartMessage.isNotEmpty())
+        viewModel.clearCartMessage()
+        val clearedState = viewModel.uiState.value as CartUiState.Success
+        Assert.assertTrue(clearedState.cartMessage.isEmpty())
+    }
+
+    // Test: updateCartUiState sets Error on exception
+    @Test
+    fun `updateCartUiState sets Error on exception`() = runTest {
+        coEvery { getCartItemsWithProductsUseCase() } throws Exception("Update error")
+        val product = mockProduct("Pizza")
+        coEvery { addProductToCartUseCase(product) } returns Unit
+        viewModel = CartViewModel(
+            addProductToCartUseCase,
+            editCartItemQuantityUseCase,
+            clearCartUseCase,
+            getCartItemsWithProductsUseCase,
+            removeCartItemUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
+        // Use reflection or expose updateCartUiState for testing, or test via addToCart
+        viewModel.addToCart(mockProduct("Pizza"))
+        advanceUntilIdle()
+        val state = viewModel.uiState.value
+        Assert.assertTrue(state is CartUiState.Error)
+        Assert.assertEquals("Update error", (state as CartUiState.Error).message)
     }
 
     // Helpers

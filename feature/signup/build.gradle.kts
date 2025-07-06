@@ -67,6 +67,7 @@ dependencies {
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation ("io.mockk:mockk:1.13.10")
 
     // Project Modules
     implementation(project(":core:model"))

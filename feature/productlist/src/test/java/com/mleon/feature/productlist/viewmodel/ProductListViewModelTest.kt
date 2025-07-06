@@ -1,46 +1,61 @@
 package com.mleon.feature.productlist.viewmodel
 
+import android.util.Log
 import com.mleon.core.data.domain.GetProductsUseCase
 import com.mleon.core.model.Product
 import com.mleon.core.model.enums.Categories
+import com.mleon.feature.productlist.MainDispatcherRule
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
+@ExperimentalCoroutinesApi
 class ProductListViewModelTest {
 
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
+
     private lateinit var getProductsUseCase: GetProductsUseCase
-    private val dispatcher = StandardTestDispatcher()
 
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun `given products error when loadProducts then uiState is Error`() = runTest {
-        givenProductsError("Error fetching products")
-        val viewModel = createViewModel()
-        viewModel.loadProducts()
-        advanceUntilIdle()
-        thenUiStateIsError(viewModel, "Error fetching products")
+    @Before
+    fun setUp() {
+        // Mockeamos el log para que no de error en las pruebas
+        mockkStatic(Log::class)
+        every { Log.e(any(), any(), any()) } returns 0
+        every { Log.d(any(), any(), any()) } returns 0
     }
 
     @Test
     fun `uiState is Loading when loadProducts is called`() = runTest {
         getProductsUseCase = mockk()
-        val viewModel = createViewModel()
+        val viewModel = ProductListViewModel(getProductsUseCase, StandardTestDispatcher(testScheduler))
         viewModel.loadProducts()
         // En este caso no esperamos a que termine la corrutina, para chequear que sea Loading.
         Assert.assertTrue(viewModel.uiState.value is ProductListUiState.Loading)
     }
 
     @Test
+    fun `given products error when loadProducts then uiState is Error`() = runTest {
+        givenProductsError("Error fetching products")
+        val viewModel = ProductListViewModel(getProductsUseCase, StandardTestDispatcher(testScheduler))
+        viewModel.loadProducts()
+        advanceUntilIdle()
+        thenUiStateIsError(viewModel, "Error fetching products")
+    }
+
+    @Test
     fun `given products when loadProducts then uiState is Success`() = runTest {
         givenProducts(listOf(mockProduct("Pizza"), mockProduct("Burger")))
-        val viewModel = createViewModel()
+        val viewModel = ProductListViewModel(getProductsUseCase, StandardTestDispatcher(testScheduler))
         viewModel.loadProducts()
         advanceUntilIdle()
         thenUiStateIsSuccess(viewModel, 2)
@@ -49,7 +64,7 @@ class ProductListViewModelTest {
     @Test
     fun `given products when search then uiState contains filtered products`() = runTest {
         givenProducts(listOf(mockProduct("Pizza"), mockProduct("Burger")))
-        val viewModel = createViewModel()
+        val viewModel = ProductListViewModel(getProductsUseCase, StandardTestDispatcher(testScheduler))
         viewModel.loadProducts()
         advanceUntilIdle()
         viewModel.onSearchTextChange("Pizza")
@@ -140,8 +155,6 @@ class ProductListViewModelTest {
         getProductsUseCase = mockk()
         coEvery { getProductsUseCase() } throws Exception(message)
     }
-
-    private fun createViewModel() = ProductListViewModel(getProductsUseCase, dispatcher)
 
     private fun thenUiStateIsSuccess(viewModel: ProductListViewModel, expectedCount: Int) {
         val state = viewModel.uiState.value
