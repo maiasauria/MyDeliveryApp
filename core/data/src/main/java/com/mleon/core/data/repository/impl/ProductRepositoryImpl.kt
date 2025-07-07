@@ -42,19 +42,25 @@ class ProductRepositoryImpl @Inject constructor(
 
             } catch (e: Exception) {
                 // Si la API falla, traigo los productos de la base de datos
-                // Comentado porque estaba rompiendo la app al iniciar
-//                productDao.getAllProducts().map { entity ->
-//                    Product(
-//                        id = entity.id,
-//                        name = entity.name,
-//                        description = entity.description,
-//                        price = entity.price,
-//                        imageUrl = entity.imageUrl,
-//                        includesDrink = false, //TODO: Implementar
-//                        category = entity.categories
-//                    )
-                emptyList<Product>()
+                productDao.getAllProducts().map { entity ->
+                    Product(
+                        id = entity.id,
+                        name = entity.name,
+                        description = entity.description,
+                        price = entity.price,
+                        imageUrl = entity.imageUrl,
+                        includesDrink = false, //TODO: Implementar
+                        category = entity.categories
+                    )
+                //emptyList<Product>()
                 }
             }
         }
+    }
+
+    override suspend fun getProductById(productId: String): Product? {
+        return withContext(Dispatchers.IO) {
+            productDao.getProductById(productId)?.toModel()
+        }
+    }
     }

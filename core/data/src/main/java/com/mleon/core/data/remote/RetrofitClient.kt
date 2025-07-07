@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
 
-    const val url = "https://maiapi-1ef4.onrender.com/"
+    const val url = "https://maiapi-1ef4.onrender.com/" //TODO extraer al archivo de configuración
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY

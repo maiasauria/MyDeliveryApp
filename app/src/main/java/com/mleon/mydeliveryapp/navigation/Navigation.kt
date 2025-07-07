@@ -1,5 +1,6 @@
 package com.mleon.mydeliveryapp.navigation
 
+import ProductDetailScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -37,7 +38,9 @@ fun AppNavigation(navController: NavHostController) {
             SignupScreen(navController)
         }
         composable(route = NavigationRoutes.PRODUCTS) {
-            ProductListScreen()
+            ProductListScreen(                onProductClick = { productId ->
+                navController.navigate("productDetail/$productId")
+            })
         }
         composable(route = NavigationRoutes.CART) {
             CartScreen(navController)
@@ -50,6 +53,14 @@ fun AppNavigation(navController: NavHostController) {
         }
         composable(route = NavigationRoutes.CHECKOUT) {
             CheckoutScreen(navController)
+        }
+        composable("productDetail/{productId}") { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString("productId") ?: ""
+            ProductDetailScreen(
+                productId = productId,
+                onAddToCart = { _, _ -> /* Implementar lógica de agregar al carrito */ },
+                navController = navController,
+            )
         }
     }
 }

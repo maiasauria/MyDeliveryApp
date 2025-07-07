@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="productlist_order_by_price">Ordenar por precio</string>
+    <string name="productlist_order_title">Ordenar</string>
     <string name="productlist_price_ascending">Precio Ascendente</string>
     <string name="productlist_price_descending">Precio Descendente</string>
     <string name="productlist_order_ascending_content_desc">Orden Ascendente</string>
@@ -9,4 +9,8 @@
     <string name="productlist_search_placeholder">Buscar productos...</string>
     <string name="productlist_clear_search_content_desc">Limpiar la búsqueda</string>
     <string name="productlist_filter_products_content_desc">Filtrar productos</string>
+    <string name="product_detail_price">Price: $%1$.2f</string>
+    <string name="product_detail_quantity">Quantity</string>
+    <string name="product_detail_add_to_cart">Add to Cart</string>
+    <string name="error_loading_product">Error cargando el producto\n</string>
 </resources>

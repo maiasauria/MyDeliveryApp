@@ -19,7 +19,10 @@ import com.mleon.utils.ui.YappLoadingIndicator
 import kotlinx.coroutines.delay
 
 @Composable
+
+
 fun ProductListScreen(
+    onProductClick: (String) -> Unit,
     productListViewModel: ProductListViewModel = hiltViewModel(),
     cartViewModel: CartViewModel = hiltViewModel()
 ) {
@@ -64,6 +67,7 @@ fun ProductListScreen(
                     cartViewModel.addToCart(it)
                     productListViewModel.onAddToCartButtonClick(it) },
                 isAddingToCart = successState.isAddingToCart,
+                onProductClick = { productId -> onProductClick(productId) } // <-- Add this line
             )
         }
         is ProductListUiState.Error -> {

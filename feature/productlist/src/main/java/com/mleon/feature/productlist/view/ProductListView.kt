@@ -33,6 +33,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberStandardBottomSheetState
@@ -65,6 +66,7 @@ fun ProductListView(
     onOrderByPriceAscending: () -> Unit,
     onAddToCart: (Product) -> Unit,
     isAddingToCart: Boolean = false,
+    onProductClick: (String) -> Unit = {},
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
@@ -96,6 +98,7 @@ fun ProductListView(
                             product = product,
                             onAddToCart = { onAddToCart(product) },
                             isLoading = isAddingToCart,
+                            onClick = { product -> onProductClick(product.id) }
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         ListDivider()
@@ -170,9 +173,10 @@ fun ProductsBottomSheet(
                         .fillMaxWidth()
                         .padding(16.dp),
             ) {
-                Text(stringResource(R.string.productlist_order_by_price), style = MaterialTheme.typography.titleLarge)
+                Text(stringResource(R.string.productlist_order_title), style = MaterialTheme.typography.titleLarge)
+                Spacer(modifier = Modifier.height(8.dp))
                 ListDivider()
-                OutlinedButton(
+                TextButton(
                     onClick = {
                         onOrderByPriceAscending()
                         onDismissRequest()
@@ -185,8 +189,10 @@ fun ProductsBottomSheet(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text(stringResource(R.string.productlist_price_ascending))
-                        Icon(Icons.Filled.ArrowUpward, contentDescription = stringResource(R.string.productlist_order_ascending_content_desc))
-
+                        Icon(
+                            Icons.Filled.ArrowUpward,
+                            contentDescription = stringResource(R.string.productlist_order_ascending_content_desc)
+                        )
                     }
                 }
                 OutlinedButton(

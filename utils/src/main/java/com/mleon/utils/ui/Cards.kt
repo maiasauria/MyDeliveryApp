@@ -1,6 +1,7 @@
 package com.mleon.utils.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -50,11 +51,14 @@ fun ProductCard(
     isLoading: Boolean,
     product: Product,
     onAddToCart: (Product) -> Unit = { },
+    onClick: (Product) -> Unit = { }
 ) {
     Card(
+
         modifier =
             modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .clickable { onClick(product) },
         shape = RoundedCornerShape(CornerSize(10.dp)),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
     ) {

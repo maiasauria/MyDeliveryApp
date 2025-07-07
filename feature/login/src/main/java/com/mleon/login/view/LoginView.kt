@@ -21,10 +21,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mleon.login.R
-import com.mleon.utils.ui.FullScreenLoadingIndicator
 import com.mleon.utils.ui.LogoImage
 import com.mleon.utils.ui.ValidatePasswordField
 import com.mleon.utils.ui.ValidateTextField
+import com.mleon.utils.ui.YappFullScreenLoadingIndicator
 
 @Composable
 fun LoginView(
@@ -102,7 +102,7 @@ fun LoginView(
         }
     }
     if (isLoading) {
-        FullScreenLoadingIndicator()
+        YappFullScreenLoadingIndicator()
     }
 }
 
