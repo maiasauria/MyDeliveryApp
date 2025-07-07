@@ -21,7 +21,7 @@ private const val ERROR_LOGIN = "Error al iniciar sesión"
 private const val ERROR_REGISTER_USER = "Error al registrar usuario"
 private const val ERROR_BAD_REQUEST = "Solicitud incorrecta"
 private const val ERROR_CONFLICT = "El usuario ya existe"
-private const val ERROR_NOT_FOUND = "Usuario no encontrado"
+private const val ERROR_NOT_FOUND = "No existe un usuario con ese email"
 private const val ERROR_INTERNAL_SERVER = "Error interno del servidor"
 private const val ERROR_UNKNOWN = "Error desconocido"
 private const val ERROR_INVALID_PASSWORD = "Contraseña incorrecta"
@@ -59,10 +59,10 @@ class UserRemoteDataSource(
             val userDto = apiService.getUserByEmail(email)
             userDto.toUser()
         } catch (e: HttpException) {
-            Log.e("UserRepositoryApi", "Error fetching user by email: ${e.message()}")
+            Log.e("UserRemoteDataSource", "Error fetching user by email: ${e.message()}")
             null
         } catch (e: Exception) {
-            Log.e("UserRepositoryApi", "Error fetching user by email: ${e.message}")
+            Log.e("UserRemoteDataSource", "Error fetching user by email: ${e.message}")
             null
         }
 
@@ -71,10 +71,10 @@ class UserRemoteDataSource(
             val response = apiService.updateUser(user.email, user)
             response.toUser()
         } catch (e: HttpException) {
-            Log.e("UserRepositoryApi", "Error updating user: ${e.message()}")
+            Log.e("UserRemoteDataSource", "Error updating user: ${e.message()}")
             null
         } catch (e: Exception) {
-            Log.e("UserRepositoryApi", "Error updating user: ${e.message}")
+            Log.e("UserRemoteDataSource", "Error updating user: ${e.message}")
             null
         }
 
@@ -94,20 +94,7 @@ class UserRemoteDataSource(
         return LoginResult.Error( errorMessage = ERROR_LOGIN)
     }
 
-    private fun handleLoginHttpException(e: HttpException): LoginResult {
-        val code = e.code()
-        val errorBody = e.response()?.errorBody()?.string()
-        val message = JSONObject(errorBody ?: "{}").optString("message", ERROR_UNKNOWN)
-        Log.e("UserRepositoryApi", "HTTP error during login: $code - $message")
-        // Maneja los errores HTTP específicos
-        val errorMsg = when (code) {
-            401 -> ERROR_INVALID_PASSWORD
-            404 -> ERROR_NOT_FOUND
-            500 -> ERROR_INTERNAL_SERVER
-            else -> ERROR_LOGIN
-        }
-        return LoginResult.Error(errorMessage = errorMsg, errorCode = code)
-    }
+
 
     // Maneja los resultados de registro
     private fun handleRegisterResponse(user: UserDto, response: RegisterResponse): RegisterResult {
@@ -117,7 +104,7 @@ class UserRemoteDataSource(
         }
         // Si la respuesta HTTP fue exitosa, pero hay un mensaje
          if (response.message != null) {
-            Log.e("UserRepositoryApi", "Error during registration: ${response.message}")
+            Log.e("UserRemoteDataSource", "Error during registration: ${response.message}")
             return RegisterResult.Error(errorMessage = response.message)
         }
         // Generic error
@@ -128,7 +115,7 @@ class UserRemoteDataSource(
         val code = e.code()
         val errorBody = e.response()?.errorBody()?.string()
         val message = JSONObject(errorBody ?: "{}").optString("message", ERROR_UNKNOWN)
-        Log.e("UserRepositoryApi", "HTTP error during registration: $code - $message")
+        Log.e("UserRemoteDataSource", "HTTP error during registration: $code - $message")
         // Maneja los errores HTTP específicos
         // Si el error es 400, 409, 404 o 500, devolvemos un mensaje específico
         val errorMsg = when (code) {
@@ -139,5 +126,20 @@ class UserRemoteDataSource(
             else -> ERROR_REGISTER_USER
             }
         return RegisterResult.Error(errorCode = code, errorMessage = errorMsg)
+    }
+
+    private fun handleLoginHttpException(e: HttpException): LoginResult {
+        val code = e.code()
+        val errorBody = e.response()?.errorBody()?.string()
+        val message = JSONObject(errorBody ?: "{}").optString("message", ERROR_UNKNOWN)
+        Log.e("UserRemoteDataSource", "HTTP error during login: $code - $message")
+        // Maneja los errores HTTP específicos
+        val errorMsg = when (code) {
+            401 -> ERROR_INVALID_PASSWORD
+            404 -> ERROR_NOT_FOUND
+            500 -> ERROR_INTERNAL_SERVER
+            else -> ERROR_LOGIN
+        }
+        return LoginResult.Error(errorMessage = errorMsg, errorCode = code)
     }
 }

@@ -22,7 +22,7 @@ import javax.inject.Inject
 class ProfileViewModel
 @Inject
 constructor(
-    private val myApplication: Application,
+    myApplication: Application,
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val updateUserProfileUseCase: UpdateUserProfileUseCase,
     private val uploadUserImageUseCase: UploadUserImageUseCase,

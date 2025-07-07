@@ -42,17 +42,15 @@ class LoginViewModelTest {
     fun setUp() {
         sharedPreferences = mock()
         loginUserUseCase = mock()
-
-            mockkStatic(Log::class)
-            every { Log.e(any(), any()) } returns 0
-
+        mockkStatic(Log::class)
+        every { Log.e(any(), any()) } returns 0
+        every { Log.d(any(), any(), any()) } returns 0
     }
 
     @After
     fun tearDown() {
         Dispatchers.resetMain()
     }
-
 
     @Test
     fun `given invalid email when onEmailChange then email validation fails`() {

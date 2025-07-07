@@ -9,7 +9,7 @@ import com.mleon.core.data.datasource.remote.UserRemoteDataSource
 import com.mleon.core.data.remote.OrderApiService
 import com.mleon.core.data.remote.ProductsApiService
 import com.mleon.core.data.remote.UsersApiService
-import com.mleon.core.data.repository.CartItemRepositoryImpl
+import com.mleon.core.data.repository.impl.CartItemRepositoryImpl
 import com.mleon.core.data.repository.impl.OrderRepositoryImpl
 import com.mleon.core.data.repository.impl.ProductRepositoryImpl
 import com.mleon.core.data.repository.impl.UserRepositoryImpl

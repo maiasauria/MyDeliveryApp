@@ -17,8 +17,6 @@ class RegisterUserUseCase @Inject constructor(
     // Puede ser suspend para operaciones asíncronas.
     suspend operator fun invoke(params: RegisterUserParams): RegisterResult {
 
-        //TODO Verificar si el usuario ya existe.
-
         return userRepository.registerUser(
             name = params.name,
             lastname = params.lastname,
