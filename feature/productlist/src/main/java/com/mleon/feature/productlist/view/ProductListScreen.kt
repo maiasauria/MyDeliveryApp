@@ -20,7 +20,6 @@ import kotlinx.coroutines.delay
 
 @Composable
 
-
 fun ProductListScreen(
     onProductClick: (String) -> Unit,
     productListViewModel: ProductListViewModel = hiltViewModel(),
@@ -31,7 +30,7 @@ fun ProductListScreen(
 
     // Only launch once when the Composable enters the composition
     LaunchedEffect(Unit) {
-        delay(1000) // Optional delay for better UX
+        delay(1000) // Demora para visualizar el indicador de carga
         productListViewModel.loadProducts()
     }
 
@@ -67,7 +66,7 @@ fun ProductListScreen(
                     cartViewModel.addToCart(it)
                     productListViewModel.onAddToCartButtonClick(it) },
                 isAddingToCart = successState.isAddingToCart,
-                onProductClick = { productId -> onProductClick(productId) } // <-- Add this line
+                onProductClick = { productId -> onProductClick(productId) }
             )
         }
         is ProductListUiState.Error -> {
@@ -83,4 +82,3 @@ fun ProductListScreen(
         }
     }
 }
-

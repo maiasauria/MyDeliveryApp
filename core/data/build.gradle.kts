@@ -29,6 +29,7 @@ android {
             buildConfigField("String", "CLOUDINARY_API_KEY", "\"${secretsProperties["CLOUDINARY_API_KEY"] ?: ""}\"")
             buildConfigField("String", "CLOUDINARY_API_SECRET", "\"${secretsProperties["CLOUDINARY_API_SECRET"] ?: ""}\"")
             buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"${secretsProperties["CLOUDINARY_CLOUD_NAME"] ?: ""}\"")
+            buildConfigField("String", "API_URL", "\"${secretsProperties["API_URL"] ?: ""}\"")
         }
     }
 

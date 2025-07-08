@@ -1,4 +1,4 @@
-package com.mleon.core.data.domain
+package com.mleon.feature.signup.usecase
 
 import com.mleon.core.data.model.RegisterResult
 import com.mleon.core.data.repository.interfaces.UserRepository

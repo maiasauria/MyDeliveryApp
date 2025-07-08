@@ -157,8 +157,7 @@ fun ProfileScreen(
         }
     }
 
-    // AlertDialog before requesting permission
-
+    // Muestra el diálogo de permisos si es necesario
     if (showPermissionDialog) {
         PermissionDialog(
             permissionToRequest = permissionToRequest,
@@ -170,6 +169,7 @@ fun ProfileScreen(
         )
     }
 
+    // Muestra el diálogo de previsualización del perfil si hay datos modificados
     if (showPreview && userDraft != null) {
         ProfilePreviewDialog(
             userDraft = userDraft!!,
@@ -197,6 +197,4 @@ fun ProfileScreen(
             onDismiss = { showLogoutDialog = false }
         )
     }
-
-
 }

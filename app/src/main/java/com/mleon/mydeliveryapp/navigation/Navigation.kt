@@ -27,7 +27,7 @@ import com.mleon.login.view.LoginScreen
 fun AppNavigation(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = NavigationRoutes.PRODUCTS,
+        startDestination = NavigationRoutes.LOGIN,
     ) {
         // Aquí definimos las rutas de navegación
         composable(route = NavigationRoutes.LOGIN) {
@@ -46,7 +46,7 @@ fun AppNavigation(navController: NavHostController) {
             CartScreen(navController)
         }
         composable(route = NavigationRoutes.PROFILE) {
-            ProfileScreen()
+            ProfileScreen(navController)
         }
         composable(route = NavigationRoutes.ORDERS) {
             OrdersScreen()

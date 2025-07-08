@@ -1,4 +1,4 @@
-package com.mleon.core.data.domain
+package com.mleon.feature.productlist.usecase
 
 import com.mleon.core.data.repository.interfaces.ProductRepository
 import com.mleon.core.model.Product

@@ -5,8 +5,8 @@ import android.util.Log
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mleon.core.data.domain.RegisterUserParams
-import com.mleon.core.data.domain.RegisterUserUseCase
+import com.mleon.feature.signup.usecase.RegisterUserParams
+import com.mleon.feature.signup.usecase.RegisterUserUseCase
 import com.mleon.core.data.model.RegisterResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
