@@ -27,19 +27,19 @@ import com.mleon.login.view.LoginScreen
 fun AppNavigation(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = NavigationRoutes.PRODUCTS,
+        startDestination = NavigationRoutes.LOGIN,
     ) {
         // Aquí definimos las rutas de navegación
         composable(route = NavigationRoutes.LOGIN) {
-            // a que ruta apuntamos
             LoginScreen(navController) // Pasamos el navController a LoginScreen
         }
         composable(route = NavigationRoutes.SIGNUP) {
             SignupScreen(navController)
         }
         composable(route = NavigationRoutes.PRODUCTS) {
-            ProductListScreen(                onProductClick = { productId ->
-                navController.navigate("productDetail/$productId")
+            ProductListScreen(
+                onProductClick = { productId ->
+                    navController.navigate("productDetail/$productId")
             })
         }
         composable(route = NavigationRoutes.CART) {

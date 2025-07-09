@@ -5,12 +5,13 @@ import android.util.Log
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mleon.core.data.model.AuthResult
 import com.mleon.feature.signup.usecase.RegisterUserParams
 import com.mleon.feature.signup.usecase.RegisterUserUseCase
-import com.mleon.core.data.model.RegisterResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,10 +25,9 @@ class SignupViewModel
     constructor(
         private val sharedPreferences: SharedPreferences,
         private val registerUserUseCase: RegisterUserUseCase,
-        private val dispatcher: CoroutineDispatcher = kotlinx.coroutines.Dispatchers.IO // Default dispatcher for background tasks
+        private val dispatcher: CoroutineDispatcher = Dispatchers.IO
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(SignupUiState())
-    //_uiState.asStateFlow(): expone solo la interfaz inmutable (StateFlow), evitando que otras clases modifiquen el estado. TODO revisar el resto.
         val uiState: StateFlow<SignupUiState> = _uiState.asStateFlow()
 
         fun onEmailChange(email: String) {
@@ -115,9 +115,9 @@ class SignupViewModel
             }
         }
 
-    private fun handleRegistrationResult(result: RegisterResult) {
+    private fun handleRegistrationResult(result: AuthResult) {
         when (result) {
-            is RegisterResult.Success -> {
+            is AuthResult.Success -> {
                 _uiState.update {
                     it.copy(
                         signupSuccess = true,
@@ -130,7 +130,7 @@ class SignupViewModel
                 sharedPreferences.edit { putString("user_email", result.user.email) }
                 Log.d("SignupViewModel", "User registered successfully: $result.user.email")
             }
-            is RegisterResult.Error -> {
+            is AuthResult.Error -> {
                 _uiState.update {
                     it.copy(
                         signupSuccess = false,

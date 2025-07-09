@@ -1,10 +1,9 @@
 package com.mleon.core.data.remote
 
+import com.mleon.core.data.datasource.remote.model.UserDto
+import com.mleon.core.data.model.AuthResponse
 import com.mleon.core.data.model.LoginRequest
-import com.mleon.core.data.model.LoginResponse
-import com.mleon.core.data.model.RegisterResponse
 import com.mleon.core.model.User
-import com.mleon.core.model.dtos.UserDto
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -13,10 +12,10 @@ import retrofit2.http.Path
 
 interface UsersApiService {
     @POST("users/login")
-    suspend fun loginUser(@Body loginRequest: LoginRequest): LoginResponse
+    suspend fun loginUser(@Body loginRequest: LoginRequest): AuthResponse
 
     @POST("users/register")
-    suspend fun registerUser(@Body registerRequest: UserDto): RegisterResponse
+    suspend fun registerUser(@Body registerRequest: UserDto): AuthResponse
 
     @GET("users/{email}")
     suspend fun getUserByEmail(@Path("email") email: String): UserDto

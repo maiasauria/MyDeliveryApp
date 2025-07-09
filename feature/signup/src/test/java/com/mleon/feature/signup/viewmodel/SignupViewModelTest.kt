@@ -3,7 +3,7 @@ package com.mleon.feature.signup.viewmodel
 import android.content.SharedPreferences
 import android.util.Log
 import com.mleon.feature.signup.usecase.RegisterUserUseCase
-import com.mleon.core.data.model.RegisterResult
+import com.mleon.core.data.model.AuthResult
 import com.mleon.core.model.User
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -50,7 +50,7 @@ class SignupViewModelTest {
 
         // GIVEN: Se crea un caso de uso simulado que devuelve un resultado exitoso al registrar un usuario.
         val user = mockk<User>(relaxed = true) { every { email } returns "a@a.com" }
-        coEvery { registerUserUseCase(any()) } returns RegisterResult.Success(user = user, message = "User registered successfully")
+        coEvery { registerUserUseCase(any()) } returns AuthResult.Success(user = user, message = "User registered successfully")
 
         // No puedo usar el metodo createViewModel() porque no puedo pasarle el testDispatcher, por eso creo el viewModel directamente.
         viewModel = SignupViewModel(sharedPreferences, registerUserUseCase, StandardTestDispatcher(testScheduler))
@@ -73,7 +73,7 @@ class SignupViewModelTest {
         // GIVEN Simula un caso de uso que tarda en completarse, retorno error pero es indistinto.
         coEvery { registerUserUseCase(any()) } coAnswers {
             delay(100) // Se simula un retraso porque no vamos a esperar un resultado
-            RegisterResult.Error("fail")
+            AuthResult.Error("fail")
         }
         viewModel = createViewModel()
         //Seteo datos validos en el estado
@@ -93,7 +93,7 @@ class SignupViewModelTest {
     @Test
     fun `onSignupButtonClick error updates uiState with error message`() = runTest {
         // GIVEN: Se crea un caso de uso simulado que devuelve un error al registrar un usuario.
-        coEvery { registerUserUseCase(any()) } returns RegisterResult.Error("Email already exists")
+        coEvery { registerUserUseCase(any()) } returns AuthResult.Error("Email already exists")
         viewModel = SignupViewModel(sharedPreferences, registerUserUseCase, StandardTestDispatcher(testScheduler))
         givenfillValidForm(viewModel)
 

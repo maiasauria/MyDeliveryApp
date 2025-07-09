@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mleon.login.usecase.LoginUserParams
 import com.mleon.login.usecase.LoginUserUseCase
-import com.mleon.core.data.model.LoginResult
+import com.mleon.core.data.model.AuthResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -79,9 +79,9 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun handleLoginResult(result: LoginResult) {
+    private fun handleLoginResult(result: AuthResult) {
         when (result) {
-            is LoginResult.Success -> {
+            is AuthResult.Success -> {
                 _uiState.update {
                     it.copy(
                         loginSuccess = true,
@@ -91,9 +91,8 @@ class LoginViewModel @Inject constructor(
                     )
                 }
                 sharedPreferences.edit { putString("user_email", result.user.email) }
-                //Log.d("LoginViewModel", "Login successful for user: ${result.user.email}, Name: ${result.user.name}")
             }
-            is LoginResult.Error -> {
+            is AuthResult.Error -> {
                 _uiState.update {
                     it.copy(
                         isLoading = false,

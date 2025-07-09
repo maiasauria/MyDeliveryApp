@@ -3,6 +3,7 @@ package com.mleon.feature.profile.viewmodel
 import android.app.Application
 import android.net.Uri
 import android.util.Log
+import com.mleon.core.data.model.AuthResult
 import com.mleon.core.model.User
 import com.mleon.feature.profile.MainDispatcherRule
 import com.mleon.feature.profile.usecase.GetUserProfileUseCase
@@ -46,7 +47,7 @@ class ProfileViewModelTest {
 
     @Test
     fun `uiState is Success when profile loads successfully`() = runTest {
-        coEvery { getUserProfileUseCase() } returns mockUser()
+        coEvery { getUserProfileUseCase() } returns AuthResult.Success("OK", mockUser())
         val application: Application = mockk(relaxed = true)
         viewModel = ProfileViewModel(
             application,
@@ -67,7 +68,7 @@ class ProfileViewModelTest {
     fun `uiState is Success and updated when updateProfile succeeds`() = runTest {
 
         // GIVEN: Se mockea el caso de uso para obtener el perfil del usuario y actualizarlo.
-        coEvery { getUserProfileUseCase() } returns mockUser()
+        coEvery { getUserProfileUseCase() } returns AuthResult.Success("OK", mockUser())
         coEvery { updateUserProfileUseCase(any()) } returns Unit
         val application: Application = mockk(relaxed = true)
         viewModel = ProfileViewModel(
@@ -96,7 +97,7 @@ class ProfileViewModelTest {
     fun `uploadImage sets isImageUploading true and updates userImageUrl on success`() = runTest {
         val uri: Uri = mockk()
         coEvery { uploadUserImageUseCase(uri) } returns "imgUrl"
-        coEvery { getUserProfileUseCase() } returns mockUser()
+        coEvery { getUserProfileUseCase() } returns AuthResult.Success("OK", mockUser())
         val application: Application = mockk(relaxed = true)
         viewModel = ProfileViewModel(
             application,
@@ -119,7 +120,7 @@ class ProfileViewModelTest {
 
     @Test
     fun `multiple field updates update state correctly`() = runTest {
-        coEvery { getUserProfileUseCase() } returns mockUser()
+        coEvery { getUserProfileUseCase() } returns AuthResult.Success("OK", mockUser())
         val application: Application = mockk(relaxed = true)
         viewModel = ProfileViewModel(
             application,
@@ -160,7 +161,7 @@ class ProfileViewModelTest {
 
     @Test
     fun `uiState is Error when profile load fails`() = runTest {
-        coEvery { getUserProfileUseCase() } throws RuntimeException("Failed to load")
+        coEvery { getUserProfileUseCase() } returns AuthResult.Error("Failed to load")
         val application: Application = mockk(relaxed = true)
         viewModel = ProfileViewModel(
             application,
@@ -179,7 +180,7 @@ class ProfileViewModelTest {
 
     @Test
     fun `uiState is Error when updateProfile fails`() = runTest {
-        coEvery { getUserProfileUseCase() } returns mockUser()
+        coEvery { getUserProfileUseCase() } returns AuthResult.Success("OK", mockUser())
         coEvery { updateUserProfileUseCase(any()) } throws RuntimeException("Update failed")
         val application: Application = mockk(relaxed = true)
         viewModel = ProfileViewModel(
@@ -203,7 +204,7 @@ class ProfileViewModelTest {
     fun `uploadImage sets Error state on upload failure`() = runTest {
         val uri: Uri = mockk()
         coEvery { uploadUserImageUseCase(uri) } throws RuntimeException("upload failed")
-        coEvery { getUserProfileUseCase() } returns mockUser()
+        coEvery { getUserProfileUseCase() } returns AuthResult.Success("OK", mockUser())
         val application: Application = mockk(relaxed = true)
         viewModel = ProfileViewModel(
             application,

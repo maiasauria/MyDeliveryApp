@@ -3,7 +3,7 @@ package com.mleon.login.viewmodel
 import android.content.SharedPreferences
 import android.util.Log
 import com.mleon.login.usecase.LoginUserUseCase
-import com.mleon.core.data.model.LoginResult
+import com.mleon.core.data.model.AuthResult
 import com.mleon.core.model.User
 import io.mockk.every
 import io.mockk.mockkStatic
@@ -101,7 +101,7 @@ class LoginViewModelTest {
     fun `onLoginClick with invalid credentials updates state with error message`() = runTest {
         val errorMessage = "Invalid credentials"
         val errorCode = 401
-        val result = LoginResult.Error(errorMessage, errorCode)
+        val result = AuthResult.Error(errorMessage, errorCode)
         whenever(loginUserUseCase(any())).thenReturn(result)
         viewModel = LoginViewModel(
             sharedPreferences,
@@ -122,7 +122,7 @@ class LoginViewModelTest {
     @Test
     fun `onLoginClick with valid credentials updates state and saves email`() = runTest {
         val user = User(email = "test@example.com", name = "Test User", lastname = "User", address = "123 Test St")
-        val result = LoginResult.Success(message = "", user = user)
+        val result = AuthResult.Success(message = "", user = user)
         val editor: SharedPreferences.Editor = mock()
         whenever(sharedPreferences.edit()).thenReturn(editor)
         whenever(editor.putString(any(), any())).thenReturn(editor)

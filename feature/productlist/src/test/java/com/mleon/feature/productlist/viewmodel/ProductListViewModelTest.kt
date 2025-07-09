@@ -1,10 +1,11 @@
 package com.mleon.feature.productlist.viewmodel
 
 import android.util.Log
-import com.mleon.feature.productlist.usecase.GetProductsUseCase
+import com.mleon.core.data.model.ProductResult
 import com.mleon.core.model.Product
 import com.mleon.core.model.enums.Categories
 import com.mleon.feature.productlist.MainDispatcherRule
+import com.mleon.feature.productlist.usecase.GetProductsUseCase
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -37,8 +38,9 @@ class ProductListViewModelTest {
     @Test
     fun `uiState is Loading when loadProducts is called`() = runTest {
         getProductsUseCase = mockk()
+        coEvery { getProductsUseCase(any()) } returns ProductResult.Success(emptyList())
         val viewModel = ProductListViewModel(getProductsUseCase, StandardTestDispatcher(testScheduler))
-        viewModel.loadProducts()
+        viewModel.loadProducts(refreshData = false)
         // En este caso no esperamos a que termine la corrutina, para chequear que sea Loading.
         Assert.assertTrue(viewModel.uiState.value is ProductListUiState.Loading)
     }
@@ -47,7 +49,7 @@ class ProductListViewModelTest {
     fun `given products error when loadProducts then uiState is Error`() = runTest {
         givenProductsError("Error fetching products")
         val viewModel = ProductListViewModel(getProductsUseCase, StandardTestDispatcher(testScheduler))
-        viewModel.loadProducts()
+        viewModel.loadProducts(refreshData = false)
         advanceUntilIdle()
         thenUiStateIsError(viewModel, "Error fetching products")
     }
@@ -56,7 +58,7 @@ class ProductListViewModelTest {
     fun `given products when loadProducts then uiState is Success`() = runTest {
         givenProducts(listOf(mockProduct("Pizza"), mockProduct("Burger")))
         val viewModel = ProductListViewModel(getProductsUseCase, StandardTestDispatcher(testScheduler))
-        viewModel.loadProducts()
+        viewModel.loadProducts(refreshData = false)
         advanceUntilIdle()
         thenUiStateIsSuccess(viewModel, 2)
     }
@@ -65,7 +67,7 @@ class ProductListViewModelTest {
     fun `given products when search then uiState contains filtered products`() = runTest {
         givenProducts(listOf(mockProduct("Pizza"), mockProduct("Burger")))
         val viewModel = ProductListViewModel(getProductsUseCase, StandardTestDispatcher(testScheduler))
-        viewModel.loadProducts()
+        viewModel.loadProducts(refreshData = false)
         advanceUntilIdle()
         viewModel.onSearchTextChange("Pizza")
         thenUiStateIsSuccess(viewModel, 1)
@@ -77,9 +79,9 @@ class ProductListViewModelTest {
         val burger = mockProduct("Burger", categories = listOf(Categories.BURGER))
         givenProducts(listOf(pizza, burger))
         val viewModel = ProductListViewModel(getProductsUseCase, StandardTestDispatcher(testScheduler))
-        viewModel.loadProducts()
+        viewModel.loadProducts(refreshData = false)
         advanceUntilIdle()
-        viewModel.onCategorySelection(com.mleon.core.model.enums.Categories.PIZZA)
+        viewModel.onCategorySelection(Categories.PIZZA)
         thenUiStateIsSuccess(viewModel, 1)
     }
 
@@ -89,7 +91,7 @@ class ProductListViewModelTest {
         val expensive = mockProduct("Expensive", price = 10.0)
         givenProducts(listOf(expensive, cheap))
         val viewModel = ProductListViewModel(getProductsUseCase, StandardTestDispatcher(testScheduler))
-        viewModel.loadProducts()
+        viewModel.loadProducts(refreshData = false)
         advanceUntilIdle()
         viewModel.onOrderByPriceAscending()
         val state = viewModel.uiState.value as ProductListUiState.Success
@@ -103,7 +105,7 @@ class ProductListViewModelTest {
         val expensive = mockProduct("Expensive", price = 10.0)
         givenProducts(listOf(cheap, expensive))
         val viewModel = ProductListViewModel(getProductsUseCase, StandardTestDispatcher(testScheduler))
-        viewModel.loadProducts()
+        viewModel.loadProducts(refreshData = false)
         advanceUntilIdle()
         viewModel.onOrderByPriceDescending()
         val state = viewModel.uiState.value as ProductListUiState.Success
@@ -116,7 +118,7 @@ class ProductListViewModelTest {
         val pizza = mockProduct("Pizza")
         givenProducts(listOf(pizza))
         val viewModel = ProductListViewModel(getProductsUseCase, StandardTestDispatcher(testScheduler))
-        viewModel.loadProducts()
+        viewModel.loadProducts(refreshData = false)
         advanceUntilIdle()
         viewModel.onAddToCartButtonClick(pizza)
         val state = viewModel.uiState.value as ProductListUiState.Success
@@ -148,12 +150,12 @@ class ProductListViewModelTest {
 
     private fun givenProducts(products: List<Product>) {
         getProductsUseCase = mockk()
-        coEvery { getProductsUseCase() } returns products
+        coEvery { getProductsUseCase(any()) } returns ProductResult.Success(products)
     }
 
     private fun givenProductsError(message: String) {
         getProductsUseCase = mockk()
-        coEvery { getProductsUseCase() } throws Exception(message)
+        coEvery { getProductsUseCase(any()) } returns ProductResult.Error(message)
     }
 
     private fun thenUiStateIsSuccess(viewModel: ProductListViewModel, expectedCount: Int) {
@@ -165,7 +167,7 @@ class ProductListViewModelTest {
     private fun thenUiStateIsError(viewModel: ProductListViewModel, expectedMessage: String) {
         val state = viewModel.uiState.value
         assert(state is ProductListUiState.Error)
-        Assert.assertEquals(expectedMessage, (state as ProductListUiState.Error).error.message)
+        Assert.assertEquals(expectedMessage, (state as ProductListUiState.Error).error)
     }
 
     private fun mockProduct(

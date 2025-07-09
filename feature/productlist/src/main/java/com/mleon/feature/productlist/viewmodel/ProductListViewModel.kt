@@ -30,7 +30,7 @@ constructor(
     private val _uiState = MutableStateFlow<ProductListUiState>(ProductListUiState.Loading)
     val uiState =  _uiState.asStateFlow()
 
-    fun loadProducts(refreshData: Boolean) {
+    fun loadProducts(refreshData: Boolean = false) {
         _uiState.value = ProductListUiState.Loading
         viewModelScope.launch {
             when (val result = getProductsUseCase(refreshData)) {
