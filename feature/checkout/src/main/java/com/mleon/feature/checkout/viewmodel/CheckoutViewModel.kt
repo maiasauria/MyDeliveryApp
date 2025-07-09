@@ -3,7 +3,7 @@ package com.mleon.feature.checkout.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mleon.core.data.model.OrderResponse
+import com.mleon.core.data.model.OrderResult
 import com.mleon.core.model.Order
 import com.mleon.core.model.enums.PaymentMethod
 import com.mleon.feature.cart.domain.usecase.GetCartItemsWithProductsUseCase
@@ -80,11 +80,14 @@ class CheckoutViewModel @Inject constructor(
                 )
 
                 when (val response = createOrderUseCase(order)) {
-                    is OrderResponse.Success -> {
+                    is OrderResult.Success -> {
                         _uiState.value = currentState.copy(orderConfirmed = true)
                     }
-                    is OrderResponse.Error -> {
+                    is OrderResult.Error -> {
                         _uiState.value = CheckoutUiState.Error(Exception(response.message))
+                    }
+                    is OrderResult.SuccessList -> {
+                        _uiState.value = currentState.copy(orderConfirmed = true)
                     }
                 }
             } catch (e: Exception) {

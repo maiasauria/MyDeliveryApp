@@ -3,6 +3,7 @@ package com.mleon.feature.orders.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mleon.core.data.model.OrderResult
 import com.mleon.feature.orders.domain.usecase.GetOrdersUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -32,8 +33,17 @@ class OrdersViewModel @Inject constructor(
         viewModelScope.launch(dispatcher + exceptionHandler) {
             _uiState.value = OrdersUiState.Loading
             try {
-                val orders = getOrdersUseCase()
-                _uiState.value = OrdersUiState.Success(orders)
+                when (val result = getOrdersUseCase()) {
+                    is OrderResult.SuccessList -> {
+                        _uiState.value = OrdersUiState.Success(result.orders)
+                    }
+                    is OrderResult.Success -> {
+                        _uiState.value = OrdersUiState.Success(listOf(result.order))
+                    }
+                    is OrderResult.Error -> {
+                        _uiState.value = OrdersUiState.Error(Exception(result.message))
+                    }
+                }
             } catch (e: Exception) {
                 _uiState.value = OrdersUiState.Error(e)
             }

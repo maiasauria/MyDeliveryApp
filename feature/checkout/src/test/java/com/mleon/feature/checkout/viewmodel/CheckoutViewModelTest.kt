@@ -1,6 +1,6 @@
 package com.mleon.feature.checkout.viewmodel
 
-import com.mleon.core.data.model.OrderResponse
+import com.mleon.core.data.model.OrderResult
 import com.mleon.core.model.CartItem
 import com.mleon.core.model.Order
 import com.mleon.feature.cart.domain.usecase.GetCartItemsWithProductsUseCase
@@ -135,11 +135,11 @@ class CheckoutViewModelTest {
     }
 
     private fun givenOrderSuccess(order: Order) {
-        coEvery { createOrderUseCase(any()) } returns OrderResponse.Success(order)
+        coEvery { createOrderUseCase(any()) } returns OrderResult.Success(order)
     }
 
     private fun givenOrderError(message: String) {
-        coEvery { createOrderUseCase(any()) } returns OrderResponse.Error(message)
+        coEvery { createOrderUseCase(any()) } returns OrderResult.Error(message)
     }
 
     private fun mockCartItem(): CartItem = mockk(relaxed = true)

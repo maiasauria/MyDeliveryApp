@@ -2,10 +2,12 @@ package com.mleon.core.data.datasource.local.entities
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "cart_items",
+    indices = [Index(value = ["productId"])],
     foreignKeys = [
         ForeignKey(
             entity = ProductEntity::class,

@@ -1,6 +1,7 @@
 package com.mleon.feature.orders.viewmodel
 
 import android.util.Log
+import com.mleon.core.data.model.OrderResult
 import com.mleon.core.model.Order
 import com.mleon.feature.orders.MainDispatcherRule
 import com.mleon.feature.orders.domain.usecase.GetOrdersUseCase
@@ -69,7 +70,7 @@ class OrdersViewModelTest {
 
     private fun givenOrders(orders: List<Order>) {
         getOrdersUseCase = mockk()
-        coEvery { getOrdersUseCase() } returns orders
+        coEvery { getOrdersUseCase() } returns OrderResult.SuccessList(orders)
     }
 
     private fun givenOrdersError(message: String) {
