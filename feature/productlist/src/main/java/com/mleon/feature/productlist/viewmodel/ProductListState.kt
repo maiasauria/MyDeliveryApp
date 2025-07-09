@@ -12,5 +12,5 @@ sealed class ProductListUiState {
         val cartMessage: String,
         val isAddingToCart: Boolean = false
     ) : ProductListUiState()
-    data class Error(val error: Exception) : ProductListUiState()
+    data class Error(val error: String) : ProductListUiState()
 }

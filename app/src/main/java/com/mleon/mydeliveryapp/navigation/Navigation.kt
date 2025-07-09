@@ -27,7 +27,7 @@ import com.mleon.login.view.LoginScreen
 fun AppNavigation(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = NavigationRoutes.LOGIN,
+        startDestination = NavigationRoutes.PRODUCTS,
     ) {
         // Aquí definimos las rutas de navegación
         composable(route = NavigationRoutes.LOGIN) {

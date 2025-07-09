@@ -3,7 +3,7 @@ package com.mleon.core.data.datasource.remote.model
 import com.mleon.core.model.Product
 import com.mleon.core.model.enums.Categories
 
-data class RemoteProduct(
+data class ProductDto(
     val name: String,
     val _id: String,
     val description: String,
@@ -15,15 +15,16 @@ data class RemoteProduct(
     val updatedAt: String,
 )
 
-fun RemoteProduct.toProduct(): Product {
+fun ProductDto.toDomain(): Product {
     val safeCategory = categories?.mapNotNull { runCatching { Categories.valueOf(it) }.getOrNull() } ?: emptyList()
     return Product(
         id = _id,
         name = name,
-        description = description ?: "",
+        description = description,
         price = price,
-        imageUrl = imageUrl ?: "",
+        imageUrl = imageUrl,
         category = safeCategory,
-        includesDrink = includesDrink ?: false,
+        includesDrink = includesDrink,
     )
 }
+

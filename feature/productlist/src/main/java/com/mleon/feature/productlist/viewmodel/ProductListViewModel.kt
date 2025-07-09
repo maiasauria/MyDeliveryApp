@@ -1,14 +1,13 @@
 package com.mleon.feature.productlist.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mleon.feature.productlist.usecase.GetProductsUseCase
+import com.mleon.core.data.model.ProductResult
 import com.mleon.core.model.Product
 import com.mleon.core.model.enums.Categories
+import com.mleon.feature.productlist.usecase.GetProductsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -31,26 +30,17 @@ constructor(
     private val _uiState = MutableStateFlow<ProductListUiState>(ProductListUiState.Loading)
     val uiState =  _uiState.asStateFlow()
 
-    private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
-        Log.e("CheckoutViewModel", "Coroutine error", exception)
-        _uiState.value = ProductListUiState.Error(exception as? Exception ?: Exception("Ocurrió un error inesperado. Intenta nuevamente."))
-    }
-
-    fun loadProducts() {
+    fun loadProducts(refreshData: Boolean) {
         _uiState.value = ProductListUiState.Loading
-        viewModelScope.launch(dispatcher + exceptionHandler) {
-            try {
-                allProducts = getProductsUseCase()
-                //Log.d("ProductListViewModel", "Products loaded: ${allProducts.size}")
-
-                if (allProducts.isEmpty()) {
-                    _uiState.value = ProductListUiState.Error(Exception("No se encontraron productos."))
-                } else {
+        viewModelScope.launch {
+            when (val result = getProductsUseCase(refreshData)) {
+                is ProductResult.Success -> {
+                    allProducts = result.products
                     updateSuccessState()
                 }
-            } catch (e: Exception) {
-                Log.e("ProductListViewModel", "Error loading products", e)
-                _uiState.value = ProductListUiState.Error(e)
+                is ProductResult.Error -> {
+                    _uiState.value = ProductListUiState.Error(result.message)
+                }
             }
         }
     }
@@ -109,7 +99,6 @@ constructor(
     }
 
     private fun updateSuccessState() {
-        //Log.d("ProductListViewModel", "Updating success state with searchQuery: $searchQuery, selectedCategory: $selectedCategory, cartMessage: $cartMessage")
         val filteredProducts = filterProducts()
         _uiState.value = ProductListUiState.Success(
             products = filteredProducts,

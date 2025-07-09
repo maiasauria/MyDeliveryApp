@@ -16,7 +16,6 @@ import com.mleon.feature.productlist.viewmodel.ProductListUiState
 import com.mleon.feature.productlist.viewmodel.ProductListViewModel
 import com.mleon.utils.ui.ErrorScreen
 import com.mleon.utils.ui.YappLoadingIndicator
-import kotlinx.coroutines.delay
 
 @Composable
 
@@ -30,8 +29,7 @@ fun ProductListScreen(
 
     // Only launch once when the Composable enters the composition
     LaunchedEffect(Unit) {
-        delay(1000) // Demora para visualizar el indicador de carga
-        productListViewModel.loadProducts()
+        productListViewModel.loadProducts(refreshData = true)
     }
 
     when (uiState) {
@@ -75,8 +73,8 @@ fun ProductListScreen(
                 contentAlignment = Alignment.Center
             ) {
                 ErrorScreen(
-                    errorMessage = (uiState as ProductListUiState.Error).error.message ?: "Ocurrió un error inesperado. Intenta nuevamente.",
-                    onRetry = { productListViewModel.loadProducts() }
+                    errorMessage = (uiState as ProductListUiState.Error).error,
+                    onRetry = { productListViewModel.loadProducts(refreshData = true) }
                 )
             }
         }
