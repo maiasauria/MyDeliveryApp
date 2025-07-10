@@ -1,6 +1,6 @@
 package com.mleon.feature.signup.usecase
 
-import com.mleon.core.data.model.AuthResult
+import com.mleon.core.data.datasource.remote.model.AuthResult
 import com.mleon.core.data.repository.interfaces.UserRepository
 import javax.inject.Inject
 

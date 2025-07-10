@@ -1,6 +1,6 @@
 package com.mleon.feature.checkout.viewmodel
 
-import com.mleon.core.data.model.OrderResult
+import com.mleon.core.data.datasource.remote.model.OrderResult
 import com.mleon.core.model.CartItem
 import com.mleon.core.model.Order
 import com.mleon.feature.cart.domain.usecase.GetCartItemsWithProductsUseCase

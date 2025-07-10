@@ -1,4 +1,4 @@
-package com.mleon.core.data.datasource.remote.model
+package com.mleon.core.data.datasource.remote.dto
 
 import com.mleon.core.model.CartItem
 import com.mleon.core.model.OrderItem
@@ -17,19 +17,34 @@ data class CartItemDto(
     val quantity: Int
 )
 
-fun CartItem.toDto(): CartItemDto = CartItemDto(
-    name = product.name,
-    description = product.description,
-    imageUrl = product.imageUrl ?: "",
-    price = product.price,
-    includesDrink = product.includesDrink,
-    categories = product.category.map { it.name },
-    quantity = quantity
-)
+fun CartItem.toDto(): CartItemDto {
+
+    // Pre procesamos las categorias para mejorar performance
+    val categoryNames = ArrayList<String>(product.category.size)
+    for (cat in product.category) {
+        categoryNames.add(cat.name)
+    }
+
+    return CartItemDto(
+        name = product.name,
+        description = product.description,
+        imageUrl = product.imageUrl ?: "",
+        price = product.price,
+        includesDrink = product.includesDrink,
+        categories = categoryNames,
+        quantity = quantity
+    )
+}
+
 
 fun CartItemDto.toCartItem(): CartItem {
-    val safeCategory =
-        categories.mapNotNull { runCatching { Categories.valueOf(it) }.getOrNull() }
+
+    val safeCategory = ArrayList<Categories>(categories.size) // Preparamos una lista de categorias seguras para evitar excepciones
+
+    // runCatching para evitar excepciones si la categoria no es valida
+    for (cat in categories) {
+        runCatching { Categories.valueOf(cat) }.getOrNull()?.let { safeCategory.add(it) }
+    }
 
     return CartItem(
         Product(

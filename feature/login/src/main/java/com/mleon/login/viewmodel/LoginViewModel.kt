@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mleon.login.usecase.LoginUserParams
 import com.mleon.login.usecase.LoginUserUseCase
-import com.mleon.core.data.model.AuthResult
+import com.mleon.core.data.datasource.remote.model.AuthResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler

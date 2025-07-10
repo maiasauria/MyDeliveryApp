@@ -1,12 +1,12 @@
 package com.mleon.core.data.datasource.remote
 
 import com.mleon.core.data.datasource.UserDataSource
-import com.mleon.core.data.datasource.remote.model.UserDto
-import com.mleon.core.data.datasource.remote.model.toUser
-import com.mleon.core.data.model.AuthResponse
-import com.mleon.core.data.model.AuthResult
-import com.mleon.core.data.model.LoginRequest
-import com.mleon.core.data.remote.UsersApiService
+import com.mleon.core.data.datasource.remote.dto.UserDto
+import com.mleon.core.data.datasource.remote.dto.toDomain
+import com.mleon.core.data.datasource.remote.model.AuthResponse
+import com.mleon.core.data.datasource.remote.model.AuthResult
+import com.mleon.core.data.datasource.remote.model.LoginRequest
+import com.mleon.core.data.datasource.remote.service.UsersApiService
 import com.mleon.core.model.User
 import retrofit2.HttpException
 import java.io.IOException
@@ -69,7 +69,7 @@ class UserRemoteDataSource(
     override suspend fun getUserByEmail(email: String): AuthResult =
         try {
             val userDto = apiService.getUserByEmail(email)
-            val user = userDto.toUser()
+            val user = userDto.toDomain()
             AuthResult.Success(user = user, message = "")
         } catch (e: IOException) {
             AuthResult.Error(ERROR_OFFLINE)
@@ -82,7 +82,7 @@ class UserRemoteDataSource(
     override suspend fun updateUser(user: User): AuthResult =
         try {
             val response = apiService.updateUser(user.email, user)
-            val updatedUser = response.toUser()
+            val updatedUser = response.toDomain()
             AuthResult.Success(user = updatedUser, message = UPDATE_OK)
         } catch (e: IOException) {
             AuthResult.Error(ERROR_OFFLINE)
@@ -97,7 +97,7 @@ class UserRemoteDataSource(
     // Maneja los resultados de inicio de sesión
     private fun handleLoginResponse(responseBody: AuthResponse): AuthResult {
         return if (responseBody.user != null) {
-            val domainUser: User = responseBody.user.toUser()
+            val domainUser: User = responseBody.user.toDomain()
             AuthResult.Success(user = domainUser, message = LOGIN_OK)
         } else
         AuthResult.Error(ERROR_LOGIN)

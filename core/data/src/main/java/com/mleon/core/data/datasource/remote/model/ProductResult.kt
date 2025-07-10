@@ -1,4 +1,4 @@
-package com.mleon.core.data.model
+package com.mleon.core.data.datasource.remote.model
 
 import com.mleon.core.model.Product
 

@@ -3,7 +3,7 @@ package com.mleon.feature.signup.viewmodel
 import android.content.SharedPreferences
 import android.util.Log
 import com.mleon.feature.signup.usecase.RegisterUserUseCase
-import com.mleon.core.data.model.AuthResult
+import com.mleon.core.data.datasource.remote.model.AuthResult
 import com.mleon.core.model.User
 import io.mockk.Runs
 import io.mockk.coEvery

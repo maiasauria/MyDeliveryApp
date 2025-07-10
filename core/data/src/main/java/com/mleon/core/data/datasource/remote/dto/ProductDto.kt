@@ -1,4 +1,4 @@
-package com.mleon.core.data.datasource.remote.model
+package com.mleon.core.data.datasource.remote.dto
 
 import com.mleon.core.model.Product
 import com.mleon.core.model.enums.Categories

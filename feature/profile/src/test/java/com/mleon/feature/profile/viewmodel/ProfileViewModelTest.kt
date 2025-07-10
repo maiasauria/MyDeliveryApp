@@ -3,7 +3,7 @@ package com.mleon.feature.profile.viewmodel
 import android.app.Application
 import android.net.Uri
 import android.util.Log
-import com.mleon.core.data.model.AuthResult
+import com.mleon.core.data.datasource.remote.model.AuthResult
 import com.mleon.core.model.User
 import com.mleon.feature.profile.MainDispatcherRule
 import com.mleon.feature.profile.usecase.GetUserProfileUseCase

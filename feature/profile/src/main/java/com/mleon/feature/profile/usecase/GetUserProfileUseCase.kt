@@ -1,7 +1,7 @@
 package com.mleon.feature.profile.usecase
 
 import android.content.SharedPreferences
-import com.mleon.core.data.model.AuthResult
+import com.mleon.core.data.datasource.remote.model.AuthResult
 import com.mleon.core.data.repository.interfaces.UserRepository
 import javax.inject.Inject
 

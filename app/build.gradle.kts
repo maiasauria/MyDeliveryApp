@@ -64,6 +64,7 @@ dependencies {
 
     // Hilt (DI)
     implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.work)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
@@ -80,6 +81,8 @@ dependencies {
     // ksp(libs.androidx.room.compiler)
     // implementation(libs.androidx.room.ktx)
 
+    implementation (libs.androidx.work.runtime.ktx)
+
     //Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -90,6 +93,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testImplementation ("junit:junit:4.13.2")
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.13")
+
 
     //Project Modules
     implementation(project(":core:model"))

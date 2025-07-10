@@ -1,8 +1,9 @@
 package com.mleon.core.data.di
 
 import android.content.Context
-import android.util.Log
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.mleon.core.data.datasource.local.AppDatabase
 import com.mleon.core.data.datasource.local.dao.ProductDao
 import dagger.Module
@@ -10,22 +11,27 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import java.util.concurrent.Executors
 import javax.inject.Singleton
+
+private const val DB_NAME = "yapp_db"
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
+
+    val MIGRATION_1_2 = object : Migration(1, 2) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            // Preparado para futuras migraciones
+        }
+    }
 
     @Provides
     @Singleton //unica BD
     fun provideDatabase(
         @ApplicationContext context: Context
     ): AppDatabase {
-        return Room.databaseBuilder(context, AppDatabase::class.java, "db")
-            .setQueryCallback({ sqlQuery, bindArgs ->
-                Log.d("RoomQuery", "SQL: $sqlQuery, Args: $bindArgs")
-            }, Executors.newSingleThreadExecutor())
+        return Room.databaseBuilder(context, AppDatabase::class.java, DB_NAME)
+            .addMigrations(MIGRATION_1_2)
             .build()
     }
 
@@ -35,9 +41,6 @@ object DatabaseModule {
 
     @Provides
     fun provideCartItemDao(database: AppDatabase) = database.cartItemDao()
-
-    //@Provides
-    //fun provideOrderHistoryDao(database: AppDatabase) = database.orderHistoryDao()
 
     @Provides
     fun provideOrderDao(database: AppDatabase) = database.orderDao()

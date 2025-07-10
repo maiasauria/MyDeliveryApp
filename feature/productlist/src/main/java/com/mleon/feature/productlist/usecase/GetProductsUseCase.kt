@@ -1,6 +1,6 @@
 package com.mleon.feature.productlist.usecase
 
-import com.mleon.core.data.model.ProductResult
+import com.mleon.core.data.datasource.remote.model.ProductResult
 import com.mleon.core.data.repository.interfaces.ProductRepository
 import javax.inject.Inject
 

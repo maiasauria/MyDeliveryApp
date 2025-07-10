@@ -1,8 +1,8 @@
-package com.mleon.core.data.remote
+package com.mleon.core.data.datasource.remote.service
 
-import com.mleon.core.data.datasource.remote.model.UserDto
-import com.mleon.core.data.model.AuthResponse
-import com.mleon.core.data.model.LoginRequest
+import com.mleon.core.data.datasource.remote.dto.UserDto
+import com.mleon.core.data.datasource.remote.model.AuthResponse
+import com.mleon.core.data.datasource.remote.model.LoginRequest
 import com.mleon.core.model.User
 import retrofit2.http.Body
 import retrofit2.http.GET

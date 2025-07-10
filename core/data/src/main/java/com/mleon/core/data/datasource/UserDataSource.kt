@@ -1,6 +1,6 @@
 package com.mleon.core.data.datasource
 
-import com.mleon.core.data.model.AuthResult
+import com.mleon.core.data.datasource.remote.model.AuthResult
 import com.mleon.core.model.User
 
 interface UserDataSource {

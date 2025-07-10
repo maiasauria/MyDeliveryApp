@@ -3,7 +3,7 @@ package com.mleon.feature.checkout.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mleon.core.data.model.OrderResult
+import com.mleon.core.data.datasource.remote.model.OrderResult
 import com.mleon.core.model.Order
 import com.mleon.core.model.enums.PaymentMethod
 import com.mleon.feature.cart.domain.usecase.GetCartItemsWithProductsUseCase

@@ -6,6 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.getValue
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.mleon.core.data.datasource.local.worker.DatabaseSyncWorker
 import com.mleon.mydeliveryapp.presentation.views.MainScreen
 import com.mleon.mydeliveryapp.ui.theme.MyDeliveryAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -14,6 +17,10 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val workRequest = OneTimeWorkRequestBuilder<DatabaseSyncWorker>().build()
+        WorkManager.getInstance(applicationContext).enqueue(workRequest)
+
         setContent {
             MyDeliveryAppTheme {
                 val navController = rememberNavController() // preserve state across recompositions

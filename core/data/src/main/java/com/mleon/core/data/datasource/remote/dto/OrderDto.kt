@@ -1,4 +1,4 @@
-package com.mleon.core.data.datasource.remote.model
+package com.mleon.core.data.datasource.remote.dto
 
 import com.mleon.core.model.Order
 
@@ -22,7 +22,7 @@ fun Order.toDto(): OrderDto {
     )
 }
 
-fun OrderDto.toOrder(): Order =
+fun OrderDto.toDomain(): Order =
     Order(
         orderId = orderId,
         orderItems = productIds.map { it.toCartItem() },

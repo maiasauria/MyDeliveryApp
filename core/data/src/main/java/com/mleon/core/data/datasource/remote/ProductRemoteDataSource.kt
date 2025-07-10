@@ -1,9 +1,9 @@
 package com.mleon.core.data.datasource.remote
 
 import com.mleon.core.data.datasource.ProductDataSource
-import com.mleon.core.data.datasource.remote.model.toDomain
-import com.mleon.core.data.model.ProductResult
-import com.mleon.core.data.remote.ProductsApiService
+import com.mleon.core.data.datasource.remote.dto.toDomain
+import com.mleon.core.data.datasource.remote.model.ProductResult
+import com.mleon.core.data.datasource.remote.service.ProductsApiService
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -15,10 +15,12 @@ class ProductRemoteDataSource @Inject constructor( //Inyectamos el ApiService
 ) : ProductDataSource {
     override suspend fun getProducts(): ProductResult {
         return try {
-            val products =
-                apiService.getProducts().map { remoteProduct -> remoteProduct.toDomain() }
-            ProductResult.Success(products)
-
+            val response = apiService.getProducts()
+            if (response.products != null) {
+                ProductResult.Success(response.products.map { it.toDomain() })
+            } else {
+                ProductResult.Error("No se encontraron productos")
+            }
         } catch (e: IOException) {
             ProductResult.Error("Sin conexión a Internet. Verifica tu conexión e intenta nuevamente")
         } catch (e: HttpException) {

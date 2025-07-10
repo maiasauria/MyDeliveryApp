@@ -2,7 +2,7 @@ package com.mleon.feature.productlist.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mleon.core.data.model.ProductResult
+import com.mleon.core.data.datasource.remote.model.ProductResult
 import com.mleon.core.model.Product
 import com.mleon.core.model.enums.Categories
 import com.mleon.feature.productlist.usecase.GetProductsUseCase
@@ -32,7 +32,7 @@ constructor(
 
     fun loadProducts(refreshData: Boolean = false) {
         _uiState.value = ProductListUiState.Loading
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcher) {
             when (val result = getProductsUseCase(refreshData)) {
                 is ProductResult.Success -> {
                     allProducts = result.products

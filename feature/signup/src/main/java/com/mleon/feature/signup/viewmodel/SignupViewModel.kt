@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mleon.core.data.model.AuthResult
+import com.mleon.core.data.datasource.remote.model.AuthResult
 import com.mleon.feature.signup.usecase.RegisterUserParams
 import com.mleon.feature.signup.usecase.RegisterUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

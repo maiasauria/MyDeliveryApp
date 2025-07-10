@@ -3,7 +3,7 @@ package com.mleon.login.viewmodel
 import android.content.SharedPreferences
 import android.util.Log
 import com.mleon.login.usecase.LoginUserUseCase
-import com.mleon.core.data.model.AuthResult
+import com.mleon.core.data.datasource.remote.model.AuthResult
 import com.mleon.core.model.User
 import io.mockk.every
 import io.mockk.mockkStatic
