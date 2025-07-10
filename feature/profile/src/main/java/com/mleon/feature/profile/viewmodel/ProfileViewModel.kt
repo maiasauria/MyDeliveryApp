@@ -128,7 +128,7 @@ constructor(
                 _uiState.value =
                     ProfileUiState.Success(state.copy(isLoading = false, isSaved = true))
             } catch (e: Exception) {
-                _uiState.value = ProfileUiState.Error("Update failed: ${e.message}")
+                _uiState.value = ProfileUiState.Error("Error al actualizar el perfil: ${e.message}")
             }
         }
     }
@@ -153,7 +153,6 @@ constructor(
                 validateForm()
             } catch (e: Exception) {
                 _uiState.value = ProfileUiState.Error("Error al subir la imagen.")
-                Log.e("ProfileViewModel", "Error uploading image: ${e.message}")
             }
         }
     }

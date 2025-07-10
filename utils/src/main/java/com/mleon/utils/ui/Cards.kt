@@ -85,7 +85,6 @@ fun ProductCard(
                         .fillMaxWidth()
                         .fillMaxHeight(),
             ) {
-                // TODO poner favoritos.
                 Text(
                     text = product.name,
                     modifier = Modifier.padding(bottom = 4.dp),

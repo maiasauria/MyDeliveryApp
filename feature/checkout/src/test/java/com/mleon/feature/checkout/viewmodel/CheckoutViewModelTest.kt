@@ -49,7 +49,6 @@ class CheckoutViewModelTest {
         viewModel.getCartItems()
         advanceUntilIdle()
         runCurrent()
-        println("After getCartItems: ${viewModel.uiState.value}")
 
         viewModel.confirmOrder()
         advanceUntilIdle()
@@ -146,12 +145,10 @@ class CheckoutViewModelTest {
     private fun mockOrder(): Order = mockk(relaxed = true)
     private fun thenUiStateIsSuccess(viewModel: CheckoutViewModel, expectedCount: Int) {
         val state = viewModel.uiState.value
-        println("Actual state: $state")
         assert(state is CheckoutUiState.Success)
     }
     private fun thenUiStateIsError(viewModel: CheckoutViewModel, expectedMessage: String) {
         val state = viewModel.uiState.value
-        println("Actual state: $state")
         assert(state is CheckoutUiState.Error)
         Assert.assertEquals(expectedMessage, (state as CheckoutUiState.Error).error.message)
     }

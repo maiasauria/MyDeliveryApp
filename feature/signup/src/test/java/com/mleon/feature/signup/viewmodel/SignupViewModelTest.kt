@@ -61,7 +61,6 @@ class SignupViewModelTest {
         advanceUntilIdle()
 
         // THEN: Se verifica que el estado de la UI se actualiza correctamente y se guarda el email en SharedPreferences.
-        println("State: ${viewModel.uiState.value}")
         val state = viewModel.uiState.value
         assertSignupSuccess(state)
         verify { sharedPreferences.edit() }
@@ -124,7 +123,6 @@ class SignupViewModelTest {
         advanceUntilIdle()
 
         // THEN: Se verifica que el estado de la UI contiene mensajes de error de validación y no se llama al caso de uso.
-        println("State: ${viewModel.uiState.value}")
         val state = viewModel.uiState.value
         assertValidationErrors(state)
         coVerify(exactly = 0) { registerUserUseCase(any()) } // Verifica que el caso de uso no se haya llamado

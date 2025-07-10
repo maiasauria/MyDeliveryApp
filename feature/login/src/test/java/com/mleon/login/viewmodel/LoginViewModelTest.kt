@@ -2,9 +2,9 @@ package com.mleon.login.viewmodel
 
 import android.content.SharedPreferences
 import android.util.Log
-import com.mleon.login.usecase.LoginUserUseCase
 import com.mleon.core.data.datasource.remote.model.AuthResult
 import com.mleon.core.model.User
+import com.mleon.login.usecase.LoginUserUseCase
 import io.mockk.every
 import io.mockk.mockkStatic
 import kotlinx.coroutines.Dispatchers
@@ -138,7 +138,6 @@ class LoginViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
-        println("State after login: $state")
         assertTrue(state.loginSuccess)
         assertEquals("", state.errorMessageLogin)
         assertEquals("", state.password)

@@ -21,99 +21,129 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignupViewModel
-    @Inject
-    constructor(
-        private val sharedPreferences: SharedPreferences,
-        private val registerUserUseCase: RegisterUserUseCase,
-        private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-    ) : ViewModel() {
-        private val _uiState = MutableStateFlow(SignupUiState())
-        val uiState: StateFlow<SignupUiState> = _uiState.asStateFlow()
+@Inject
+constructor(
+    private val sharedPreferences: SharedPreferences,
+    private val registerUserUseCase: RegisterUserUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+) : ViewModel() {
+    private val _uiState = MutableStateFlow(SignupUiState())
+    val uiState: StateFlow<SignupUiState> = _uiState.asStateFlow()
 
-        fun onEmailChange(email: String) {
-            _uiState.update { it.copy(email = email) }
-            validateForm()
+    fun onEmailChange(email: String) {
+        _uiState.update { it.copy(email = email) }
+        validateForm()
+    }
+
+    fun onLastnameChange(lastname: String) {
+        _uiState.update { it.copy(lastname = lastname) }
+        validateForm()
+    }
+
+    fun onPasswordChange(password: String) {
+        _uiState.update { it.copy(password = password) }
+        validateForm()
+    }
+
+    fun onConfirmPasswordChange(confirmPassword: String) {
+        _uiState.update { it.copy(passwordConfirm = confirmPassword) }
+        validateForm()
+    }
+
+    fun onNameChange(name: String) {
+        _uiState.update { it.copy(name = name) }
+        validateForm()
+    }
+
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
+        Log.e("SignupViewModel", "Coroutine error", exception)
+        _uiState.update { it.copy(errorMessageSignup = "Ocurrió un error inesperado.") }
+    }
+
+    fun onSignupButtonClick() {
+        _uiState.update {
+            it.copy(
+                isLoading = true,
+                errorMessageSignup = "",
+                signupSuccess = false
+            )
         }
+        validateForm()
 
-        fun onLastnameChange(lastname: String) {
-            _uiState.update { it.copy(lastname = lastname) }
-            validateForm()
-        }
-
-        fun onPasswordChange(password: String) {
-            _uiState.update { it.copy(password = password) }
-            validateForm()
-        }
-
-        fun onConfirmPasswordChange(confirmPassword: String) {
-            _uiState.update { it.copy(passwordConfirm = confirmPassword) }
-            validateForm()
-        }
-
-        fun onNameChange(name: String) {
-            _uiState.update { it.copy(name = name) }
-            validateForm()
-        }
-
-        private val exceptionHandler = CoroutineExceptionHandler { _, exception -> println("Error occurred: ${exception.message}") }
-
-        fun onSignupButtonClick() {
-            _uiState.update { it.copy(isLoading = true, errorMessageSignup = "", signupSuccess = false) }
-            validateForm()
-
-            // Fail first: Si no es valido, no continuar con el registro
-            if (!_uiState.value.isFormValid) {
-                _uiState.update { it.copy(errorMessageSignup = "Por favor, completa todos los campos correctamente.", isLoading = false, signupSuccess = false) }
-                return
-            }
-
-            //No indico el dispatcher porque el caso de uso ya lo maneja internamente
-            viewModelScope.launch(dispatcher + exceptionHandler) {
-
-                try {
-                    val currentState = _uiState.value // Obtiene el estado actual una vez
-                    val params = RegisterUserParams(
-                        name = currentState.name,
-                        lastname = currentState.lastname,
-                        email = currentState.email,
-                        password = currentState.password
-                    )
-                    val result = registerUserUseCase(params)
-
-                    handleRegistrationResult(result)
-                } catch (e: Exception) {
-                    _uiState.update {
-                        it.copy(
-                            errorMessageSignup = e.message ?: "Unknown error",
-                            isFormValid = false,
-                            signupSuccess = false,
-                        )
-                    }
-                } finally {
-                    _uiState.update { it.copy(isLoading = false) }
-                }
-            }
-        }
-
-        private fun validateForm() {
-            val currentState = _uiState.value // Obtiene el estado actual una vez
-            val isNameValid = currentState.name.isNotBlank() && currentState.name.length in 2..20
-            val isLastnameValid = currentState.lastname.isNotBlank() && currentState.lastname.length in 2..20
-            val isEmailValid = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$").matches(currentState.email)
-            val isPasswordValid = currentState.password.length in 8..12
-            val isPasswordConfirmValid = currentState.password == currentState.passwordConfirm && currentState.passwordConfirm.isNotBlank()
-
+        // Fail first: Si no es valido, no continuar con el registro
+        if (!_uiState.value.isFormValid) {
             _uiState.update {
                 it.copy(
-                    errorMessageName = if (!isNameValid && currentState.name.isNotEmpty()) "El nombre no puede estar vacío" else "",
-                    errorMessageLastname = if (!isLastnameValid && currentState.lastname.isNotEmpty()) { "El apellido no puede estar vacío" } else { "" },
-                    errorMessageEmail = if (!isEmailValid && currentState.email.isNotEmpty()) "Email inválido" else "",
-                    errorMessagePassword = if (!isPasswordValid && currentState.password.isNotEmpty()) { "La contraseña debe tener entre 8 y 12 caracteres" } else { "" },
-                    errorMessagePasswordConfirm = if (!isPasswordConfirmValid && currentState.passwordConfirm.isNotEmpty()) { "Las contraseñas no coinciden" } else { "" },
-                    isFormValid = isNameValid && isLastnameValid && isEmailValid && isPasswordValid && isPasswordConfirmValid,
+                    errorMessageSignup = "Por favor, completa todos los campos correctamente.",
+                    isLoading = false,
+                    signupSuccess = false
                 )
             }
+            return
         }
+
+        //No indico el dispatcher porque el caso de uso ya lo maneja internamente
+        viewModelScope.launch(dispatcher + exceptionHandler) {
+
+            try {
+                val currentState = _uiState.value // Obtiene el estado actual una vez
+                val params = RegisterUserParams(
+                    name = currentState.name,
+                    lastname = currentState.lastname,
+                    email = currentState.email,
+                    password = currentState.password
+                )
+                val result = registerUserUseCase(params)
+
+                handleRegistrationResult(result)
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        errorMessageSignup = e.message ?: "Error desconocido",
+                        isFormValid = false,
+                        signupSuccess = false,
+                    )
+                }
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
+            }
+        }
+    }
+
+    private fun validateForm() {
+        val currentState = _uiState.value // Obtiene el estado actual una vez
+        val isNameValid = currentState.name.isNotBlank() && currentState.name.length in 2..20
+        val isLastnameValid =
+            currentState.lastname.isNotBlank() && currentState.lastname.length in 2..20
+        val isEmailValid = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$").matches(currentState.email)
+        val isPasswordValid = currentState.password.length in 8..12
+        val isPasswordConfirmValid =
+            currentState.password == currentState.passwordConfirm && currentState.passwordConfirm.isNotBlank()
+
+        _uiState.update {
+            it.copy(
+                errorMessageName = if (!isNameValid && currentState.name.isNotEmpty()) "El nombre no puede estar vacío" else "",
+                errorMessageLastname = if (!isLastnameValid && currentState.lastname.isNotEmpty()) {
+                    "El apellido no puede estar vacío"
+                } else {
+                    ""
+                },
+                errorMessageEmail = if (!isEmailValid && currentState.email.isNotEmpty()) "Email inválido" else "",
+                errorMessagePassword = if (!isPasswordValid && currentState.password.isNotEmpty()) {
+                    "La contraseña debe tener entre 8 y 12 caracteres"
+                } else {
+                    ""
+                },
+                errorMessagePasswordConfirm = if (!isPasswordConfirmValid && currentState.passwordConfirm.isNotEmpty()) {
+                    "Las contraseñas no coinciden"
+                } else {
+                    ""
+                },
+                isFormValid = isNameValid && isLastnameValid && isEmailValid && isPasswordValid && isPasswordConfirmValid,
+            )
+        }
+    }
 
     private fun handleRegistrationResult(result: AuthResult) {
         when (result) {
@@ -125,11 +155,10 @@ class SignupViewModel
                         password = "",
                         passwordConfirm = ""
                     )
-
                 }
                 sharedPreferences.edit { putString("user_email", result.user.email) }
-                Log.d("SignupViewModel", "User registered successfully: $result.user.email")
             }
+
             is AuthResult.Error -> {
                 _uiState.update {
                     it.copy(
@@ -137,8 +166,7 @@ class SignupViewModel
                         errorMessageSignup = result.errorMessage
                     )
                 }
-                Log.e("SignupViewModel", "Registration failed: ${result.errorMessage}")
             }
         }
     }
-    }
+}
