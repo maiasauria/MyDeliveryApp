@@ -13,6 +13,7 @@ class MyDeliveryApp : Application(), Configuration.Provider {
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
 
+    // Provee la configuración de WorkManager a HiltWorkerFactory
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)

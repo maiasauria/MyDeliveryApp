@@ -18,7 +18,6 @@ import com.mleon.utils.ui.ErrorScreen
 import com.mleon.utils.ui.YappLoadingIndicator
 
 @Composable
-
 fun ProductListScreen(
     onProductClick: (String) -> Unit,
     productListViewModel: ProductListViewModel = hiltViewModel(),
@@ -27,7 +26,7 @@ fun ProductListScreen(
 
     val uiState by productListViewModel.uiState.collectAsState()
 
-    // Only launch once when the Composable enters the composition
+    // Solo se ejecuta una vez al cargar la pantalla
     LaunchedEffect(Unit) {
         productListViewModel.loadProducts(refreshData = true)
     }

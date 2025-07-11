@@ -16,8 +16,8 @@ class ProductRemoteDataSource @Inject constructor( //Inyectamos el ApiService
     override suspend fun getProducts(): ProductResult {
         return try {
             val response = apiService.getProducts()
-            if (response.products != null) {
-                ProductResult.Success(response.products.map { it.toDomain() })
+            return if (response.isNotEmpty()) {
+                ProductResult.Success(response.map { it.toDomain() })
             } else {
                 ProductResult.Error("No se encontraron productos")
             }
