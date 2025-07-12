@@ -3,12 +3,13 @@ package com.mleon.mydeliveryapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.mleon.core.data.datasource.local.worker.ProductSyncManager
 import com.mleon.mydeliveryapp.presentation.views.MainScreen
-import com.mleon.mydeliveryapp.ui.theme.MyDeliveryAppTheme
+import com.mleon.mydeliveryapp.ui.theme.YappTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -16,7 +17,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var productSyncManager : ProductSyncManager
+    lateinit var productSyncManager: ProductSyncManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +28,7 @@ class MainActivity : ComponentActivity() {
         productSyncManager.syncNow()
 
 
-
+        enableEdgeToEdge()
         setContent {
             MyDeliveryAppTheme {
                 val navController = rememberNavController() // preserve state across recompositions

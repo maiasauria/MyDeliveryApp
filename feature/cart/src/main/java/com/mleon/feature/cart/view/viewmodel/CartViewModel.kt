@@ -12,6 +12,7 @@ import com.mleon.feature.cart.domain.usecase.RemoveCartItemUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -41,7 +42,10 @@ class CartViewModel @Inject constructor(
     }
 
     fun addToCart(product: Product) {
-        _uiState.value = CartUiState.Loading
+        val state = _uiState.value
+        if (state is CartUiState.Success) {
+            _uiState.value = state.copy(isProcessing = true) // Cambia el estado a Success con isProcessing = true
+        }
         viewModelScope.launch(dispatcher + exceptionHandler) {
             try {
                 addProductToCartUseCase(product)
@@ -53,7 +57,10 @@ class CartViewModel @Inject constructor(
     }
 
     fun editQuantity(product: Product, quantity: Int) {
-        _uiState.value = CartUiState.Loading
+        val state = _uiState.value
+        if (state is CartUiState.Success) {
+            _uiState.value = state.copy(isProcessing = true) // Cambia el estado a Success con isProcessing = true
+        }
         viewModelScope.launch(dispatcher + exceptionHandler) {
             try {
                 editCartItemQuantityUseCase(product, quantity)
@@ -65,7 +72,10 @@ class CartViewModel @Inject constructor(
     }
 
     fun removeFromCart(product: Product) {
-        _uiState.value = CartUiState.Loading
+        val state = _uiState.value
+        if (state is CartUiState.Success) {
+            _uiState.value = state.copy(isProcessing = true) // Cambia el estado a Success con isProcessing = true
+        }
         viewModelScope.launch(dispatcher + exceptionHandler) {
             try {
                 removeCartItemUseCase(product.id)
@@ -112,10 +122,11 @@ class CartViewModel @Inject constructor(
 
     // Actualiza el estado del carrito con los elementos y el precio total
     private suspend fun updateCartUiState(cartMessage: String = "") {
+        delay(500) // Simula un pequeño retraso para mostrar el estado de procesamiento
         try {
             val items = getCartItemsWithProductsUseCase()
             val total = items.sumOf { it.product.price * it.quantity }
-            _uiState.value = CartUiState.Success(items, total, cartMessage)
+            _uiState.value = CartUiState.Success(items, total, cartMessage, isProcessing = false)
         } catch (e: Exception) {
             _uiState.value = CartUiState.Error(e.message ?: "Error al cargar el carrito")
         }

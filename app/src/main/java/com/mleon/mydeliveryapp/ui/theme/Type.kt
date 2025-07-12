@@ -1,11 +1,9 @@
 package com.mleon.mydeliveryapp.ui.theme
 
 import androidx.compose.material3.Typography
-
 import androidx.compose.ui.text.font.FontFamily
-
-import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.text.googlefonts.Font
+import androidx.compose.ui.text.googlefonts.GoogleFont
 import com.mleon.mydeliveryapp.R
 
 val provider = GoogleFont.Provider(
@@ -16,19 +14,18 @@ val provider = GoogleFont.Provider(
 
 val bodyFontFamily = FontFamily(
     Font(
-        googleFont = GoogleFont("Albert Sans"),
+        googleFont = GoogleFont("Open Sans"),
         fontProvider = provider,
     )
 )
 
 val displayFontFamily = FontFamily(
     Font(
-        googleFont = GoogleFont("Albert Sans"),
+        googleFont = GoogleFont("Work Sans"),
         fontProvider = provider,
     )
 )
 
-// Default Material 3 typography values
 val baseline = Typography()
 
 val AppTypography = Typography(

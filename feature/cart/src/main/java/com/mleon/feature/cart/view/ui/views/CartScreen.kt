@@ -54,7 +54,7 @@ fun CartScreen(
                 CartView(
                     cartItems = successState.cartItems,
                     totalPrice = successState.total,
-                    isLoading = false,
+                    isLoading = successState.isProcessing,
                     onQuantityChange = { product, quantity ->
                         cartViewModel.editQuantity(
                             product,

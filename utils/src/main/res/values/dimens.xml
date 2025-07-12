@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base dimensions -->
+    <dimen name="base_margin">16dp</dimen>
+    <dimen name="base_padding">16dp</dimen>
+
+    <dimen name="large_card_height">112dp</dimen>
+    <dimen name="product_image_size">112dp</dimen>
+
+
+    <dimen name="cart_price_width">64dp</dimen>
+
+    <dimen name="button_height">48dp</dimen>
+    <dimen name="cart_icon_button_size">35dp</dimen>
+    <dimen name="icon_button_size">32dp</dimen>
+
+    <dimen name="remove_button_width">30dp</dimen>
+    <dimen name="cart_card_padding">16dp</dimen>
+    <dimen name="card_corner_radius">10dp</dimen>
+    <dimen name="product_image_corner_radius">10dp</dimen>
+    <dimen name="product_card_padding">8dp</dimen>
+    <dimen name="product_card_image_padding">8dp</dimen>
+    <dimen name="cart_quantity_padding">8dp</dimen>
+    <dimen name="text_bottom_padding">4dp</dimen>
+
+    <dimen name="filter_chip_spacing">8dp</dimen>
+    <dimen name="filter_chip_padding">4dp</dimen>
+    <dimen name="sheet_content_spacing">8dp</dimen>
+    <dimen name="searchbar_vertical_padding">8dp</dimen>
+    <dimen name="textfield_min_height">48dp</dimen>
+
+    <dimen name="cart_card_height">110dp</dimen>
+    <dimen name="cart_image_size">100dp</dimen>
+    <dimen name="cart_image_corner_radius">10dp</dimen>
+    <dimen name="cart_content_padding">16dp</dimen>
+    <dimen name="cart_text_bottom_padding">4dp</dimen>
+    <dimen name="cart_icon_button_padding">8dp</dimen>
+    <dimen name="cart_remove_button_width">30dp</dimen>
+</resources>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="orders_title">Mis Pedidos</string>
+    <string name="orders_title">Mis pedidos</string>
     <string name="orders_error">Error: %1$s</string>
     <string name="orders_quantity">%1$d productos</string>
     <string name="orders_shipping_address">%1$s</string>
     <string name="orders_total">$%1$.2f</string>
     <string name="orders_date">%1$s</string>
-    <string name="orders_title_card">Pedido # %1$s</string>
+    <string name="orders_title_card">Pedido #%1$s</string>
 </resources>

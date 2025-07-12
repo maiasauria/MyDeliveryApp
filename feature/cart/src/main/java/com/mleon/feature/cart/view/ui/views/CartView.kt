@@ -1,6 +1,5 @@
 package com.mleon.feature.cart.view.ui.views
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -44,7 +43,6 @@ fun CartView(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f), // Usar espacio disponible
-            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             //Elementos del carrito
             itemsIndexed(cartItems) { index, cartItem ->
@@ -56,7 +54,6 @@ fun CartView(
                     isLoading = isLoading
                 )
                 if (index < cartItems.lastIndex) { //No mostrar el divisor después del último elemento
-                    Spacer(modifier = Modifier.padding(vertical = 4.dp))
                     ListDivider()
                 }
             }
@@ -75,7 +72,7 @@ fun CartView(
             }
             item {
                 Text(
-                    text = "${stringResource(id = R.string.prod_totals)} ${totalPrice.toCurrencyFormat()}",
+                    text = "${stringResource(id = R.string.prod_totals)}${totalPrice.toCurrencyFormat()}",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }

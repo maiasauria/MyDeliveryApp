@@ -1,6 +1,5 @@
 package com.mleon.utils.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,9 +29,10 @@ import com.mleon.utils.R
 
 @Composable
 fun LogoImage() {
-    Image(
+    Icon(
         painter = painterResource(id = R.drawable.main_logo),
         contentDescription = "Logo",
+        tint = MaterialTheme.colorScheme.primary,
         modifier =
             Modifier
                 .fillMaxWidth()
@@ -41,13 +42,14 @@ fun LogoImage() {
 
 @Composable
 fun ListDivider(
-    modifier: Modifier = Modifier.padding(horizontal = 8.dp),
     thickness: Dp = 1.dp,
 ) {
+    Spacer(modifier = Modifier.padding(vertical = 4.dp))
     HorizontalDivider(
-        modifier = modifier,
+        modifier = Modifier.padding(horizontal = 8.dp),
         thickness = thickness,
     )
+    Spacer(modifier = Modifier.padding(vertical = 4.dp))
 }
 
 @Composable
@@ -84,7 +86,7 @@ fun ScreenSubTitle(title: String) {
 
 @Composable
 fun ImageLoader(
-    url: String,
+    url: String = "",
     contentDescription: String? = null,
     modifier: Modifier = Modifier,
 ) {
@@ -93,8 +95,7 @@ fun ImageLoader(
             ImageRequest.Builder(LocalContext.current).data(url).crossfade(true).build(),
         contentDescription = contentDescription,
         modifier = modifier
-            .clip(RoundedCornerShape(10.dp))
-            .padding(end = 8.dp),
+            .clip(RoundedCornerShape(10.dp)),
         contentScale = ContentScale.Crop,
         error = painterResource(R.drawable.ic_launcher_background),
         placeholder = painterResource(R.drawable.ic_launcher_background),

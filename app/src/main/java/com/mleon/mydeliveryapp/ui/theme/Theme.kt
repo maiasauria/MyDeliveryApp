@@ -92,7 +92,7 @@ data class ColorFamily(
 )
 
 @Composable
-fun MyDeliveryAppTheme(
+fun YappTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {

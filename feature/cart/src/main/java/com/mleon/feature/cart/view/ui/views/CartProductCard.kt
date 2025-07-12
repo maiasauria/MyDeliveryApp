@@ -23,6 +23,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -83,14 +84,13 @@ fun CartProductCard(
                     .fillMaxHeight()
             ) {
                 CardTitle(productName = product.name)
+                ProductPrice(product.price, quantity)
                 Spacer(modifier = Modifier.weight(1f))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()) {
-
-                    ProductPrice(product.price)
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically
@@ -114,7 +114,6 @@ fun CartProductCard(
                         )
                     }
                     RemoveFromCartButton(
-                        modifier = Modifier.padding(start = 8.dp),
                         isLoading = isLoading,
                         onRemoveFromCart = onRemoveFromCart
                     )
@@ -136,10 +135,9 @@ fun CardTitle(productName: String = "") {
     }
 
  @Composable
- fun ProductPrice(price: Double = 0.0) {
+ fun ProductPrice(price: Double = 0.0, productQuantity: Int = 1) {
      Text(
-         modifier = Modifier.width(64.dp),
-         text = "\$${price.toCurrencyFormat()}",
+         text = "\$${price.toCurrencyFormat()} x $productQuantity = \$${(price * productQuantity.toDouble()).toCurrencyFormat()}",
          style = MaterialTheme.typography.bodyMedium
      )
     }
@@ -159,7 +157,7 @@ fun QuantityButton(
                 modifier = Modifier
                     .size(35.dp)
                     .background(
-                        MaterialTheme.colorScheme.primary,
+                        if (enabled) MaterialTheme.colorScheme.primary else Color.Gray,
                         shape = CircleShape
                     )
             ) {
@@ -175,7 +173,6 @@ fun QuantityButton(
 
 @Composable
 fun RemoveFromCartButton(
-    modifier: Modifier = Modifier,
     isLoading: Boolean = false,
     onRemoveFromCart: () -> Unit = {}
 ) {
@@ -186,18 +183,13 @@ fun RemoveFromCartButton(
             .width(30.dp),
         enabled = !isLoading
     ) {
-        if (isLoading) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = stringResource(id = CartR.string.removing),
-                tint = Color.Gray
-            )
-        } else {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = stringResource(id = CartR.string.remove_from_cart),
-            )
-        }
+        Icon(
+            imageVector = Icons.Default.Delete,
+            contentDescription = stringResource(
+                id = CartR.string.remove_from_cart
+            ),
+            tint = if (isLoading) Color.Gray else LocalContentColor.current
+        )
     }
 }
 

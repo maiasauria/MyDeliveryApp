@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,6 +25,9 @@ import com.mleon.core.model.enums.PaymentMethod
 import com.mleon.feature.orders.R
 import com.mleon.utils.ui.ListDivider
 import com.mleon.utils.ui.ScreenTitle
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun OrdersListView(
@@ -42,7 +44,6 @@ fun OrdersListView(
                 itemsIndexed(orders) { index, order ->
                     OrderCard(order = order, position = index + 1)
                     if (index < orders.lastIndex) {
-                        Spacer(modifier = Modifier.padding(vertical = 8.dp))
                         ListDivider()
                     }
                 }
@@ -77,8 +78,8 @@ fun OrderCard(order: Order, position: Int) {
                 style = MaterialTheme.typography.bodySmall,
                 text = stringResource(
                     R.string.orders_date,
-                    java.text.SimpleDateFormat("yyyy-MM-dd HH:mm")
-                        .format(java.util.Date(order.timestamp))
+                    SimpleDateFormat("yyyy-MM-dd HH:mm", Locale("es", "AR"))
+                        .format(Date(order.timestamp))
                 )
             )
             Text(
