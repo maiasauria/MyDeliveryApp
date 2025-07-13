@@ -66,7 +66,7 @@ fun CartView(
             }
             items(cartItems) {
                 Text(
-                    text = "${it.product.name} x ${it.quantity} = $${(it.product.price * it.quantity.toDouble()).toCurrencyFormat()}",
+                    text = "${it.product.name} x ${it.quantity} = ${(it.product.price * it.quantity.toDouble()).toCurrencyFormat()}",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }

@@ -137,7 +137,7 @@ fun CardTitle(productName: String = "") {
  @Composable
  fun ProductPrice(price: Double = 0.0, productQuantity: Int = 1) {
      Text(
-         text = "\$${price.toCurrencyFormat()} x $productQuantity = \$${(price * productQuantity.toDouble()).toCurrencyFormat()}",
+         text = "${price.toCurrencyFormat()} x $productQuantity = ${(price * productQuantity.toDouble()).toCurrencyFormat()}",
          style = MaterialTheme.typography.bodyMedium
      )
     }

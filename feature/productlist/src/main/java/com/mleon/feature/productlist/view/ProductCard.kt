@@ -90,7 +90,7 @@ fun ProductCard(
                         overflow = TextOverflow.Ellipsis,
                     )
                     Text(
-                        text = "\$${product.price.toCurrencyFormat()}",
+                        text = product.price.toCurrencyFormat(),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(top = 8.dp)
                     )
