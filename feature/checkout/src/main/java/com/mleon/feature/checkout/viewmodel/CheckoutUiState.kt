@@ -4,7 +4,7 @@ import com.mleon.core.model.CartItem
 import com.mleon.core.model.enums.PaymentMethod
 
 sealed class CheckoutUiState {
-    object Loading : CheckoutUiState()
+    data object Loading : CheckoutUiState()
     data class Success(
         val cartItems: List<CartItem>,
         val paymentMethod: PaymentMethod,
@@ -15,5 +15,6 @@ sealed class CheckoutUiState {
         val orderConfirmed: Boolean = false,
         val validOrder: Boolean = false
     ) : CheckoutUiState()
-    data class Error(val error: Exception) : CheckoutUiState()
+    data class Error(val errorMessage: String) : CheckoutUiState()
+    data object MissingAddress : CheckoutUiState()
 }

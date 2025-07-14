@@ -8,11 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,7 +32,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mleon.core.model.CartItem
@@ -74,33 +73,42 @@ fun CheckoutView(
 
             // Mostrar la cantidad total de productos (cart * cantidad)
             ScreenSubTitle(stringResource(id = R.string.checkout_total_items))
-            Text(
-                text = stringResource(id = R.string.checkout_total_products, cartItems.sumOf { it.quantity }),
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(vertical = 8.dp),
-            )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                items(cartItems) { cartItem ->
+                    PriceRow(
+                        name = cartItem.product.name,
+                        quantity = cartItem.quantity,
+                        price = cartItem.product.price
+                    )
+                }
+                item {
+                    PriceRow(
+                        name = stringResource(id = R.string.prod_totals),
+                        quantity = 0,
+                        price = subtotalAmount
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(12.dp))
+
+            }
             ListDivider()
-            Spacer(modifier = Modifier.height(12.dp))
 
             ScreenSubTitle(stringResource(id = R.string.checkout_shipping_address))
             Text(text = shippingAddress)
 
-            Spacer(modifier = Modifier.height(12.dp))
             ListDivider()
-            Spacer(modifier = Modifier.height(12.dp))
 
             ScreenSubTitle(stringResource(id = R.string.checkout_payment_method_title))
 
             // Payment Method Selection
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     RadioButton(
                         selected = paymentMethod == PaymentMethod.CREDIT_CARD,
@@ -123,7 +131,7 @@ fun CheckoutView(
                                         tooltipState.show()
                                     }
                                 },
-                                modifier = Modifier.size(20.dp),
+                                //   modifier = Modifier.size(20.dp),
                             ) {
                                 Icon(imageVector = Icons.Filled.Info, contentDescription = "Info")
                             }
@@ -133,7 +141,6 @@ fun CheckoutView(
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     RadioButton(
                         selected = paymentMethod == PaymentMethod.CASH,
@@ -145,20 +152,22 @@ fun CheckoutView(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
             ListDivider()
             Spacer(modifier = Modifier.height(12.dp))
 
-            Text(text = stringResource(id = R.string.checkout_subtotal, subtotalAmount.toCurrencyFormat()))
-            Text(text = stringResource(id = R.string.checkout_shipping_cost, shippingCost.toCurrencyFormat()))
-            Text(text = stringResource(id = R.string.checkout_total, totalAmount.toCurrencyFormat()),
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold))
-
-            Spacer(modifier = Modifier.height(12.dp))
-            ListDivider()
-
-            Spacer(modifier = Modifier.height(24.dp))
-
+            SummaryRow(
+                label = stringResource(id = R.string.checkout_subtotal),
+                value = subtotalAmount.toCurrencyFormat()
+            )
+            SummaryRow(
+                label = stringResource(id = R.string.checkout_shipping_cost),
+                value = shippingCost.toCurrencyFormat()
+            )
+            SummaryRow(
+                label = stringResource(id = R.string.checkout_total),
+                value = totalAmount.toCurrencyFormat(),
+                isBold = true
+            )
         }
 
         Button(
@@ -166,7 +175,7 @@ fun CheckoutView(
             enabled = isOrderValid,
             modifier = Modifier.fillMaxWidth(),
         ) {
-                Text(stringResource(id = R.string.checkout_confirm_order))
+            Text(stringResource(id = R.string.checkout_confirm_order))
         }
     }
 }
@@ -181,8 +190,14 @@ fun PaymentMethodSelection() {
 private fun CheckoutViewPreview() {
     val cartItems =
         listOf(
-            CartItem(Product("1", "Product 1", "Product Description", 20.0, false, "image1.jpg"), 2),
-            CartItem(Product("2", "Product 2", "Product Description", 30.0, false, "image2.jpg"), 1),
+            CartItem(
+                Product("1", "Product 1", "Product Description", 20.0, false, "image1.jpg"),
+                2
+            ),
+            CartItem(
+                Product("2", "Product 2", "Product Description", 30.0, false, "image2.jpg"),
+                1
+            ),
         )
     CheckoutView(
         cartItems = cartItems,
@@ -193,4 +208,48 @@ private fun CheckoutViewPreview() {
         shippingCost = 20.0,
         totalAmount = 120.0,
     )
+}
+
+@Composable
+fun PriceRow(
+    name: String,
+    quantity: Int,
+    price: Double,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = if (quantity > 0) "$name x $quantity" else name,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(1f),
+        )
+        Text(
+            text = price.toCurrencyFormat(),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+}
+
+@Composable
+fun SummaryRow(label: String, value: String, isBold: Boolean = false) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 2.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = label,
+            style = if (isBold) MaterialTheme.typography.titleLarge
+            else MaterialTheme.typography.bodyMedium
+        )
+        Text(
+            text = value,
+            style = if (isBold) MaterialTheme.typography.titleLarge
+            else MaterialTheme.typography.bodyMedium
+        )
+    }
 }

@@ -4,10 +4,12 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mleon.core.data.datasource.remote.model.OrderResult
+import com.mleon.core.model.CartItem
 import com.mleon.core.model.Order
 import com.mleon.core.model.enums.PaymentMethod
 import com.mleon.feature.cart.domain.usecase.GetCartItemsWithProductsUseCase
 import com.mleon.feature.checkout.domain.usecase.CreateOrderUseCase
+import com.mleon.feature.checkout.domain.usecase.GetUserAddressUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -15,94 +17,100 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.UUID.randomUUID
+import java.util.UUID
 import javax.inject.Inject
 
+private const val ERROR_MESSAGE = "Ocurrió un error inesperado. Intenta nuevamente."
 
 @HiltViewModel
 class CheckoutViewModel @Inject constructor(
     private val getCartItemsWithProductsUseCase: GetCartItemsWithProductsUseCase,
     private val createOrderUseCase: CreateOrderUseCase,
+    private val getUserAddressUseCase: GetUserAddressUseCase,
     private val dispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<CheckoutUiState>(CheckoutUiState.Loading)
-    val uiState= _uiState.asStateFlow()
+    val uiState = _uiState.asStateFlow()
 
     private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
         Log.e("CheckoutViewModel", "Coroutine error", exception)
-        _uiState.value = CheckoutUiState.Error(
-            exception as? Exception ?: Exception("Ocurrió un error inesperado. Intenta nuevamente.")
-        )
+        _uiState.value = CheckoutUiState.Error(exception.message ?: ERROR_MESSAGE)
     }
 
-    fun getCartItems() {
+    fun loadCheckoutData() {
         _uiState.value = CheckoutUiState.Loading
         viewModelScope.launch(dispatcher + exceptionHandler) {
-
             try {
+                val address = getUserAddressUseCase()
+                if (address.isBlank()) {
+                    _uiState.value = CheckoutUiState.MissingAddress
+                    return@launch
+                }
                 val cartItems = getCartItemsWithProductsUseCase()
                 val subTotal = cartItems.sumOf { it.product.price * it.quantity }
-                val shippingCost = 10.0 // Valor fijo temporalmente, se puede cambiar por una lógica más compleja
+                val shippingCost = 10.0
                 val total = subTotal + shippingCost
-
                 _uiState.value = CheckoutUiState.Success(
                     cartItems = cartItems,
-                    paymentMethod = PaymentMethod.CASH,
-                    shippingAddress = "Calle Falsa 123",
+                    paymentMethod = PaymentMethod.CASH, // Fijo
+                    shippingAddress = address,
                     shippingCost = shippingCost,
                     totalAmount = total,
                     subTotalAmount = subTotal,
                     orderConfirmed = false,
-                    validOrder = cartItems.isNotEmpty()
+                    validOrder = isOrderValid(cartItems, address)
                 )
             } catch (e: Exception) {
-                _uiState.value = CheckoutUiState.Error(e)
+                setError(e.message)
             }
         }
     }
 
-
-    fun confirmOrder() {
-        val currentState = _uiState.value
-        if (currentState !is CheckoutUiState.Success) return
-
-        viewModelScope.launch(dispatcher + exceptionHandler) {
-            _uiState.value = CheckoutUiState.Loading
-            try {
-                val order = Order(
-                    orderId = randomUUID().toString(),
-                    orderItems = currentState.cartItems,
-                    shippingAddress = currentState.shippingAddress,
-                    paymentMethod = currentState.paymentMethod.apiValue,
-                    total = currentState.totalAmount,
-                    timestamp = System.currentTimeMillis(),
-                )
-
-                when (val response = createOrderUseCase(order)) {
-                    is OrderResult.Success -> {
-                        _uiState.value = currentState.copy(orderConfirmed = true)
-                    }
-                    is OrderResult.Error -> {
-                        _uiState.value = CheckoutUiState.Error(Exception(response.message))
-                    }
-                    is OrderResult.SuccessList -> {
-                        _uiState.value = currentState.copy(orderConfirmed = true)
-                    }
-                }
-            } catch (e: Exception) {
-                _uiState.value = CheckoutUiState.Error(e)
+    fun confirmOrder() = viewModelScope.launch(dispatcher + exceptionHandler) {
+        val state = _uiState.value as? CheckoutUiState.Success ?: return@launch
+        _uiState.value = CheckoutUiState.Loading
+        try {
+            if (state.shippingAddress.isBlank()) {
+                _uiState.value = CheckoutUiState.MissingAddress
+                return@launch
             }
+            val order = Order(
+                orderId = UUID.randomUUID().toString(),
+                orderItems = state.cartItems,
+                shippingAddress = state.shippingAddress,
+                paymentMethod = state.paymentMethod.apiValue,
+                total = state.totalAmount,
+                timestamp = System.currentTimeMillis(),
+            )
+            when (val result = createOrderUseCase(order)) {
+                is OrderResult.Success, is OrderResult.SuccessList -> _uiState.value =
+                    state.copy(orderConfirmed = true)
+
+                is OrderResult.Error -> setError(result.message)
+            }
+        } catch (e: Exception) {
+            setError(e.message)
         }
     }
 
     fun onPaymentMethodSelection(paymentMethod: PaymentMethod) {
         _uiState.update { state ->
+            //Solo actualizamos el estado si es un CheckoutUiState.Success
             if (state is CheckoutUiState.Success) {
-                state.copy(paymentMethod = paymentMethod, validOrder = true)
+                state.copy(paymentMethod = paymentMethod)
             } else {
+                // Si no es un estado de éxito, no hacemos nada
                 state
             }
         }
+    }
+
+    private fun isOrderValid(cartItems: List<CartItem>, address: String?): Boolean {
+        return cartItems.isNotEmpty() && !address.isNullOrBlank()
+    }
+
+    private fun setError(message: String?) {
+        _uiState.value = CheckoutUiState.Error(message ?: ERROR_MESSAGE)
     }
 }

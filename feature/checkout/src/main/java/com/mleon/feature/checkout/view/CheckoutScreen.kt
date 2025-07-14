@@ -2,6 +2,9 @@ package com.mleon.feature.checkout.view
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -29,7 +32,7 @@ fun CheckoutScreen(
 
     // Only launch once when the Composable enters the composition
     LaunchedEffect(Unit) {
-        checkoutViewModel.getCartItems()
+        checkoutViewModel.loadCheckoutData()
     }
 
     when (uiState) {
@@ -64,10 +67,22 @@ fun CheckoutScreen(
                 contentAlignment = Alignment.Center
             ) {
                 ErrorScreen(
-                    errorMessage = (errorState.error.message ?: "Ocurrió un error inesperado. Intenta nuevamente."),
-                    onRetry = { checkoutViewModel.getCartItems() }
+                    errorMessage = (errorState.errorMessage),
+                    onRetry = { checkoutViewModel.loadCheckoutData() }
                 )
             }
+        }
+        is CheckoutUiState.MissingAddress -> {
+            AlertDialog(
+                onDismissRequest = { },
+                title = { Text("Dirección de envío") },
+                text = { Text("Necesitas indicar un domicilio para enviar tu pedido") },
+                confirmButton = {
+                    Button(onClick = {navController.navigate(NavigationRoutes.PROFILE)}) {
+                        Text("Editar perfil")
+                    }
+                }
+            )
         }
     }
 }

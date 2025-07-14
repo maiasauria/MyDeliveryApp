@@ -70,7 +70,8 @@ fun FullScreenLoadingIndicator() {
 fun ScreenTitle(title: String) {
     Text(
         text = title,
-        style = MaterialTheme.typography.headlineMedium,
+        style = MaterialTheme.typography.headlineMedium
+
     )
     Spacer(modifier = Modifier.height(16.dp))
 }

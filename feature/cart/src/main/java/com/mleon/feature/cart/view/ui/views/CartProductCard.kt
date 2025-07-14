@@ -1,4 +1,4 @@
- package com.mleon.feature.cart.view.ui.views
+package com.mleon.feature.cart.view.ui.views
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,29 +29,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.mleon.core.model.Product
 import com.mleon.feature.cart.R
 import com.mleon.utils.toCurrencyFormat
 import com.mleon.utils.ui.ImageLoader
 import com.mleon.feature.cart.R as CartR
-import com.mleon.utils.R as UtilsR
 
 
- @Composable
+@Composable
 fun CartProductCard(
     modifier: Modifier = Modifier,
     product: Product,
@@ -123,53 +114,60 @@ fun CartProductCard(
     }
 }
 
- @Composable
+@Composable
 fun CardTitle(productName: String = "") {
-        Text(
-            text = productName,
-            modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-    }
-
- @Composable
- fun ProductPrice(price: Double = 0.0, productQuantity: Int = 1) {
-     Text(
-         text = "${price.toCurrencyFormat()} x $productQuantity = ${(price * productQuantity.toDouble()).toCurrencyFormat()}",
-         style = MaterialTheme.typography.bodyMedium
-     )
-    }
+    Text(
+        text = productName,
+        modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
+        style = MaterialTheme.typography.titleMedium,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
+    )
+}
 
 
- @Composable
+@Composable
+fun ProductPrice(price: Double = 0.0, productQuantity: Int = 1) {
+    val priceText = stringResource(
+        id = R.string.cart_product_price_format,
+        price.toCurrencyFormat(),
+        productQuantity,
+        (price * productQuantity.toDouble()).toCurrencyFormat()
+    )
+    Text(
+        text = priceText,
+        style = MaterialTheme.typography.bodyMedium
+    )
+}
+
+@Composable
 fun QuantityButton(
-     enabled: Boolean = false,
-     onClick: () -> Unit = {},
-     contentDescription: String = "",
-     icon: ImageVector) {
-        IconButton(
-            onClick = onClick,
-            enabled = enabled
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(35.dp)
-                    .background(
-                        if (enabled) MaterialTheme.colorScheme.primary else Color.Gray,
-                        shape = CircleShape
-                    )
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = contentDescription,
-                    tint = Color.White,
-                    modifier = Modifier.align(Alignment.Center)
+    enabled: Boolean = false,
+    onClick: () -> Unit = {},
+    contentDescription: String = "",
+    icon: ImageVector
+) {
+    IconButton(
+        onClick = onClick,
+        enabled = enabled
+    ) {
+        Box(
+            modifier = Modifier
+                .size(32.dp)
+                .background(
+                    if (enabled) MaterialTheme.colorScheme.primary else Color.Gray,
+                    shape = CircleShape
                 )
-            }
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = contentDescription,
+                tint = Color.White,
+                modifier = Modifier.align(Alignment.Center)
+            )
         }
     }
+}
 
 @Composable
 fun RemoveFromCartButton(
@@ -190,95 +188,6 @@ fun RemoveFromCartButton(
             ),
             tint = if (isLoading) Color.Gray else LocalContentColor.current
         )
-    }
-}
-
-@Composable
-fun ProductCardCart(
-    modifier: Modifier = Modifier,
-    product: Product,
-    onAddToCart: (Product) -> Unit = { }
-) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(CornerSize(10.dp)),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(product.imageUrl)
-                    .crossfade(true)
-                    .build(),
-                placeholder = painterResource(UtilsR.drawable.ic_launcher_background),
-                contentDescription = product.name,
-                modifier = Modifier
-                    .height(110.dp)
-                    .width(110.dp)
-                    .padding(end = 8.dp)
-                    .clip(RoundedCornerShape(10.dp)),
-                contentScale = ContentScale.Crop,
-                error = painterResource(UtilsR.drawable.ic_launcher_background)
-            )
-
-            Column(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-            ) {
-                Text(
-                    text = product.name,
-                    modifier = Modifier.padding(bottom = 4.dp),
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = product.description,
-                    modifier = Modifier.padding(bottom = 4.dp),
-                    style = MaterialTheme.typography.bodySmall,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(),
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-
-                    Text(
-                        text = "\$${product.price.toCurrencyFormat()}",
-                        modifier = Modifier
-                            .padding(bottom = 8.dp),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-
-                    IconButton(onClick = { onAddToCart(product) }) {
-                        Box(
-                            modifier = Modifier
-                                .size(40.dp)
-                                .background(MaterialTheme.colorScheme.primary, shape = CircleShape)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = stringResource(id = R.string.add),
-                                tint = Color.White,
-                                modifier = Modifier.align(Alignment.Center)
-                            )
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 

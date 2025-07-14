@@ -2,6 +2,7 @@ package com.mleon.mydeliveryapp.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import com.mleon.mydeliveryapp.R
@@ -23,15 +24,13 @@ val displayFontFamily = FontFamily(
     Font(
         googleFont = GoogleFont("Work Sans"),
         fontProvider = provider,
+        weight = FontWeight.W600,
     )
 )
 
 val baseline = Typography()
 
 val AppTypography = Typography(
-    displayLarge = baseline.displayLarge.copy(fontFamily = displayFontFamily),
-    displayMedium = baseline.displayMedium.copy(fontFamily = displayFontFamily),
-    displaySmall = baseline.displaySmall.copy(fontFamily = displayFontFamily),
     headlineLarge = baseline.headlineLarge.copy(fontFamily = displayFontFamily),
     headlineMedium = baseline.headlineMedium.copy(fontFamily = displayFontFamily),
     headlineSmall = baseline.headlineSmall.copy(fontFamily = displayFontFamily),

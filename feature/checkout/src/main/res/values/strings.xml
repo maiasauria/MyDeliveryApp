@@ -2,15 +2,19 @@
 <resources>
     <string name="checkout_title">Confirmación del pedido</string>
     <string name="checkout_total_products">Total: %1$d productos.</string>
-    <string name="checkout_subtotal">Subtotal de productos: %1$s</string>
-    <string name="checkout_shipping_cost">Costo de envio: %1$s</string>
-    <string name="checkout_total">Total: %1$s</string>
-    <string name="checkout_shipping_address">Direccion de envio</string>
-    <string name="checkout_payment_method_title">Metodo de pago</string>
+    <string name="checkout_subtotal">Subtotal de productos</string>
+    <string name="checkout_shipping_cost">Costo de envío</string>
+    <string name="checkout_total">Total</string>
+    <string name="checkout_shipping_address">Dirección de envío</string>
+    <string name="checkout_payment_method_title">Método de pago</string>
     <string name="checkout_credit_card_tooltip">Estamos trabajando en la integración de pagos con tarjeta de crédito. Por favor, elegi otro método de pago por ahora.</string>
     <string name="checkout_info">Info</string>
     <string name="checkout_error">Error: %1$s</string>
     <string name="checkout_confirm_order">Confirmar el pedido</string>
     <string name="checkout_total_items">Productos</string>
-
+    <string name="error_unexpected">Ocurrió un error inesperado. Intenta nuevamente.</string>
+    <string name="missing_address_title">Dirección de envío</string>
+    <string name="prod_totals">Total de productos</string>
+    <string name="missing_address_message">Necesitas indicar un domicilio para enviar tu pedido</string>
+    <string name="edit_profile">Editar perfil</string>
 </resources>

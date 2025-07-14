@@ -16,13 +16,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mleon.core.model.Order
 import com.mleon.core.model.enums.PaymentMethod
 import com.mleon.feature.orders.R
+import com.mleon.utils.toCurrencyFormat
 import com.mleon.utils.ui.ListDivider
 import com.mleon.utils.ui.ScreenTitle
 import java.text.SimpleDateFormat
@@ -67,10 +67,12 @@ fun OrderCard(order: Order, position: Int) {
                 horizontalArrangement = Arrangement.SpaceBetween,) {
                 Text(
                     text = stringResource(R.string.orders_title_card, position),
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                    style = MaterialTheme.typography.titleLarge
+
                 )
                 Text(
-                    stringResource(R.string.orders_total, order.total)
+                    text = order.total.toCurrencyFormat(),
+                    style = MaterialTheme.typography.titleLarge
                 )
             }
 
@@ -87,6 +89,8 @@ fun OrderCard(order: Order, position: Int) {
                     R.string.orders_quantity,
                     order.orderItems.sumOf { it.quantity }
                 ),
+                maxLines = 1,
+                style = MaterialTheme.typography.bodyMedium,
             )
             Text(
                 stringResource(
@@ -95,6 +99,7 @@ fun OrderCard(order: Order, position: Int) {
                 ),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
     }
