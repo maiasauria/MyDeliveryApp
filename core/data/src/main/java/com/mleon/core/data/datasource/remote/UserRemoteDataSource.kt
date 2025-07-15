@@ -3,7 +3,7 @@ package com.mleon.core.data.datasource.remote
 import com.mleon.core.data.datasource.UserDataSource
 import com.mleon.core.data.datasource.remote.dto.UserDto
 import com.mleon.core.data.datasource.remote.dto.toDomain
-import com.mleon.core.data.datasource.remote.model.AuthResponse
+import com.mleon.core.data.datasource.remote.model.LoginResponse
 import com.mleon.core.data.datasource.remote.model.AuthResult
 import com.mleon.core.data.datasource.remote.model.LoginRequest
 import com.mleon.core.data.datasource.remote.service.UsersApiService
@@ -55,7 +55,7 @@ class UserRemoteDataSource(
     override suspend fun loginUser(email: String, password: String): AuthResult {
         return try {
             val loginRequest = LoginRequest(email, password)
-            val responseBody: AuthResponse = apiService.loginUser(loginRequest)
+            val responseBody = apiService.loginUser(loginRequest)
             handleLoginResponse(responseBody)
         } catch (e: IOException) {
             AuthResult.Error(ERROR_OFFLINE)
@@ -95,7 +95,7 @@ class UserRemoteDataSource(
     // Funciones auxiliares para manejar las respuestas y excepciones
 
     // Maneja los resultados de inicio de sesión
-    private fun handleLoginResponse(responseBody: AuthResponse): AuthResult {
+    private fun handleLoginResponse(responseBody: LoginResponse): AuthResult {
         return if (responseBody.user != null) {
             val domainUser: User = responseBody.user.toDomain()
             AuthResult.Success(user = domainUser, message = LOGIN_OK)
@@ -103,10 +103,9 @@ class UserRemoteDataSource(
         AuthResult.Error(ERROR_LOGIN)
     }
 
-    private fun handleRegisterResponse(response: AuthResponse): AuthResult {
-        return response.toUser()?.let { user ->
-            AuthResult.Success(user = user, message = REGISTER_OK)
-        } ?: AuthResult.Error(ERROR_REGISTER_USER)
+    private fun handleRegisterResponse(response: UserDto): AuthResult {
+        val user = response.toDomain()
+        return AuthResult.Success(user = user, message = REGISTER_OK)
     }
 
     // Maneja las excepciones HTTP específicas
