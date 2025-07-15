@@ -64,8 +64,7 @@ fun CheckoutView(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(dimensionResource(id = R.dimen.checkout_screen_padding)),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
@@ -91,8 +90,6 @@ fun CheckoutView(
                         price = subtotalAmount
                     )
                 }
-
-
             }
             ListDivider()
 
@@ -103,7 +100,6 @@ fun CheckoutView(
 
             ScreenSubTitle(stringResource(id = R.string.checkout_payment_method_title))
 
-            // Payment Method Selection
             Column(
                 modifier = Modifier.fillMaxWidth(),
             ) {
@@ -112,7 +108,7 @@ fun CheckoutView(
                 ) {
                     RadioButton(
                         selected = paymentMethod == PaymentMethod.CREDIT_CARD,
-                        onClick = { /* Do nothing, it's disabled */ },
+                        onClick = { }, // Deshabilitado, se maneja con Tooltip
                         enabled = false,
                     )
 
@@ -131,7 +127,6 @@ fun CheckoutView(
                                         tooltipState.show()
                                     }
                                 },
-                                //   modifier = Modifier.size(20.dp),
                             ) {
                                 Icon(imageVector = Icons.Filled.Info, contentDescription = "Info")
                             }
@@ -227,7 +222,7 @@ fun PriceRow(
             modifier = Modifier.weight(1f),
         )
         Text(
-            text = price.toCurrencyFormat(),
+            text = (price*quantity).toCurrencyFormat(),
             style = MaterialTheme.typography.bodyMedium,
         )
     }

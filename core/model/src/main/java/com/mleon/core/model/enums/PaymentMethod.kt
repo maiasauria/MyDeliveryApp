@@ -2,7 +2,7 @@ package com.mleon.core.model.enums
 
 enum class PaymentMethod(val displayName: String, val apiValue: String) {
     CASH("Efectivo", "CASH"),
-    CREDIT_CARD("Tarjeta de Credito", "CREDIT_CARD");
+    CREDIT_CARD("Tarjeta de Crédito", "CREDIT_CARD");
 
     companion object {
         fun fromDisplayName(name: String?): PaymentMethod? =

@@ -50,8 +50,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.mleon.core.model.Product
 import com.mleon.core.model.enums.Categories
 import com.mleon.feature.productlist.R
-import com.mleon.utils.R as UtilsR
 import com.mleon.utils.ui.ListDivider
+import com.mleon.utils.R as UtilsR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +72,7 @@ fun ProductListView(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = dimensionResource(id = UtilsR.dimen.base_padding)),
+        //    .padding(horizontal = dimensionResource(id = UtilsR.dimen.base_padding)),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             SearchAndFiltersBar(

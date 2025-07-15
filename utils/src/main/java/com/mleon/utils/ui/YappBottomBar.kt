@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -45,7 +43,7 @@ fun YappBottomBar(
     ) {
         Row(
             modifier = Modifier
-                .padding(dimensionResource(id = R.dimen.bottom_bar_padding))
+               .padding(dimensionResource(id = R.dimen.bottom_bar_padding))
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
@@ -56,8 +54,8 @@ fun YappBottomBar(
 
                 Box(
                     modifier = Modifier
-                        .width(dimensionResource(id = R.dimen.bottom_bar_item_width))
-                        .height(dimensionResource(id = R.dimen.bottom_bar_item_height))
+           //             .width(dimensionResource(id = R.dimen.bottom_bar_item_width))
+           //             .height(dimensionResource(id = R.dimen.bottom_bar_item_height))
                         .background(
                             color = if (isSelected) highlightColor else MaterialTheme.colorScheme.surface,
                             shape = RoundedCornerShape(dimensionResource(id = R.dimen.bottom_bar_item_corner_radius))

@@ -34,7 +34,7 @@ fun CartView(
     ) {
     val screenPadding = dimensionResource(id = R.dimen.cart_card_padding)
     val buttonStartPadding = dimensionResource(id = R.dimen.cart_remove_button_padding)
-    Column(modifier = Modifier.padding(screenPadding)) {
+    Column() {
         ScreenTitle(stringResource(id = R.string.screen_title))
 
         LazyColumn(
@@ -58,8 +58,7 @@ fun CartView(
         }
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(

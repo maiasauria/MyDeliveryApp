@@ -64,8 +64,7 @@ fun ProfileView(
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(dimensionResource(id = R.dimen.profile_screen_padding)),
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.profile_screen_spacing)),
         ) {
             ScreenTitle(stringResource(R.string.profile_title))
@@ -79,10 +78,10 @@ fun ProfileView(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Button(onClick = onRequestCamera, enabled = !isLoading) {
+                Button(onClick = onRequestCamera) {
                     Text(stringResource(R.string.profile_take_photo))
                 }
-                Button(onClick = onRequestGallery, enabled = !isLoading) {
+                Button(onClick = onRequestGallery) {
                     Text(stringResource(R.string.profile_upload_photo))
                 }
             }
@@ -92,7 +91,6 @@ fun ProfileView(
                 label = stringResource(R.string.profile_name_label),
                 isError = errorMessageName.isNotEmpty(),
                 errorMessage = errorMessageName,
-                enabled = !isLoading,
             )
 
             ValidateTextField(
@@ -101,7 +99,6 @@ fun ProfileView(
                 label = stringResource(R.string.profile_lastname_label),
                 isError = errorMessageLastname.isNotEmpty(),
                 errorMessage = errorMessageLastname,
-                enabled = !isLoading,
             )
 
             ValidateEmailField(
@@ -110,7 +107,6 @@ fun ProfileView(
                 label = stringResource(R.string.profile_email_label),
                 isError = errorMessageEmail.isNotEmpty(),
                 errorMessage = errorMessageEmail,
-                enabled = !isLoading,
             )
 
             ValidateTextField(
@@ -119,13 +115,11 @@ fun ProfileView(
                 label = stringResource(R.string.profile_address_label),
                 isError = errorMessageAddress.isNotEmpty(),
                 errorMessage = errorMessageAddress,
-                enabled = !isLoading,
             )
 
             SaveProfileButton(
                 isLoading = isLoading,
                 isFormValid = isFormValid,
-           //     onSave = onSave,
                 onSave = {
                     val userDraft = User(
                         name = name,
@@ -137,12 +131,9 @@ fun ProfileView(
                     onShowPreview(userDraft)
                 }
             )
-
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.profile_spacer_16)))
 
-            LogoutButton(
-                onClick = onLogoutRequest
-            )
+            LogoutButton(onClick = onLogoutRequest)
         }
     }
 }
@@ -170,7 +161,7 @@ fun LogoutButton(
         onClick = { onClick() },
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Text("Cerrar sesión")
+        Text(stringResource(R.string.logout_button_text))
     }
 }
 

@@ -45,7 +45,7 @@ fun ProfileScreen(
     var pendingAction by remember { mutableStateOf<(() -> Unit)?>(null) }
     var showLogoutDialog by rememberSaveable { mutableStateOf(false) }
     var showPreview by rememberSaveable { mutableStateOf(false) }
-    var userDraft by rememberSaveable { mutableStateOf<User?>(null) }
+    var userDraft by remember { mutableStateOf<User?>(null) }
     var cameraImageUri by remember { mutableStateOf<Uri?>(null) }
 
 
@@ -181,7 +181,7 @@ fun ProfileScreen(
         )
     }
 
-    if (uiState is ProfileUiState.Success && uiState.data.isLoading) {
+    if (uiState is ProfileUiState.Success && uiState.data.isImageUploading) {
         ImageUploadingDialog()
     }
 

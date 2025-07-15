@@ -60,15 +60,16 @@ fun ProductCard(
         modifier =
             modifier
                 .fillMaxWidth()
-                .clickable { onClick(product) },
-        shape = RoundedCornerShape(CornerSize(dimensionResource(id = R.dimen.product_card_corner_radius))),
+                .clickable { onClick(product) }
+        .height(dimensionResource(id = R.dimen.product_card_height)),
+
+    shape = RoundedCornerShape(CornerSize(dimensionResource(id = R.dimen.product_card_corner_radius))),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
     ) {
         Row(
             modifier =
                 Modifier
-                    .fillMaxWidth()
-                    .height(dimensionResource(id = R.dimen.product_card_height)),
+                    .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ImageLoader(

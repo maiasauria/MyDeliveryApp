@@ -133,10 +133,6 @@ constructor(
         }
     }
 
-    /* Uploads an image to Cloudinary and updates the user image URL in the UI state.
-     * @param uri The URI of the image to upload.
-     * This function runs in the IO dispatcher to avoid blocking the main thread.
-     */
     private fun uploadImage(uri: Uri) {
         val current = _uiState.value
         if (current !is ProfileUiState.Success) return

@@ -56,9 +56,7 @@ fun SignupView(
     isLoading: Boolean = false,
 ) {
     Box(
-        modifier = Modifier
-            .padding(dimensionResource(id = R.dimen.signup_screen_padding))
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         Column(

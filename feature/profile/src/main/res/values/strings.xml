@@ -8,9 +8,10 @@
     <string name="profile_email_label">Email</string>
     <string name="profile_address_label">Dirección</string>
     <string name="profile_save">Guardar cambios</string>
-    <string name="logout">Cerrar sesión</string>
+    <string name="logout_button_text">Cerrar sesión</string>
     <string name="profile_loading_image_title">Cargando Imagen</string>
     <string name="profile_loading_image_text">Por favor, espera mientras se carga la imagen.</string>
-    <string name="profile_image_content_desc">Profile Image</string>
-    <string name="profile_add_image_content_desc">Add Image</string>
+
+    <string name="profile_image_content_desc">Imagen de Perfil</string>
+    <string name="profile_add_image_content_desc">Agregar imagen</string>
 </resources>

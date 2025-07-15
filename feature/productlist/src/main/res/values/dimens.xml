@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="product_card_corner_radius">12dp</dimen>
-    <dimen name="product_card_height">128dp</dimen>
+
+    <dimen name="product_card_height">110dp</dimen>
     <dimen name="product_card_image_size">96dp</dimen>
-    <dimen name="product_card_content_padding">16dp</dimen>
+
+    <dimen name="product_card_corner_radius">12dp</dimen>
+
+
+    <dimen name="product_card_content_padding">8dp</dimen>
     <dimen name="product_card_price_top_padding">8dp</dimen>
     <dimen name="product_card_add_button_size">32dp</dimen>
     <dimen name="product_card_pulsate_corner_radius">12dp</dimen>

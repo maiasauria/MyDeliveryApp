@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Card
@@ -15,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,7 +34,6 @@ fun OrdersListView(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(dimensionResource(id = R.dimen.orders_screen_padding))
     ) {
         ScreenTitle(stringResource(R.string.orders_title))
         Box(modifier = Modifier.weight(1f, fill = false)) {
@@ -52,58 +49,6 @@ fun OrdersListView(
     }
 }
 
-
-@Composable
-fun OrderCard(order: Order, position: Int) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
-
-        ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(dimensionResource(id = R.dimen.orders_card_padding))) {
-            Row (modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,) {
-                Text(
-                    text = stringResource(R.string.orders_title_card, position),
-                    style = MaterialTheme.typography.titleLarge
-
-                )
-                Text(
-                    text = order.total.toCurrencyFormat(),
-                    style = MaterialTheme.typography.titleLarge
-                )
-            }
-
-            Text(
-                style = MaterialTheme.typography.bodySmall,
-                text = stringResource(
-                    R.string.orders_date,
-                    SimpleDateFormat("yyyy-MM-dd HH:mm", Locale("es", "AR"))
-                        .format(Date(order.timestamp))
-                )
-            )
-            Text(
-                stringResource(
-                    R.string.orders_quantity,
-                    order.orderItems.sumOf { it.quantity }
-                ),
-                maxLines = 1,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            Text(
-                stringResource(
-                    R.string.orders_shipping_address,
-                    order.shippingAddress
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable

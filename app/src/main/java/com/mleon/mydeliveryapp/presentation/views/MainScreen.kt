@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.navigation.NavHostController
 import com.mleon.core.navigation.NavigationRoutes
+import com.mleon.mydeliveryapp.R
 import com.mleon.mydeliveryapp.navigation.AppNavigation
 import com.mleon.mydeliveryapp.navigation.navigateToRoute
 import com.mleon.utils.ui.YappBottomBar
@@ -31,7 +33,11 @@ fun MainScreen(navController: NavHostController, currentRoute: String?) {
             }
         }
     ) { innerPadding ->
-        Column(Modifier.padding(innerPadding)) {
+        Column(Modifier
+            .padding(innerPadding)
+            .padding(dimensionResource(id = R.dimen.screen_padding))
+
+        ) {
             AppNavigation(navController = navController)
         }
     }

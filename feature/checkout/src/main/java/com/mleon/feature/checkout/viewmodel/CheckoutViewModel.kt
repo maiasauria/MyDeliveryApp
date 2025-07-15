@@ -10,6 +10,7 @@ import com.mleon.core.model.enums.PaymentMethod
 import com.mleon.feature.cart.domain.usecase.GetCartItemsWithProductsUseCase
 import com.mleon.feature.checkout.domain.usecase.CreateOrderUseCase
 import com.mleon.feature.checkout.domain.usecase.GetUserAddressUseCase
+import com.mleon.feature.checkout.domain.usecase.NoAddressException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -61,6 +62,8 @@ class CheckoutViewModel @Inject constructor(
                     orderConfirmed = false,
                     validOrder = isOrderValid(cartItems, address)
                 )
+            } catch (e: NoAddressException) {
+                _uiState.value = CheckoutUiState.MissingAddress
             } catch (e: Exception) {
                 setError(e.message)
             }

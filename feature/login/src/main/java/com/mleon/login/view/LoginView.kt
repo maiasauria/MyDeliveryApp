@@ -44,9 +44,7 @@ fun LoginView(
     isLoading: Boolean = false,
 ) {
     Box(
-        modifier = Modifier
-            .padding(dimensionResource(id = R.dimen.login_padding))
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         Column(
