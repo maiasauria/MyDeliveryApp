@@ -16,9 +16,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.mleon.login.R
 import com.mleon.utils.ui.LogoImage
 import com.mleon.utils.ui.ValidatePasswordField
@@ -45,7 +45,7 @@ fun LoginView(
 ) {
     Box(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(dimensionResource(id = R.dimen.login_padding))
             .fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
@@ -53,7 +53,7 @@ fun LoginView(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.login_column_spacing)),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LogoImage()
@@ -75,22 +75,22 @@ fun LoginView(
                 onPasswordVisibilityChange = { onPasswordVisibilityChange(!passwordVisible) },
                 enabled = !isLoading
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.login_spacer_16)))
             if (errorMessageLogin.isNotEmpty()) {
                 Text(
                     text = errorMessageLogin,
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.login_error_bottom_padding))
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.login_spacer_16)))
             LoginButton(
                 onClick = onLoginClick,
                 isFormValid = isFormValid,
                 enabled = !isLoading
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.login_spacer_24)))
             TextButton(
                 onClick = onSignupClick,
                 modifier = Modifier.fillMaxWidth(),
@@ -117,7 +117,7 @@ fun LoginButton(
         },
         enabled = isFormValid && enabled,
         modifier = Modifier
-            .height(48.dp)
+            .height(dimensionResource(id = R.dimen.login_button_height))
             .fillMaxWidth()
     ) {
         Text(stringResource(id = R.string.login_button))

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="checkout_screen_padding">16dp</dimen>
+    <dimen name="checkout_spacer_12">12dp</dimen>
+    <dimen name="checkout_summary_row_vertical_padding">2dp</dimen>
+</resources>

@@ -16,9 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mleon.core.navigation.NavigationRoutes
 import com.mleon.feature.signup.R
@@ -57,7 +57,7 @@ fun SignupView(
 ) {
     Box(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(dimensionResource(id = R.dimen.signup_screen_padding))
             .fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
@@ -65,7 +65,7 @@ fun SignupView(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(),
-            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.signup_field_spacing), Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LogoImage()
@@ -113,13 +113,13 @@ fun SignupView(
                 onPasswordVisibilityChange = { onConfirmPasswordVisibilityChange(!confirmPasswordVisible) },
                 enabled = !isLoading
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.signup_button_top_spacing)))
             if (errorMessageSignup.isNotEmpty()) {
                 Text(
                     text = errorMessageSignup,
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = 8.dp)
+                    modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.signup_error_bottom_padding))
                 )
             }
             Button(
@@ -131,7 +131,7 @@ fun SignupView(
             ) {
                 Text(stringResource(R.string.signup_button))
             }
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.signup_text_button_top_spacing)))
             TextButton(
                 onClick = {
                     navController.navigate(NavigationRoutes.LOGIN)

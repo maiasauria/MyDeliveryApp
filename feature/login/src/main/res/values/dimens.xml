@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="login_padding">16dp</dimen>
+    <dimen name="login_column_spacing">8dp</dimen>
+    <dimen name="login_spacer_16">16dp</dimen>
+    <dimen name="login_spacer_24">24dp</dimen>
+    <dimen name="login_error_bottom_padding">8dp</dimen>
+    <dimen name="login_button_height">48dp</dimen>
+</resources>

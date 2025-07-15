@@ -23,10 +23,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.mleon.core.model.User
 import com.mleon.feature.profile.R
@@ -63,11 +63,10 @@ fun ProfileView(
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(dimensionResource(id = R.dimen.profile_screen_padding)),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.profile_screen_spacing)),
         ) {
             ScreenTitle(stringResource(R.string.profile_title))
 
@@ -139,7 +138,7 @@ fun ProfileView(
                 }
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.profile_spacer_16)))
 
             LogoutButton(
                 onClick = onLogoutRequest
@@ -184,7 +183,7 @@ fun UserImage(
     Card(
         modifier =
             modifier
-                .size(128.dp)
+                .size(dimensionResource(id = R.dimen.profile_user_image_size))
                 .clickable { onClick() },
     ) {
         if (userImageUrl.isNotEmpty()) {
@@ -202,7 +201,7 @@ fun UserImage(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .padding(24.dp),
+                        .padding(dimensionResource(id = R.dimen.profile_user_icon_padding)),
             )
         }
     }
@@ -246,10 +245,10 @@ fun ProfilePreviewDialog(
                 ) {
                     UserImage(
                         userImageUrl = userDraft.userImageUrl ?: "",
-                        modifier = Modifier.size(96.dp)
+                        modifier = Modifier.size(dimensionResource(id = R.dimen.profile_preview_image_size))
                     )
                 }
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.profile_spacer_8)))
                 Text("Nombre: ${userDraft.name}")
                 Text("Apellido: ${userDraft.lastname}")
                 Text("Email: ${userDraft.email}")
@@ -293,9 +292,9 @@ fun ImageUploadingDialog() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                    .padding(vertical = dimensionResource(id = R.dimen.profile_uploading_dialog_vertical_padding)),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.profile_uploading_dialog_spacing)),
             ) {
                 YappSmallLoadingIndicator()
                 Text(stringResource(R.string.profile_loading_image_text))

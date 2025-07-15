@@ -17,9 +17,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import com.mleon.utils.R
 
 @Composable
 fun ErrorScreen(
@@ -33,16 +34,16 @@ fun ErrorScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(dimensionResource(id = R.dimen.error_screen_padding)),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
                 imageVector = Icons.Filled.ErrorOutline,
                 contentDescription = "Error",
                 tint = MaterialTheme.colorScheme.error,
-                modifier = Modifier.size(96.dp)
+                modifier = Modifier.size(dimensionResource(id = R.dimen.error_screen_icon_size))
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.error_screen_spacer)))
             Text(
                 text = errorMessage,
                 style = MaterialTheme.typography.titleMedium,
@@ -50,7 +51,7 @@ fun ErrorScreen(
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.error_screen_spacer)))
             Button(onClick = onRetry) {
                 Text("Reintentar")
             }

@@ -28,9 +28,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.mleon.core.navigation.NavigationRoutes
+import com.mleon.utils.R
 
 
 @Composable
@@ -44,7 +45,7 @@ fun YappBottomBar(
     ) {
         Row(
             modifier = Modifier
-                .padding(8.dp)
+                .padding(dimensionResource(id = R.dimen.bottom_bar_padding))
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
@@ -55,14 +56,14 @@ fun YappBottomBar(
 
                 Box(
                     modifier = Modifier
-                        .width(72.dp)
-                        .height(56.dp)
+                        .width(dimensionResource(id = R.dimen.bottom_bar_item_width))
+                        .height(dimensionResource(id = R.dimen.bottom_bar_item_height))
                         .background(
                             color = if (isSelected) highlightColor else MaterialTheme.colorScheme.surface,
-                            shape = RoundedCornerShape(12.dp)
+                            shape = RoundedCornerShape(dimensionResource(id = R.dimen.bottom_bar_item_corner_radius))
                         )
                         .clickable { onItemClick(item.route)}
-                        .padding(8.dp),
+                        .padding(dimensionResource(id = R.dimen.bottom_bar_item_padding)),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {

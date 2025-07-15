@@ -38,12 +38,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.mleon.core.model.Product
 import com.mleon.core.model.enums.Categories
+import com.mleon.feature.productlist.R
 import com.mleon.utils.toCurrencyFormat
 import com.mleon.utils.ui.ImageLoader
 
@@ -60,14 +61,14 @@ fun ProductCard(
             modifier
                 .fillMaxWidth()
                 .clickable { onClick(product) },
-        shape = RoundedCornerShape(CornerSize(10.dp)),
+        shape = RoundedCornerShape(CornerSize(dimensionResource(id = R.dimen.product_card_corner_radius))),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
     ) {
         Row(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(110.dp),
+                    .height(dimensionResource(id = R.dimen.product_card_height)),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ImageLoader(
@@ -75,8 +76,8 @@ fun ProductCard(
                 contentDescription = product.name,
                 modifier =
                     Modifier
-                        .height(110.dp)
-                        .width(110.dp)
+                        .height(dimensionResource(id = R.dimen.product_card_image_size))
+                        .width(dimensionResource(id = R.dimen.product_card_image_size))
             )
             Box(
                 modifier = Modifier
@@ -86,7 +87,7 @@ fun ProductCard(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(dimensionResource(id = R.dimen.product_card_content_padding))
                         .align(Alignment.TopStart)
                 ) {
                     Text(
@@ -104,7 +105,7 @@ fun ProductCard(
                     Text(
                         text = product.price.toCurrencyFormat(),
                         style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(top = 8.dp)
+                        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.product_card_price_top_padding))
                     )
                 }
                 IconButton(
@@ -115,7 +116,7 @@ fun ProductCard(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(32.dp)
+                            .size(dimensionResource(id = R.dimen.product_card_add_button_size))
                             .background(
                                 MaterialTheme.colorScheme.primary,
                                 shape = CircleShape
@@ -205,8 +206,8 @@ fun Modifier.bounceClick() = composed {
 fun PulsateEffect() {
     Button(onClick = {
         // clicked
-    }, shape = RoundedCornerShape(12.dp),
-        contentPadding = PaddingValues(16.dp),
+    }, shape = RoundedCornerShape(dimensionResource(id = R.dimen.product_card_pulsate_corner_radius)),
+        contentPadding = PaddingValues(dimensionResource(id = R.dimen.product_card_pulsate_padding)),
         modifier = Modifier.bounceClick()) {
         Text(text = "Click me")
     }

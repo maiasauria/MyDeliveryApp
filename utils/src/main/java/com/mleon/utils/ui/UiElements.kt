@@ -19,9 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -36,20 +35,18 @@ fun LogoImage() {
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
+                .padding(bottom = dimensionResource(id = R.dimen.logo_image_bottom_padding)),
     )
 }
 
 @Composable
-fun ListDivider(
-    thickness: Dp = 1.dp,
-) {
-    Spacer(modifier = Modifier.padding(vertical = 4.dp))
+fun ListDivider() {
+    Spacer(modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.list_divider_vertical_padding)))
     HorizontalDivider(
-        modifier = Modifier.padding(horizontal = 8.dp),
-        thickness = thickness,
+        modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.list_divider_horizontal_padding)),
+        thickness = dimensionResource(id = R.dimen.list_divider_thickness),
     )
-    Spacer(modifier = Modifier.padding(vertical = 4.dp))
+    Spacer(modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.list_divider_vertical_padding)))
 }
 
 @Composable
@@ -73,7 +70,7 @@ fun ScreenTitle(title: String) {
         style = MaterialTheme.typography.headlineMedium
 
     )
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.screen_title_bottom_spacing)))
 }
 
 @Composable
@@ -82,7 +79,7 @@ fun ScreenSubTitle(title: String) {
         text = title,
         style = MaterialTheme.typography.titleLarge,
     )
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.screen_subtitle_bottom_spacing)))
 }
 
 @Composable
@@ -96,10 +93,9 @@ fun ImageLoader(
             ImageRequest.Builder(LocalContext.current).data(url).crossfade(true).build(),
         contentDescription = contentDescription,
         modifier = modifier
-            .clip(RoundedCornerShape(10.dp)),
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.image_loader_corner_radius))),
         contentScale = ContentScale.Crop,
         error = painterResource(R.drawable.ic_launcher_background),
         placeholder = painterResource(R.drawable.ic_launcher_background),
     )
 }
-

@@ -31,9 +31,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.mleon.core.model.CartItem
 import com.mleon.core.model.Product
 import com.mleon.core.model.enums.PaymentMethod
@@ -65,7 +65,7 @@ fun CheckoutView(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(dimensionResource(id = R.dimen.checkout_screen_padding)),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
@@ -153,7 +153,7 @@ fun CheckoutView(
             }
 
             ListDivider()
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.checkout_spacer_12)))
 
             SummaryRow(
                 label = stringResource(id = R.string.checkout_subtotal),
@@ -238,7 +238,7 @@ fun SummaryRow(label: String, value: String, isBold: Boolean = false) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 2.dp),
+            .padding(vertical = dimensionResource(id = R.dimen.checkout_summary_row_vertical_padding)),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(

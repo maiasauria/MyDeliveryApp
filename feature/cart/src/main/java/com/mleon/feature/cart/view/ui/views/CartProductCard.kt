@@ -31,10 +31,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.mleon.core.model.Product
 import com.mleon.feature.cart.R
 import com.mleon.utils.toCurrencyFormat
@@ -54,23 +54,23 @@ fun CartProductCard(
     Card(
         modifier = modifier
             .fillMaxWidth(),
-        shape = RoundedCornerShape(CornerSize(10.dp)),
+        shape = RoundedCornerShape(CornerSize(dimensionResource(id = R.dimen.cart_card_corner_radius))),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(110.dp),
+                .height(dimensionResource(id = R.dimen.cart_card_height)),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ImageLoader(url = product.imageUrl ?: "",
                 contentDescription = product.name,
-                modifier = Modifier.height(100.dp).width(100.dp),
+                modifier = Modifier.height(dimensionResource(id = R.dimen.cart_image_size)).width(dimensionResource(id = R.dimen.cart_image_size)),
             )
 
             Column(
                 modifier = Modifier
-                    .padding(4.dp)
+                    .padding(dimensionResource(id = R.dimen.cart_card_padding))
                     .fillMaxWidth()
                     .fillMaxHeight()
             ) {
@@ -95,7 +95,7 @@ fun CartProductCard(
                         )
                         Text(
                             text = quantity.toString(),
-                            modifier = Modifier.padding(horizontal = 8.dp)
+                            modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.cart_quantity_text_padding))
                         )
                         QuantityButton(
                             onClick = { onQuantityChange(product, quantity + 1) },
@@ -118,7 +118,7 @@ fun CartProductCard(
 fun CardTitle(productName: String = "") {
     Text(
         text = productName,
-        modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
+        modifier = Modifier.padding(top = dimensionResource(id = R.dimen.cart_card_padding), bottom = dimensionResource(id = R.dimen.cart_card_padding)),
         style = MaterialTheme.typography.titleMedium,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis
@@ -153,7 +153,7 @@ fun QuantityButton(
     ) {
         Box(
             modifier = Modifier
-                .size(32.dp)
+                .size(dimensionResource(id = R.dimen.cart_button_size))
                 .background(
                     if (enabled) MaterialTheme.colorScheme.primary else Color.Gray,
                     shape = CircleShape
@@ -177,8 +177,8 @@ fun RemoveFromCartButton(
     IconButton(
         onClick = onRemoveFromCart,
         modifier = Modifier
-            .padding(start = 8.dp)
-            .width(30.dp),
+            .padding(start = dimensionResource(id = R.dimen.cart_remove_button_padding))
+            .width(dimensionResource(id = R.dimen.cart_remove_button_width)),
         enabled = !isLoading
     ) {
         Icon(

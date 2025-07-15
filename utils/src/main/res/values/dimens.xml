@@ -36,4 +36,29 @@
     <dimen name="cart_text_bottom_padding">4dp</dimen>
     <dimen name="cart_icon_button_padding">8dp</dimen>
     <dimen name="cart_remove_button_width">30dp</dimen>
+
+    <!-- Bottom bar dimensions -->
+    <dimen name="bottom_bar_item_width">56dp</dimen>
+    <dimen name="bottom_bar_item_height">48dp</dimen>
+    <dimen name="bottom_bar_item_corner_radius">16dp</dimen>
+    <dimen name="bottom_bar_item_padding">8dp</dimen>
+
+    <dimen name="list_divider_vertical_padding">4dp</dimen>
+    <dimen name="list_divider_horizontal_padding">8dp</dimen>
+    <dimen name="screen_title_bottom_spacing">16dp</dimen>
+    <dimen name="screen_subtitle_bottom_spacing">16dp</dimen>
+    <dimen name="image_loader_corner_radius">10dp</dimen>
+    <dimen name="logo_image_bottom_padding">16dp</dimen>
+    <dimen name="list_divider_thickness">1dp</dimen>
+
+    <dimen name="error_screen_padding">16dp</dimen>
+    <dimen name="error_screen_icon_size">96dp</dimen>
+    <dimen name="error_screen_spacer">24dp</dimen>
+
+    <dimen name="signup_screen_padding">16dp</dimen>
+    <dimen name="signup_field_spacing">8dp</dimen>
+    <dimen name="signup_button_top_spacing">16dp</dimen>
+    <dimen name="signup_error_bottom_padding">8dp</dimen>
+    <dimen name="signup_text_button_top_spacing">24dp</dimen>
+    <dimen name="bottom_bar_padding">8dp</dimen>
 </resources>

@@ -1,4 +1,3 @@
-
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,9 +26,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.mleon.core.model.Product
@@ -73,7 +72,7 @@ fun ProductDetailView(
     quantity: Int,
     onQuantityChange: (Int) -> Unit,
     onAddToCart: (Product, Int) -> Unit,
-    onBack: () -> Unit // Add this parameter
+    onBack: () -> Unit
 ) {
     when (uiState) {
         is ProductDetailUiState.Loading -> {
@@ -98,7 +97,7 @@ fun ProductDetailView(
                         onClick = onBack,
                         modifier = Modifier
                             .align(Alignment.TopStart)
-                            .padding(16.dp)
+                            .padding(dimensionResource(id = R.dimen.product_detail_back_button_padding))
                     ) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
@@ -107,11 +106,11 @@ fun ProductDetailView(
                     }
                 }
 
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(dimensionResource(id = R.dimen.product_detail_content_padding))) {
                     ProductInfoView(product)
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.product_detail_section_spacing)))
                     QuantitySelector(quantity, onQuantityChange)
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.product_detail_section_spacing)))
                     AddToCartButton { onAddToCart(product, quantity) }
                 }
             }
@@ -143,7 +142,7 @@ fun QuantitySelector(quantity: Int, onQuantityChange: (Int) -> Unit) {
         }
         Text(
             text = quantity.toString(),
-            modifier = Modifier.width(32.dp),
+            modifier = Modifier.width(dimensionResource(id = R.dimen.product_detail_quantity_width)),
             textAlign = TextAlign.Center
         )
         IconButton(onClick = { onQuantityChange(quantity + 1) }) {
