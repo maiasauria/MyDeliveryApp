@@ -49,6 +49,7 @@ espressoCore = "3.6.1"
 # KSP
 ksp = "2.1.21-2.0.1"
 junitJunit = "4.12"
+swiperefreshlayoutVersion = "1.2.0-beta01"
 workRuntimeKtx = "2.10.2"
 hiltCommon = "1.2.0"
 hiltWork = "1.2.0"
@@ -59,8 +60,10 @@ hiltWork = "1.2.0"
 #Core
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayoutVersion" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilNetworkOkhttp" }
+google-accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanistSwiperefreshVersion" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 
 # Compose & UI

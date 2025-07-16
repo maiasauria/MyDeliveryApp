@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview) // vista previa para compose
     implementation(libs.androidx.hilt.navigation.compose) // Integración de Hilt con Jetpack Compose para la inyección de dependencias en composables.
     implementation(libs.androidx.foundation.android) // Proporciona componentes básicos de la interfaz de usuario, como contenedores y modificadores, para Jetpack Compose.
+    implementation(libs.androidx.swiperefreshlayout)
 
     // Hilt (DI)
     implementation(libs.hilt.android)

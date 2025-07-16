@@ -120,7 +120,7 @@ class ProductListViewModelTest {
         val viewModel = ProductListViewModel(getProductsUseCase, StandardTestDispatcher(testScheduler))
         viewModel.loadProducts(refreshData = false)
         advanceUntilIdle()
-        viewModel.onAddToCartButtonClick(pizza)
+        viewModel.onAddToCart(pizza)
         val state = viewModel.uiState.value as ProductListUiState.Success
         Assert.assertTrue(state.cartMessage.contains("Pizza"))
     }
@@ -132,7 +132,7 @@ class ProductListViewModelTest {
         val viewModel = ProductListViewModel(getProductsUseCase, StandardTestDispatcher(testScheduler))
         viewModel.loadProducts()
         advanceUntilIdle()
-        viewModel.onAddToCartButtonClick(pizza)
+        viewModel.onAddToCart(pizza)
         viewModel.clearCartMessage()
         val state = viewModel.uiState.value as ProductListUiState.Success
         Assert.assertTrue(state.cartMessage.isEmpty())

@@ -30,6 +30,9 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
@@ -64,9 +67,13 @@ fun ProductListView(
     onAddToCart: (Product) -> Unit = {},
     isAddingToCart: Boolean = false,
     onProductClick: (String) -> Unit = {},
+    isRefreshing: Boolean = false,
+    onRefresh: () -> Unit = {},
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
+    val pullState = rememberPullToRefreshState()
+
     Box(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -80,23 +87,37 @@ fun ProductListView(
                 selectedCategory = selectedCategory,
                 onCategorySelection = onCategorySelection,
             )
-            LazyColumn(
-                modifier =
-                    Modifier.fillMaxSize(),
-            ) {
-                itemsIndexed(products) { index, product ->
-                    ProductCard(
-                        product = product,
-                        onAddToCart = { onAddToCart(product) },
-                        isLoading = isAddingToCart,
-                        onClick = { onProductClick(it.id) }
-                    )
-                    if (index < products.lastIndex) {
-                        ListDivider()
+
+            PullToRefreshBox (
+                state = pullState,
+                onRefresh = onRefresh,
+                isRefreshing = isRefreshing,
+                    indicator = {
+                    Indicator(
+                        modifier = Modifier.align(Alignment.TopCenter),
+                        isRefreshing = isRefreshing,
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        state = pullState
+                    ) } )
+             {
+                LazyColumn(
+                    modifier =
+                        Modifier.fillMaxSize(),
+                ) {
+                    itemsIndexed(products) { index, product ->
+                        ProductCard(
+                            product = product,
+                            onAddToCart = { onAddToCart(product) },
+                            isLoading = isAddingToCart,
+                            onClick = { onProductClick(it.id) }
+                        )
+                        if (index < products.lastIndex) {
+                            ListDivider()
+                        }
                     }
                 }
             }
-
             if (showBottomSheet) {
                 ProductsBottomSheet(
                     sheetState = sheetState,

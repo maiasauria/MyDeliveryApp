@@ -25,10 +25,11 @@ fun ProductListScreen(
 ) {
 
     val uiState by productListViewModel.uiState.collectAsState()
+    val isRefreshing = uiState is ProductListUiState.Loading
 
     // Solo se ejecuta una vez al cargar la pantalla
     LaunchedEffect(Unit) {
-        productListViewModel.loadProducts(refreshData = false)
+        productListViewModel.loadProducts(refreshData = true)
     }
 
     when (uiState) {
@@ -65,7 +66,9 @@ fun ProductListScreen(
                 isAddingToCart = successState.isAddingToCart,
                 onProductClick = { productId -> onProductClick(productId) },
                 onOrderByNameAscending = { productListViewModel.onOrderByNameAscending() },
-                onOrderByNameDescending = { productListViewModel.onOrderByNameDescending() }
+                onOrderByNameDescending = { productListViewModel.onOrderByNameDescending() },
+                isRefreshing = isRefreshing,
+                onRefresh = { productListViewModel.loadProducts(refreshData = true) },
             )
         }
         is ProductListUiState.Error -> {
