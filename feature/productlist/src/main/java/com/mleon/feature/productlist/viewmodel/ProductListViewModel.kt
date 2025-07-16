@@ -71,6 +71,22 @@ constructor(
         }
     }
 
+    fun onOrderByNameAscending() {
+        val currentState = _uiState.value
+        if (currentState is ProductListUiState.Success) {
+            val sorted = currentState.products.sortedBy { it.name }
+            _uiState.value = currentState.copy(products = sorted)
+        }
+    }
+
+    fun onOrderByNameDescending() {
+        val currentState = _uiState.value
+        if (currentState is ProductListUiState.Success) {
+            val sorted = currentState.products.sortedByDescending { it.name }
+            _uiState.value = currentState.copy(products = sorted)
+        }
+    }
+
     private fun filterProducts(): List<Product> {
         return allProducts.filter { product ->
             // Verifica si el producto pertenece a la categoría seleccionada
@@ -84,7 +100,7 @@ constructor(
         }
     }
 
-    fun onAddToCartButtonClick(product: Product) {
+    fun onAddToCart(product: Product) {
         val currentState = _uiState.value
         if (currentState is ProductListUiState.Success) {
             _uiState.value = currentState.copy(isAddingToCart = true) // Bloquea la UI mientras se agrega al carrito

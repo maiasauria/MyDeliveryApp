@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="productlist_order_title">Ordenar</string>
+    <string name="productlist_sort_title">Filtrar</string>
     <string name="productlist_price_ascending">Precio Ascendente</string>
     <string name="productlist_price_descending">Precio Descendente</string>
+    <string name="productlist_name_ascending">Nombre Ascendente</string>
+    <string name="productlist_name_descending">Nombre Descendente</string>
     <string name="productlist_order_ascending_content_desc">Orden Ascendente</string>
     <string name="productlist_order_descending_content_desc">Orden Descendente</string>
+    <string name="productlist_name_ascending_content_desc">Nombre Ascendente</string>
+    <string name="productlist_name_descending_content_desc">Nombre Descendente</string>
     <string name="productlist_search_label">Buscar</string>
     <string name="productlist_search_placeholder">Buscar productos...</string>
     <string name="productlist_clear_search_content_desc">Limpiar la búsqueda</string>

@@ -49,7 +49,7 @@ class CartViewModel @Inject constructor(
         viewModelScope.launch(dispatcher + exceptionHandler) {
             try {
                 addProductToCartUseCase(product)
-                updateCartUiState("${product.name} added to cart")
+                updateCartUiState("${product.name} agregado al carrito")
             } catch (e: Exception) {
                 _uiState.value = CartUiState.Error(e.message ?: "Error al agregar el producto al carrito")
             }

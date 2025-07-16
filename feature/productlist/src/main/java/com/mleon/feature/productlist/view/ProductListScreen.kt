@@ -28,7 +28,7 @@ fun ProductListScreen(
 
     // Solo se ejecuta una vez al cargar la pantalla
     LaunchedEffect(Unit) {
-        productListViewModel.loadProducts(refreshData = true)
+        productListViewModel.loadProducts(refreshData = false)
     }
 
     when (uiState) {
@@ -61,9 +61,11 @@ fun ProductListScreen(
                 onOrderByPriceAscending = { productListViewModel.onOrderByPriceAscending() },
                 onAddToCart = {
                     cartViewModel.addToCart(it)
-                    productListViewModel.onAddToCartButtonClick(it) },
+                    productListViewModel.onAddToCart(it) },
                 isAddingToCart = successState.isAddingToCart,
-                onProductClick = { productId -> onProductClick(productId) }
+                onProductClick = { productId -> onProductClick(productId) },
+                onOrderByNameAscending = { productListViewModel.onOrderByNameAscending() },
+                onOrderByNameDescending = { productListViewModel.onOrderByNameDescending() }
             )
         }
         is ProductListUiState.Error -> {

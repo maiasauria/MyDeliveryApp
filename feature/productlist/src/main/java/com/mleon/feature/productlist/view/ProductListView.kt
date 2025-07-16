@@ -1,17 +1,13 @@
 package com.mleon.feature.productlist.view
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -43,7 +39,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,18 +57,18 @@ fun ProductListView(
     products: List<Product> = emptyList(),
     onSearchQueryChange: (String) -> Unit,
     onCategorySelection: (Categories?) -> Unit,
-    onOrderByPriceDescending: () -> Unit,
-    onOrderByPriceAscending: () -> Unit,
-    onAddToCart: (Product) -> Unit,
+    onOrderByPriceDescending: () -> Unit = {},
+    onOrderByPriceAscending: () -> Unit = {},
+    onOrderByNameAscending: () -> Unit = {},
+    onOrderByNameDescending: () -> Unit = {},
+    onAddToCart: (Product) -> Unit = {},
     isAddingToCart: Boolean = false,
     onProductClick: (String) -> Unit = {},
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-        //    .padding(horizontal = dimensionResource(id = UtilsR.dimen.base_padding)),
+        modifier = Modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             SearchAndFiltersBar(
@@ -89,17 +85,12 @@ fun ProductListView(
                     Modifier.fillMaxSize(),
             ) {
                 itemsIndexed(products) { index, product ->
-                    AnimatedVisibility(
-                        visible = true,
-                        enter = fadeIn(animationSpec = tween(2000, 50), initialAlpha = 0f),
-                    ) {
-                        ProductCard(
-                            product = product,
-                            onAddToCart = { onAddToCart(product) },
-                            isLoading = isAddingToCart,
-                            onClick = { product -> onProductClick(product.id) }
-                        )
-                    }
+                    ProductCard(
+                        product = product,
+                        onAddToCart = { onAddToCart(product) },
+                        isLoading = isAddingToCart,
+                        onClick = { onProductClick(it.id) }
+                    )
                     if (index < products.lastIndex) {
                         ListDivider()
                     }
@@ -112,6 +103,10 @@ fun ProductListView(
                     onDismissRequest = { showBottomSheet = false },
                     onOrderByPriceDescending = onOrderByPriceDescending,
                     onOrderByPriceAscending = onOrderByPriceAscending,
+                    onOrderByNameAscending = onOrderByNameAscending,
+                    onOrderByNameDescending = onOrderByNameDescending,
+                    selectedCategory = selectedCategory,
+                    onCategorySelection = onCategorySelection,
                 )
             }
         }
@@ -128,7 +123,7 @@ fun FiltersRow(
             Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = UtilsR.dimen.filter_chip_spacing)),
     ) {
-        items(Categories.entries.sorted()) { category ->
+        items(Categories.entries.sortedBy { it.getCategoryName() }) { category ->
             val isSelected = selectedCategory == category
             FilterChip(
                 selected = isSelected,
@@ -141,10 +136,9 @@ fun FiltersRow(
                 colors =
                     FilterChipDefaults.filterChipColors(
                         selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                        selectedContainerColor = if (isSelected) MaterialTheme.colorScheme.primary else Color.LightGray,
-                    ),
+                        selectedContainerColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,                    ),
                 modifier = Modifier.padding(dimensionResource(id = UtilsR.dimen.filter_chip_padding)),
-                )
+            )
         }
     }
 }
@@ -154,67 +148,110 @@ fun FiltersRow(
 fun ProductsBottomSheet(
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
-    onOrderByPriceDescending: () -> Unit,
-    onOrderByPriceAscending: () -> Unit,
+    onOrderByPriceDescending: () -> Unit = {},
+    onOrderByPriceAscending: () -> Unit = {},
+    onOrderByNameAscending: () -> Unit = {},
+    onOrderByNameDescending: () -> Unit = {},
+    selectedCategory: Categories? = null,
+    onCategorySelection: (Categories?) -> Unit,
 ) {
-
-        ModalBottomSheet(
-            onDismissRequest = onDismissRequest,
-            sheetState = sheetState,
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+        sheetState = sheetState,
+    ) {
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(dimensionResource(id = UtilsR.dimen.base_padding)),
         ) {
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(dimensionResource(id = UtilsR.dimen.base_padding)),
+            Text(
+                stringResource(R.string.productlist_sort_title),
+                style = MaterialTheme.typography.titleLarge
+            )
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = UtilsR.dimen.filter_chip_spacing)),
             ) {
-                Text(
-                    stringResource(R.string.productlist_order_title),
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Spacer(modifier = Modifier.height(dimensionResource(id = UtilsR.dimen.sheet_content_spacing)))
-                ListDivider()
-                TextButton(
-                    onClick = {
-                        onOrderByPriceAscending()
-                        onDismissRequest()
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text(stringResource(R.string.productlist_price_ascending))
-                        Icon(
-                            Icons.Filled.ArrowUpward,
-                            contentDescription = stringResource(R.string.productlist_order_ascending_content_desc)
+                Categories.entries.sorted().forEach { category ->
+                    val isSelected = selectedCategory == category
+                    FilterChip(
+                        selected = isSelected,
+                        onClick = { onCategorySelection(category) },
+                        label = { Text(category.getCategoryName()) },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
                         )
-                    }
-                }
-                TextButton(
-                    onClick = {
-                        onOrderByPriceDescending()
-                        onDismissRequest()
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text(stringResource(R.string.productlist_price_descending))
-                        Icon(
-                            Icons.Filled.ArrowDownward,
-                            contentDescription = stringResource(R.string.productlist_order_descending_content_desc)
-                        )
-                    }
+                    )
                 }
             }
+       //     Spacer(modifier = Modifier.height(dimensionResource(id = UtilsR.dimen.sheet_content_spacing)))
+            ListDivider()
+            Text(
+                stringResource(R.string.productlist_order_title),
+                style = MaterialTheme.typography.titleLarge
+            )
+            OrderButton(
+                text = stringResource(R.string.productlist_price_ascending),
+                icon = Icons.Filled.ArrowUpward,
+                contentDesc = stringResource(R.string.productlist_order_ascending_content_desc),
+                onClick = {
+                    onOrderByPriceAscending()
+                    onDismissRequest()
+                },
+            )
+            OrderButton(
+                text = stringResource(R.string.productlist_price_descending),
+                icon = Icons.Filled.ArrowDownward,
+                contentDesc = stringResource(R.string.productlist_order_descending_content_desc),
+                onClick = {
+                    onOrderByPriceDescending()
+                    onDismissRequest()
+                },
+            )
+            OrderButton(
+                text = stringResource(R.string.productlist_name_ascending),
+                icon = Icons.Filled.ArrowUpward,
+                contentDesc = stringResource(R.string.productlist_name_ascending_content_desc),
+                onClick = {
+                    onOrderByNameAscending()
+                    onDismissRequest()
+                },
+            )
+            OrderButton(
+                text = stringResource(R.string.productlist_name_descending),
+                icon = Icons.Filled.ArrowDownward,
+                contentDesc = stringResource(R.string.productlist_name_descending_content_desc),
+                onClick = {
+                    onOrderByNameDescending()
+                    onDismissRequest()
+                },
+            )
         }
+    }
+}
 
+@Composable
+private fun OrderButton(
+    text: String,
+    icon: ImageVector,
+    contentDesc: String,
+    onClick: () -> Unit
+) {
+    TextButton(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(text)
+            Icon(icon, contentDescription = contentDesc)
+        }
+    }
 }
 
 @Composable
@@ -291,8 +328,8 @@ private fun ProductsBottomSheetPreview() {
                 initialValue = SheetValue.Expanded,
             ),
         onDismissRequest = {},
-        onOrderByPriceDescending = {},
-        onOrderByPriceAscending = {},
+        selectedCategory = Categories.PIZZA,
+        onCategorySelection = {},
     )
 }
 
