@@ -22,6 +22,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 private const val ERROR_MESSAGE = "Ocurrió un error inesperado. Intenta nuevamente."
+private const val SHIPPING_COST = 1000.0
 
 @HiltViewModel
 class CheckoutViewModel @Inject constructor(
@@ -50,7 +51,7 @@ class CheckoutViewModel @Inject constructor(
                 }
                 val cartItems = getCartItemsWithProductsUseCase()
                 val subTotal = cartItems.sumOf { it.product.price * it.quantity }
-                val shippingCost = 10.0
+                val shippingCost = SHIPPING_COST
                 val total = subTotal + shippingCost
                 _uiState.value = CheckoutUiState.Success(
                     cartItems = cartItems,
@@ -73,27 +74,25 @@ class CheckoutViewModel @Inject constructor(
     fun confirmOrder() = viewModelScope.launch(dispatcher + exceptionHandler) {
         val state = _uiState.value as? CheckoutUiState.Success ?: return@launch
         _uiState.value = CheckoutUiState.Loading
-        try {
-            if (state.shippingAddress.isBlank()) {
-                _uiState.value = CheckoutUiState.MissingAddress
-                return@launch
-            }
-            val order = Order(
-                orderId = UUID.randomUUID().toString(),
-                orderItems = state.cartItems,
-                shippingAddress = state.shippingAddress,
-                paymentMethod = state.paymentMethod.apiValue,
-                total = state.totalAmount,
-                timestamp = System.currentTimeMillis(),
-            )
-            when (val result = createOrderUseCase(order)) {
-                is OrderResult.Success, is OrderResult.SuccessList -> _uiState.value =
-                    state.copy(orderConfirmed = true)
 
-                is OrderResult.Error -> setError(result.message)
-            }
-        } catch (e: Exception) {
-            setError(e.message)
+        if (state.shippingAddress.isBlank()) {
+            _uiState.value = CheckoutUiState.MissingAddress
+            return@launch
+        }
+        val order = Order(
+            orderId = UUID.randomUUID().toString(),
+            orderItems = state.cartItems,
+            shippingAddress = state.shippingAddress,
+            paymentMethod = state.paymentMethod.apiValue,
+            total = state.totalAmount,
+            timestamp = System.currentTimeMillis(),
+        )
+        val result = createOrderUseCase(order)
+        when (result) {
+            is OrderResult.Success, is OrderResult.SuccessList -> _uiState.value =
+                state.copy(orderConfirmed = true)
+
+            is OrderResult.Error -> setError(result.message)
         }
     }
 

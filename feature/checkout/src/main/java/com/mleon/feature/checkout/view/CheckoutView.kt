@@ -22,6 +22,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.TooltipState
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,6 +43,7 @@ import com.mleon.utils.toCurrencyFormat
 import com.mleon.utils.ui.ListDivider
 import com.mleon.utils.ui.ScreenSubTitle
 import com.mleon.utils.ui.ScreenTitle
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,52 +102,12 @@ fun CheckoutView(
 
             ScreenSubTitle(stringResource(id = R.string.checkout_payment_method_title))
 
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    RadioButton(
-                        selected = paymentMethod == PaymentMethod.CREDIT_CARD,
-                        onClick = { }, // Deshabilitado, se maneja con Tooltip
-                        enabled = false,
-                    )
-
-                    TooltipBox(
-                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                        tooltip = {
-                            PlainTooltip { Text(stringResource(id = R.string.checkout_credit_card_tooltip)) }
-                        },
-                        state = tooltipState,
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(PaymentMethod.CREDIT_CARD.displayName)
-                            IconButton(
-                                onClick = {
-                                    scope.launch {
-                                        tooltipState.show()
-                                    }
-                                },
-                            ) {
-                                Icon(imageVector = Icons.Filled.Info, contentDescription = "Info")
-                            }
-                        }
-                    }
-                }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    RadioButton(
-                        selected = paymentMethod == PaymentMethod.CASH,
-                        onClick = {
-                            onPaymentMethodSelection(PaymentMethod.CASH)
-                        }
-                    )
-                    Text(PaymentMethod.CASH.displayName)
-                }
-            }
+            PaymentMethodSelection(
+                paymentMethod = paymentMethod,
+                onPaymentMethodSelection = onPaymentMethodSelection,
+                tooltipState = tooltipState,
+                scope = scope
+            )
 
             ListDivider()
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.checkout_spacer_12)))
@@ -175,9 +137,60 @@ fun CheckoutView(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PaymentMethodSelection() {
-    // TODO implement
+fun PaymentMethodSelection(
+    paymentMethod: PaymentMethod,
+    onPaymentMethodSelection: (PaymentMethod) -> Unit,
+    tooltipState: TooltipState,
+    scope: CoroutineScope,
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            RadioButton(
+                selected = paymentMethod == PaymentMethod.CREDIT_CARD,
+                onClick = { }, // Deshabilitado, se maneja con Tooltip
+                enabled = false,
+            )
+
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                tooltip = {
+                    PlainTooltip { Text(stringResource(id = R.string.checkout_credit_card_tooltip)) }
+                },
+                state = tooltipState,
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(PaymentMethod.CREDIT_CARD.displayName)
+                    IconButton(
+                        onClick = {
+                            scope.launch {
+                                tooltipState.show()
+                            }
+                        },
+                    ) {
+                        Icon(imageVector = Icons.Filled.Info, contentDescription = "Info")
+                    }
+                }
+            }
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            RadioButton(
+                selected = paymentMethod == PaymentMethod.CASH,
+                onClick = {
+                    onPaymentMethodSelection(PaymentMethod.CASH)
+                }
+            )
+            Text(PaymentMethod.CASH.displayName)
+        }
+    }
 }
 
 @Preview(showBackground = true)

@@ -4,7 +4,6 @@ import com.mleon.core.data.datasource.OrderDataSource
 import com.mleon.core.data.datasource.local.dao.OrderDao
 import com.mleon.core.data.datasource.local.dao.OrderItemDao
 import com.mleon.core.data.datasource.local.entities.toEntity
-import com.mleon.core.data.datasource.local.entities.toModel
 import com.mleon.core.data.datasource.local.entities.toOrderItemEntity
 import com.mleon.core.data.datasource.remote.dto.toDto
 import com.mleon.core.data.datasource.remote.model.OrderResult
@@ -33,11 +32,20 @@ class OrderRepositoryImpl @Inject constructor(
 
             // Llamo al DataSource para crear la orden en el servidor
             val orderRequest = order.toDto()
-            orderDataSource.createOrder(orderRequest)
+            val orderCreated = orderDataSource.createOrder(orderRequest)
 
-            // Si la creación fue exitosa, devuelvo el Order de Room
-            val orderWithItems = orderDao.getOrderItemsWithProductById(order.orderId)
-            OrderResult.Success(orderWithItems?.toModel() ?: order)
+            when (orderCreated) {
+                is OrderResult.Error -> {
+                    // Si hubo un error al crear la orden en el servidor, elimino la orden y los items de la base de datos
+                    orderDao.deleteOrder(orderEntity.id)
+                    orderItemDao.deleteOrderItemsByOrderId(order.orderId)
+                    return@withContext orderCreated
+                }
+                else -> {
+                    // Si la creación fue exitosa, retorno el resultado del DataSource
+                    return@withContext orderCreated
+                }
+            }
         }
 
 

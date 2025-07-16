@@ -28,9 +28,12 @@ constructor(
             OrderResult.Error("Ocurrió un error inesperado")
         }
 
-    override suspend fun createOrder(request: OrderDto): OrderResult =
-        try {
+    override suspend fun createOrder(request: OrderDto): OrderResult {
+        return try {
             val response = apiService.createOrder(request)
+            if (response.orderId.isEmpty()) {
+                return OrderResult.Error("Error al crear la orden. Intenta nuevamente")
+            }
             OrderResult.Success(response.toOrder())
         } catch (e: IOException) {
             OrderResult.Error("Sin conexión a Internet. Verifica tu conexión e intenta nuevamente")
@@ -39,4 +42,5 @@ constructor(
         } catch (e: Exception) {
             OrderResult.Error("Ocurrió un error inesperado")
         }
+    }
 }

@@ -32,4 +32,7 @@ interface OrderItemDao {
     @Transaction
     @Query("SELECT * FROM order_items WHERE orderId = :orderId")
     fun getOrderItemsWithProduct(orderId: Long): List<OrderItemWithProductEntity>
+
+    @Query("DELETE FROM order_items WHERE orderId = :orderId")
+    fun deleteOrderItemsByOrderId(orderId: String)
 }
