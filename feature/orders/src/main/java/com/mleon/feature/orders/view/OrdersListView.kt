@@ -1,6 +1,5 @@
 package com.mleon.feature.orders.view
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,13 +22,12 @@ fun OrdersListView(
         modifier = Modifier.fillMaxWidth()
     ) {
         ScreenTitle(stringResource(R.string.orders_title))
-        Box(modifier = Modifier.weight(1f, fill = false)) {
-            LazyColumn {
-                itemsIndexed(orders) { index, order ->
-                    OrderCard(order = order, position = index + 1)
-                    if (index < orders.lastIndex) {
-                        ListDivider()
-                    }
+
+        LazyColumn {
+            itemsIndexed(orders) { index, order ->
+                OrderCard(order = order, position = index + 1)
+                if (index < orders.lastIndex) {
+                    ListDivider()
                 }
             }
         }
@@ -48,7 +46,7 @@ fun OrdersListViewPreview() {
                 total = 100.0,
                 timestamp = System.currentTimeMillis(),
                 paymentMethod = PaymentMethod.CREDIT_CARD.displayName
-            ),Order(
+            ), Order(
                 orderId = "1",
                 orderItems = listOf(),
                 shippingAddress = "123 Main St",
