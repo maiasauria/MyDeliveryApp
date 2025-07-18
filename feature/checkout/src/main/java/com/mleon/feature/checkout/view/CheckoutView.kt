@@ -88,7 +88,7 @@ fun CheckoutView(
                 item {
                     PriceRow(
                         name = stringResource(id = R.string.prod_totals),
-                        quantity = 0,
+                        quantity = 1,
                         price = subtotalAmount
                     )
                 }

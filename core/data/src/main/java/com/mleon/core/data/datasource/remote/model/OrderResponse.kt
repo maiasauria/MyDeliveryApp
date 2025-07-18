@@ -6,7 +6,7 @@ import com.mleon.core.model.Order
 
 data class OrderResponse(
     val orderId: String,
-    val productIds: List<CartItemDto>,
+    val orderItems: List<CartItemDto>,
     val total: Double,
     val timestamp: Long
 )
@@ -14,7 +14,7 @@ data class OrderResponse(
 fun OrderResponse.toOrder() =
     Order(
         orderId = orderId,
-        orderItems = productIds.map { it.toCartItem() },
+        orderItems = orderItems.map { it.toCartItem() },
         shippingAddress = "",
         paymentMethod = "",
         total = total,

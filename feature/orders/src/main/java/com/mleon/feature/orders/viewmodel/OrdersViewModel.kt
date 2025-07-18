@@ -1,10 +1,10 @@
 package com.mleon.feature.orders.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mleon.core.data.datasource.remote.model.OrderResult
 import com.mleon.feature.orders.domain.usecase.GetOrdersUseCase
+import com.mleon.utils.ERROR_UNKNOWN
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -23,9 +23,8 @@ class OrdersViewModel @Inject constructor(
     val uiState: StateFlow<OrdersUiState> = _uiState
 
     private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
-        Log.e("OrdersViewModel", "Coroutine error", exception)
         _uiState.value = OrdersUiState.Error(
-            Exception(exception.message ?: "Ocurrió un error inesperado. Intenta nuevamente.")
+            Exception(exception.message ?: ERROR_UNKNOWN)
         )
     }
 
@@ -33,8 +32,7 @@ class OrdersViewModel @Inject constructor(
         viewModelScope.launch(dispatcher + exceptionHandler) {
             _uiState.value = OrdersUiState.Loading
             try {
-                val result = getOrdersUseCase()
-                when (result) {
+                when (val result = getOrdersUseCase()) {
                     is OrderResult.SuccessList -> {
                         _uiState.value = OrdersUiState.Success(result.orders)
                     }

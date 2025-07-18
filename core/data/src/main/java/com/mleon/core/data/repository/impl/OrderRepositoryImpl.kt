@@ -36,7 +36,8 @@ class OrderRepositoryImpl @Inject constructor(
 
             when (orderCreated) {
                 is OrderResult.Error -> {
-                    // Si hubo un error al crear la orden en el servidor, elimino la orden y los items de la base de datos
+                    // Si hubo un error al crear la orden en el servidor,
+                    // elimino la orden y los items de la base de datos
                     orderDao.deleteOrder(orderEntity.id)
                     orderItemDao.deleteOrderItemsByOrderId(order.orderId)
                     return@withContext orderCreated
@@ -47,7 +48,6 @@ class OrderRepositoryImpl @Inject constructor(
                 }
             }
         }
-
 
     override suspend fun getOrders(): OrderResult =
         withContext(Dispatchers.IO) {

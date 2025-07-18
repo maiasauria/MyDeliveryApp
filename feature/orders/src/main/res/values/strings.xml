@@ -2,8 +2,7 @@
 <resources>
     <string name="orders_title">Mis pedidos</string>
     <string name="orders_error">Error: %1$s</string>
-    <string name="orders_quantity">%1$d productos</string>
-    <string name="orders_shipping_address">%1$s</string>
-    <string name="orders_date">%1$s</string>
     <string name="orders_title_card">Pedido #%1$s</string>
+    <string name="orders_items_single">%1$d producto</string>
+    <string name="orders_items_plural">%1$d productos</string>
 </resources>

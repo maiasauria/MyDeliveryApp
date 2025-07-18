@@ -4,7 +4,7 @@ import com.mleon.core.model.Order
 
 data class OrderDto(
     val orderId: String,
-    val productIds: List<CartItemDto>,
+    val orderItems: List<CartItemDto>,
     val shippingAddress: String? = null,
     val paymentMethod: String? = null,
     val total: Double,
@@ -14,7 +14,7 @@ data class OrderDto(
 fun Order.toDto(): OrderDto {
     return OrderDto(
         orderId = orderId,
-        productIds = orderItems.map { it.toDto() },
+        orderItems = orderItems.map { it.toDto() },
         shippingAddress = shippingAddress,
         paymentMethod = paymentMethod,
         total = total,
@@ -25,7 +25,7 @@ fun Order.toDto(): OrderDto {
 fun OrderDto.toDomain(): Order =
     Order(
         orderId = orderId,
-        orderItems = productIds.map { it.toCartItem() },
+        orderItems = orderItems.map { it.toCartItem() },
         shippingAddress = shippingAddress ?: "",
         paymentMethod = paymentMethod ?: "",
         total = total,

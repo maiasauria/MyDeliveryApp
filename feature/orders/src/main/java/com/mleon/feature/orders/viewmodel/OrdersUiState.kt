@@ -9,3 +9,4 @@ sealed class OrdersUiState {
     ) : OrdersUiState()
     data class Error(val error: Exception) : OrdersUiState()
 }
+

@@ -1,6 +1,5 @@
 package com.mleon.feature.orders.view
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -9,10 +8,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mleon.feature.orders.viewmodel.OrdersUiState
 import com.mleon.feature.orders.viewmodel.OrdersViewModel
+import com.mleon.utils.ERROR_UNKNOWN
 import com.mleon.utils.ui.ErrorScreen
 import com.mleon.utils.ui.YappLoadingIndicator
 
@@ -21,7 +20,6 @@ fun OrdersScreen(
     viewModel: OrdersViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.loadOrders()
@@ -41,7 +39,7 @@ fun OrdersScreen(
             OrdersListView(orders = orders)
         }
         is OrdersUiState.Error -> {
-            val errorMessage = (uiState as OrdersUiState.Error).error.message ?: "An unexpected error occurred. Please try again."
+            val errorMessage = (uiState as OrdersUiState.Error).error.message ?: ERROR_UNKNOWN
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -50,9 +48,6 @@ fun OrdersScreen(
                     errorMessage = errorMessage,
                     onRetry = { viewModel.loadOrders() }
                 )
-            }
-            LaunchedEffect(errorMessage) {
-                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
             }
         }
     }

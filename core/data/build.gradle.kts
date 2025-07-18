@@ -82,8 +82,9 @@ dependencies {
     implementation (libs.androidx.work.runtime.ktx)
 
     //Cloudinary
-    implementation("com.cloudinary:cloudinary-android:2.3.1") // Biblioteca para interactuar con Cloudinary, un servicio de gestión de medios en la nube.
+    implementation(libs.cloudinary.android) // Biblioteca para interactuar con Cloudinary, un servicio de gestión de medios en la nube.
 
     // Project Modules
     implementation(project(":core:model"))
+    implementation(project(":utils"))
 }
