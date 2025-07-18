@@ -1,6 +1,5 @@
 package com.mleon.feature.orders.view
 
-import android.provider.Settings.System.DATE_FORMAT
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,7 +21,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-private const val DATE_FORMAT = "yyyy-MM-dd HH:mm"
+private const val DATE_DISPLAY_FORMAT = "yyyy-MM-dd HH:mm"
 
 @Composable
 fun OrderCard(order: Order, position: Int) {
@@ -61,7 +60,7 @@ fun OrderCardHeader(order: Order, position: Int) {
 fun OrderCardDetails(order: Order) {
     Text(
         style = MaterialTheme.typography.bodySmall,
-        text = SimpleDateFormat(DATE_FORMAT, Locale("es", "AR"))
+        text = SimpleDateFormat(DATE_DISPLAY_FORMAT, Locale("es", "AR"))
                 .format(Date(order.timestamp))
     )
     Text(

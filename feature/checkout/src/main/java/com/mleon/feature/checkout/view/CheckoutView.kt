@@ -85,11 +85,11 @@ fun CheckoutView(
                         price = cartItem.product.price
                     )
                 }
+                //Subtotal
                 item {
-                    PriceRow(
-                        name = stringResource(id = R.string.prod_totals),
-                        quantity = 1,
-                        price = subtotalAmount
+                    SummaryRow(
+                        label = stringResource(id = R.string.prod_totals),
+                        value = subtotalAmount.toCurrencyFormat()
                     )
                 }
             }
@@ -222,11 +222,10 @@ private fun CheckoutViewPreview() {
 fun PriceRow(
     name: String,
     quantity: Int,
-    price: Double,
-    modifier: Modifier = Modifier
+    price: Double
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(

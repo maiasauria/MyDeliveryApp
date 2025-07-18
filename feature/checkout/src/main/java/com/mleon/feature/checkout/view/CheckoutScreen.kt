@@ -22,6 +22,10 @@ import com.mleon.feature.checkout.viewmodel.CheckoutViewModel
 import com.mleon.utils.ui.ErrorScreen
 import com.mleon.utils.ui.YappLoadingIndicator
 
+private const val TITLE_SHIPPING_ADDRESS = "Dirección de envío"
+private const val TEXT_MISSING_ADDRESS = "Necesitas indicar un domicilio para enviar tu pedido"
+private const val BUTTON_EDIT_PROFILE = "Editar perfil"
+
 @Composable
 fun CheckoutScreen(
     navController: NavHostController,
@@ -30,7 +34,6 @@ fun CheckoutScreen(
 ) {
     val uiState by checkoutViewModel.uiState.collectAsState()
 
-    // Only launch once when the Composable enters the composition
     LaunchedEffect(Unit) {
         checkoutViewModel.loadCheckoutData()
     }
@@ -42,7 +45,11 @@ fun CheckoutScreen(
             LaunchedEffect(successState.orderConfirmed) {
                 if (successState.orderConfirmed) {
                     cartViewModel.clearCart()
-                    navController.navigate(NavigationRoutes.ORDERS)
+                    navController.navigate(NavigationRoutes.ORDERS) {
+                        popUpTo(NavigationRoutes.CHECKOUT) {
+                            inclusive = true
+                        }
+                    }
                 }
             }
 
@@ -75,11 +82,11 @@ fun CheckoutScreen(
         is CheckoutUiState.MissingAddress -> {
             AlertDialog(
                 onDismissRequest = { },
-                title = { Text("Dirección de envío") },
-                text = { Text("Necesitas indicar un domicilio para enviar tu pedido") },
+                title = { Text(TITLE_SHIPPING_ADDRESS) },
+                text = { Text(TEXT_MISSING_ADDRESS) },
                 confirmButton = {
                     Button(onClick = {navController.navigate(NavigationRoutes.PROFILE)}) {
-                        Text("Editar perfil")
+                        Text(BUTTON_EDIT_PROFILE)
                     }
                 }
             )

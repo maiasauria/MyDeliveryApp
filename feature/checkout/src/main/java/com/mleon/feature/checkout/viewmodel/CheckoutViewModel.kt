@@ -45,10 +45,6 @@ class CheckoutViewModel @Inject constructor(
         viewModelScope.launch(dispatcher + exceptionHandler) {
             try {
                 val address = getUserAddressUseCase()
-                if (address.isBlank()) {
-                    _uiState.value = CheckoutUiState.MissingAddress
-                    return@launch
-                }
                 val cartItems = getCartItemsWithProductsUseCase()
                 val subTotal = cartItems.sumOf { it.product.price * it.quantity }
                 val shippingCost = SHIPPING_COST
@@ -75,10 +71,6 @@ class CheckoutViewModel @Inject constructor(
         val state = _uiState.value as? CheckoutUiState.Success ?: return@launch
         _uiState.value = CheckoutUiState.Loading
 
-        if (state.shippingAddress.isBlank()) {
-            _uiState.value = CheckoutUiState.MissingAddress
-            return@launch
-        }
         val order = Order(
             orderId = UUID.randomUUID().toString(),
             orderItems = state.cartItems,
