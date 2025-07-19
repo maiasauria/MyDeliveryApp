@@ -1,7 +1,6 @@
 package com.mleon.feature.profile.views
 
 import android.Manifest
-import android.content.Context
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -19,17 +18,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mleon.core.model.User
 import com.mleon.core.navigation.NavigationRoutes
+import com.mleon.feature.profile.R
 import com.mleon.feature.profile.viewmodel.ProfileUiState
 import com.mleon.feature.profile.viewmodel.ProfileViewModel
+import com.mleon.utils.UriUtils
 import com.mleon.utils.ui.ErrorScreen
 import com.mleon.utils.ui.YappLoadingIndicator
-import java.io.File
 
+
+const val IMAGE_ROUTE = "image/*"
+const val CAMERA_PERMISSION = Manifest.permission.CAMERA
 
 @Composable
 fun ProfileScreen(
@@ -40,14 +42,14 @@ fun ProfileScreen(
     val context = LocalContext.current
 
     // Permission dialog state
-    var showPermissionDialog by rememberSaveable { mutableStateOf(false) }
     var permissionToRequest by rememberSaveable { mutableStateOf("") }
     var pendingAction by remember { mutableStateOf<(() -> Unit)?>(null) }
     var showLogoutDialog by rememberSaveable { mutableStateOf(false) }
     var showPreview by rememberSaveable { mutableStateOf(false) }
     var userDraft by remember { mutableStateOf<User?>(null) }
-    var cameraImageUri by remember { mutableStateOf<Uri?>(null) }
 
+    // Estado para la imagen de la cámara
+    var cameraImageUri by remember { mutableStateOf<Uri?>(null) }
 
     // Gallery launcher
     val galleryLauncher = rememberLauncherForActivityResult(
@@ -65,24 +67,14 @@ fun ProfileScreen(
         }
     }
 
-    // Permission launcher
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         if (isGranted) {
             pendingAction?.invoke()
         } else {
-            Toast.makeText(context, "Permission denied", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.profile_permission_denied), Toast.LENGTH_SHORT).show()
         }
-    }
-
-    fun createImageUri(context: Context): Uri? {
-        val image = File(context.cacheDir, "profile_photo_${System.currentTimeMillis()}.jpg")
-        return FileProvider.getUriForFile(
-            context,
-            "${context.packageName}.provider",
-            image
-        )
     }
 
     LaunchedEffect(Unit) {
@@ -108,15 +100,11 @@ fun ProfileScreen(
 
         is ProfileUiState.Success -> {
             val state = uiState.data
+            val userData = uiState.userData
 
-            LaunchedEffect(state.errorMessage) {
-                if (state.errorMessage.isNotEmpty()) {
-                    Toast.makeText(context, state.errorMessage, Toast.LENGTH_LONG).show()
-                }
-            }
             LaunchedEffect(state.isSaved) {
                 if (state.isSaved) {
-                    Toast.makeText(context, "Perfil guardado", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, context.getString(R.string.profile_saved_toast), Toast.LENGTH_LONG).show()
                     viewModel.clearSavedFlag()
                 }
             }
@@ -126,27 +114,19 @@ fun ProfileScreen(
                 onLastnameChange = viewModel::onLastnameChange,
                 onEmailChange = viewModel::onEmailChange,
                 onAddressChange = viewModel::onAddressChange,
-                name = state.name,
-                lastname = state.lastname,
-                email = state.email,
-                address = state.address,
-                userImageUrl = state.userImageUrl,
-                isLoading = state.isLoading,
-                isFormValid = state.isFormValid,
-                errorMessageName = state.errorMessageName,
-                errorMessageLastname = state.errorMessageLastname,
-                errorMessageEmail = state.errorMessageEmail,
-                errorMessageAddress = state.errorMessageAddress,
+                formState = state,
+                userData = userData,
                 onRequestCamera = {
-                    permissionToRequest = Manifest.permission.CAMERA
-                    showPermissionDialog = true
+                    permissionToRequest = CAMERA_PERMISSION
                     pendingAction = {
-                        cameraImageUri = createImageUri(context)
+                        cameraImageUri = UriUtils.createImageUri(context)
                         cameraImageUri?.let { cameraLauncher.launch(it) }
                     }
+                    //No chequeo SDK porque la app requiere 24 y el permiso está disponible desde 23
+                    permissionLauncher.launch(permissionToRequest)
                 },
                 onRequestGallery = {
-                    galleryLauncher.launch("image/*")
+                    galleryLauncher.launch(IMAGE_ROUTE)
                 },
                 onLogoutRequest = { showLogoutDialog = true },
                 onShowPreview = { draft ->
@@ -157,18 +137,6 @@ fun ProfileScreen(
         }
     }
 
-    // Muestra el diálogo de permisos si es necesario
-    if (showPermissionDialog) {
-        PermissionDialog(
-            permissionToRequest = permissionToRequest,
-            onConfirm = {
-                showPermissionDialog = false
-                permissionLauncher.launch(permissionToRequest)
-            },
-            onDismiss = { showPermissionDialog = false }
-        )
-    }
-
     // Muestra el diálogo de previsualización del perfil si hay datos modificados
     if (showPreview && userDraft != null) {
         ProfilePreviewDialog(
@@ -177,12 +145,15 @@ fun ProfileScreen(
                 viewModel.updateProfile()
                 showPreview = false
             },
-            onDismiss = { showPreview = false }
+            onDismiss = {
+                showPreview = false
+                viewModel.loadProfile()
+            },
         )
     }
 
-    if (uiState is ProfileUiState.Success && uiState.data.isImageUploading) {
-        ImageUploadingDialog()
+    if (uiState is ProfileUiState.Success && uiState.data.isUploading) {
+        UploadingDialog()
     }
 
     if (showLogoutDialog) {

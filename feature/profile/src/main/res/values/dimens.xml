@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="profile_screen_padding">16dp</dimen>
     <dimen name="profile_screen_spacing">12dp</dimen>
-    <dimen name="profile_image_size">128dp</dimen>
-    <dimen name="profile_image_icon_padding">24dp</dimen>
     <dimen name="profile_preview_image_size">96dp</dimen>
-    <dimen name="profile_preview_spacing">8dp</dimen>
+    <dimen name="profile_uploading_dialog_spacer">8dp</dimen>
+    <dimen name="profile_spacer">16dp</dimen>
     <dimen name="profile_uploading_dialog_vertical_padding">16dp</dimen>
-    <dimen name="profile_uploading_dialog_spacing">8dp</dimen>
-    <dimen name="profile_spacer_16">16dp</dimen>
-    <dimen name="profile_spacer_8">8dp</dimen>
+    <dimen name="profile_uploading_dialog_spacing">16dp</dimen>
     <dimen name="profile_user_image_size">128dp</dimen>
     <dimen name="profile_user_icon_padding">24dp</dimen>
 </resources>
