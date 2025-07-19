@@ -9,6 +9,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +22,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 
 @Composable
@@ -74,7 +77,7 @@ fun YappLoadingDots(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun YappLoadingIndicator() {
+fun YappFullScreenLoadingIndicator() {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -85,7 +88,7 @@ fun YappLoadingIndicator() {
     }
 }
 @Composable
-fun YappFullScreenLoadingIndicator() {
+fun YappLogoLoadingIndicator() {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -96,6 +99,7 @@ fun YappFullScreenLoadingIndicator() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             LogoImage()
+            Spacer(modifier = Modifier.height(24.dp))
             YappLoadingDots()
         }
     }
@@ -105,9 +109,28 @@ fun YappSmallLoadingIndicator() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .height(48.dp)
             .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f)),
         contentAlignment = Alignment.Center
     ) {
         YappLoadingDots()
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun YappLoadingIndicatorPreview() {
+    YappFullScreenLoadingIndicator()
+}
+
+@Preview(showBackground = true)
+@Composable
+fun YappFullScreenLoadingIndicatorPreview() {
+    YappLogoLoadingIndicator()
+}
+
+@Preview(showBackground = true)
+@Composable
+fun YappSmallLoadingIndicatorPreview() {
+    YappSmallLoadingIndicator()
 }

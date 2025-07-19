@@ -27,7 +27,7 @@ import com.mleon.feature.profile.viewmodel.ProfileUiState
 import com.mleon.feature.profile.viewmodel.ProfileViewModel
 import com.mleon.utils.UriUtils
 import com.mleon.utils.ui.ErrorScreen
-import com.mleon.utils.ui.YappLoadingIndicator
+import com.mleon.utils.ui.YappFullScreenLoadingIndicator
 
 
 const val IMAGE_ROUTE = "image/*"
@@ -83,7 +83,7 @@ fun ProfileScreen(
 
     when (uiState) {
         is ProfileUiState.Loading -> {
-            YappLoadingIndicator()
+            YappFullScreenLoadingIndicator()
         }
 
         is ProfileUiState.Error -> {

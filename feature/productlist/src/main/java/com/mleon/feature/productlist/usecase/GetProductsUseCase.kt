@@ -9,6 +9,7 @@ class GetProductsUseCase @Inject constructor(
     private val productRepository: ProductRepository
 ) {
     suspend operator fun invoke(refreshData : Boolean): ProductResult {
+        // Llamamos al repositorio para obtener la lista de productos
         return productRepository.getProducts(refreshData)
     }
 }

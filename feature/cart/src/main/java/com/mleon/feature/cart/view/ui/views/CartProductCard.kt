@@ -167,7 +167,7 @@ fun ProductPrice(price: Double = 0.0, productQuantity: Int = 1, modifier: Modifi
 
 @Composable
 fun QuantityButton(
-    enabled: Boolean = false,
+    enabled: Boolean = true,
     onClick: () -> Unit = {},
     contentDescription: String = "",
     icon: ImageVector

@@ -3,18 +3,26 @@
 
     <dimen name="product_card_height">110dp</dimen>
     <dimen name="product_card_image_size">96dp</dimen>
-
     <dimen name="product_card_corner_radius">12dp</dimen>
-
-
     <dimen name="product_card_content_padding">8dp</dimen>
     <dimen name="product_card_price_top_padding">8dp</dimen>
     <dimen name="product_card_add_button_size">32dp</dimen>
     <dimen name="product_card_pulsate_corner_radius">12dp</dimen>
     <dimen name="product_card_pulsate_padding">16dp</dimen>
 
-    <dimen name="product_detail_back_button_padding">16dp</dimen>
+    <dimen name="product_detail_back_button_radius">40dp</dimen>
     <dimen name="product_detail_content_padding">16dp</dimen>
+    <dimen name="product_detail_padding">8dp</dimen>
     <dimen name="product_detail_section_spacing">16dp</dimen>
     <dimen name="product_detail_quantity_width">32dp</dimen>
+    <dimen name="product_detail_quantity_text_padding">8dp</dimen>
+    <dimen name="product_detail_corner_radius">12dp</dimen>
+    <dimen name="product_detail_selector_radius">40dp</dimen>
+    <dimen name="product_detail_fraction_height">0.33</dimen>
+    <dimen name="product_detail_chip_padding">4dp</dimen>
+    <dimen name="product_detail_row_padding">8dp</dimen>
+    <dimen name="product_detail_icon_start_padding">8dp</dimen>
+    <dimen name="product_detail_icon_end_padding">4dp</dimen>
+    <dimen name="product_detail_chip_spacing">8dp</dimen>
+
 </resources>

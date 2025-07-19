@@ -15,7 +15,7 @@ import com.mleon.feature.cart.view.viewmodel.CartViewModel
 import com.mleon.feature.productlist.viewmodel.ProductListUiState
 import com.mleon.feature.productlist.viewmodel.ProductListViewModel
 import com.mleon.utils.ui.ErrorScreen
-import com.mleon.utils.ui.YappLoadingIndicator
+import com.mleon.utils.ui.YappFullScreenLoadingIndicator
 
 @Composable
 fun ProductListScreen(
@@ -38,7 +38,7 @@ fun ProductListScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                YappLoadingIndicator()
+                YappFullScreenLoadingIndicator()
             }
         }
 
@@ -67,7 +67,7 @@ fun ProductListScreen(
                 onProductClick = { productId -> onProductClick(productId) },
                 onOrderByNameAscending = { productListViewModel.onOrderByNameAscending() },
                 onOrderByNameDescending = { productListViewModel.onOrderByNameDescending() },
-                isRefreshing = isRefreshing,
+                isRefreshing = isRefreshing, //TODO revisar si hace falta.
                 onRefresh = { productListViewModel.loadProducts(refreshData = true) },
             )
         }

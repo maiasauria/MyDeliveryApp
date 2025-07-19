@@ -39,8 +39,9 @@ fun AppNavigation(navController: NavHostController) {
         composable(route = NavigationRoutes.PRODUCTS) {
             ProductListScreen(
                 onProductClick = { productId ->
-                    navController.navigate("productDetail/$productId")
-            })
+                    val route = NavigationRoutes.PRODUCT_DETAIL.replace("{productId}", productId)
+                    navController.navigate(route)
+                })
         }
         composable(route = NavigationRoutes.CART) {
             CartScreen(navController)
@@ -63,6 +64,17 @@ fun AppNavigation(navController: NavHostController) {
             )
         }
     }
+}
+@Composable
+fun ProductDetailNav(
+    navController: NavHostController,
+    backStackEntry: NavBackStackEntry
+) {
+    val productId = backStackEntry.arguments?.getString("productId") ?: ""
+    ProductDetailScreen(
+        productId = productId,
+        navController = navController,
+    )
 }
 
 // Funcion de extensión para navegar a una ruta específica

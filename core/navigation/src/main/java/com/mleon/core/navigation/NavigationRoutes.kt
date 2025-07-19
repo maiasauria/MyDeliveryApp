@@ -7,6 +7,6 @@ object NavigationRoutes {
     const val CART = "cart"
     const val PROFILE = "profile"
     const val ORDERS = "orders"
-    const val PAYMENT = "payment"
     const val CHECKOUT = "checkout"
+    const val PRODUCT_DETAIL = "productDetail/{productId}"
 }

@@ -20,7 +20,7 @@ import com.mleon.feature.cart.view.viewmodel.CartViewModel
 import com.mleon.feature.checkout.viewmodel.CheckoutUiState
 import com.mleon.feature.checkout.viewmodel.CheckoutViewModel
 import com.mleon.utils.ui.ErrorScreen
-import com.mleon.utils.ui.YappLoadingIndicator
+import com.mleon.utils.ui.YappFullScreenLoadingIndicator
 
 private const val TITLE_SHIPPING_ADDRESS = "Dirección de envío"
 private const val TEXT_MISSING_ADDRESS = "Necesitas indicar un domicilio para enviar tu pedido"
@@ -65,7 +65,7 @@ fun CheckoutScreen(
             )
         }
         is CheckoutUiState.Loading -> {
-            YappLoadingIndicator()
+            YappFullScreenLoadingIndicator()
         }
         is CheckoutUiState.Error -> {
             val errorState = uiState as CheckoutUiState.Error

@@ -41,14 +41,14 @@ class CartViewModel @Inject constructor(
 
     }
 
-    fun addToCart(product: Product) {
+    fun addToCart(product: Product, quantity: Int = 1) {
         val state = _uiState.value
         if (state is CartUiState.Success) {
             _uiState.value = state.copy(isProcessing = true) // Cambia el estado a Success con isProcessing = true
         }
         viewModelScope.launch(dispatcher + exceptionHandler) {
             try {
-                addProductToCartUseCase(product)
+                addProductToCartUseCase(product, quantity)
                 updateCartUiState("${product.name} agregado al carrito")
             } catch (e: Exception) {
                 _uiState.value = CartUiState.Error(e.message ?: "Error al agregar el producto al carrito")

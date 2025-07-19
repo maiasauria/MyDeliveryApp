@@ -8,15 +8,20 @@ import javax.inject.Inject
 class AddProductToCartUseCase @Inject constructor(
     private val cartItemRepository: CartItemRepository
 ) {
-    suspend operator fun invoke(product: Product) {
+    suspend operator fun invoke(product: Product, quantity: Int = 1) {
+        // Verificamos si el producto ya existe en el carrito
         val existingCartItem = cartItemRepository.getCartItemByProductId(product.id)
+
+        // Si el producto ya está en el carrito, actualizamos la cantidad
         if (existingCartItem != null) {
-            val updatedCartItem = existingCartItem.copy(quantity = existingCartItem.quantity + 1)
+            val updatedCartItem = existingCartItem.copy(quantity = quantity)
             cartItemRepository.updateCartItem(updatedCartItem)
+
+        // Si el producto no está en el carrito, lo insertamos como un nuevo artículo
         } else {
-            cartItemRepository.insertCartItem(CartItemEntity(productId = product.id, quantity = 1))
+            cartItemRepository.insertCartItem(
+                CartItemEntity(productId = product.id, quantity = quantity)
+            )
         }
     }
 }
-
-

@@ -23,7 +23,7 @@ import com.mleon.login.R
 import com.mleon.utils.ui.LogoImage
 import com.mleon.utils.ui.ValidatePasswordField
 import com.mleon.utils.ui.ValidateTextField
-import com.mleon.utils.ui.YappFullScreenLoadingIndicator
+import com.mleon.utils.ui.YappLogoLoadingIndicator
 
 @Composable
 fun LoginView(
@@ -99,7 +99,7 @@ fun LoginView(
         }
     }
     if (isLoading) {
-        YappFullScreenLoadingIndicator()
+        YappLogoLoadingIndicator()
     }
 }
 

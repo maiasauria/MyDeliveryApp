@@ -16,7 +16,7 @@ import com.mleon.core.navigation.NavigationRoutes
 import com.mleon.feature.cart.view.viewmodel.CartUiState
 import com.mleon.feature.cart.view.viewmodel.CartViewModel
 import com.mleon.utils.ui.ErrorScreen
-import com.mleon.utils.ui.YappLoadingIndicator
+import com.mleon.utils.ui.YappFullScreenLoadingIndicator
 
 @Composable
 fun CartScreen(
@@ -33,7 +33,7 @@ fun CartScreen(
 
     when (uiState) {
         is CartUiState.Loading -> {
-            YappLoadingIndicator()
+            YappFullScreenLoadingIndicator()
         }
 
         is CartUiState.Success -> {

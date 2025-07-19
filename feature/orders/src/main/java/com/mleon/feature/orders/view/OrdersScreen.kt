@@ -13,7 +13,7 @@ import com.mleon.feature.orders.viewmodel.OrdersUiState
 import com.mleon.feature.orders.viewmodel.OrdersViewModel
 import com.mleon.utils.ERROR_UNKNOWN
 import com.mleon.utils.ui.ErrorScreen
-import com.mleon.utils.ui.YappLoadingIndicator
+import com.mleon.utils.ui.YappFullScreenLoadingIndicator
 
 @Composable
 fun OrdersScreen(
@@ -31,7 +31,7 @@ fun OrdersScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                YappLoadingIndicator()
+                YappFullScreenLoadingIndicator()
             }
         }
         is OrdersUiState.Success -> {
