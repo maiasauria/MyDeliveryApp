@@ -1,34 +1,31 @@
 package com.mleon.feature.signup.viewmodel
 
-import android.content.SharedPreferences
-import android.util.Log
-import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mleon.core.data.datasource.remote.model.AuthResult
 import com.mleon.feature.signup.usecase.RegisterUserParams
 import com.mleon.feature.signup.usecase.RegisterUserUseCase
+import com.mleon.feature.signup.usecase.SaveUserEmailUseCase
+import com.mleon.utils.UserValidations
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val ERROR_SIGNUP = "Por favor, completa todos los campos correctamente."
+private const val ERROR_SIGNUP_PREFIX = "Error: "
+
 @HiltViewModel
-class SignupViewModel
-@Inject
-constructor(
-    private val sharedPreferences: SharedPreferences,
+class SignupViewModel @Inject constructor(
     private val registerUserUseCase: RegisterUserUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val saveUserEmailUseCase: SaveUserEmailUseCase,
+    private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(SignupUiState())
-    val uiState: StateFlow<SignupUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<SignupUiState> = _uiState
 
     fun onEmailChange(email: String) {
         _uiState.update { it.copy(email = email) }
@@ -55,97 +52,64 @@ constructor(
         validateForm()
     }
 
-
-    private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
-        Log.e("SignupViewModel", "Coroutine error", exception)
-        _uiState.update { it.copy(errorMessageSignup = "Ocurrió un error inesperado.") }
-    }
-
-    fun onSignupButtonClick() {
-        _uiState.update {
-            it.copy(
-                isLoading = true,
-                errorMessageSignup = "",
-                signupSuccess = false
-            )
-        }
+    fun onSignupClick() {
         validateForm()
-
-        // Fail first: Si no es valido, no continuar con el registro
         if (!_uiState.value.isFormValid) {
-            _uiState.update {
-                it.copy(
-                    errorMessageSignup = "Por favor, completa todos los campos correctamente.",
-                    isLoading = false,
-                    signupSuccess = false
-                )
-            }
+            _uiState.update { it.copy(errorMessageSignup = ERROR_SIGNUP) }
             return
         }
+        signup()
+    }
 
-        //No indico el dispatcher porque el caso de uso ya lo maneja internamente
-        viewModelScope.launch(dispatcher + exceptionHandler) {
+    private fun validateForm() {
+        val state = _uiState.value
 
+        val nameResult = UserValidations.validateName(state.name)
+        val lastnameResult = UserValidations.validateLastname(state.lastname)
+        val emailResult = UserValidations.validateEmail(state.email)
+        val passwordResult = UserValidations.validatePassword(state.password)
+        val passwordConfirmResult = UserValidations.validatePasswordConfirm(state.password, state.passwordConfirm)
+
+        _uiState.update {
+            it.copy(
+                errorMessageName = if (state.name.isNotBlank() && !nameResult.isValid) nameResult.errorMessage ?: "" else "",
+                errorMessageLastname = if (state.lastname.isNotBlank() && !lastnameResult.isValid) lastnameResult.errorMessage ?: "" else "",
+                errorMessageEmail = if (state.email.isNotBlank() && !emailResult.isValid) emailResult.errorMessage ?: "" else "",
+                errorMessagePassword = if (state.password.isNotBlank() && !passwordResult.isValid) passwordResult.errorMessage ?: "" else "",
+                errorMessagePasswordConfirm = if (state.passwordConfirm.isNotBlank() && !passwordConfirmResult.isValid) passwordConfirmResult.errorMessage ?: "" else "",
+                isFormValid = nameResult.isValid && lastnameResult.isValid &&
+                        emailResult.isValid && passwordResult.isValid && passwordConfirmResult.isValid
+            )
+        }
+    }
+
+
+    private fun signup() {
+        println("signup: ${_uiState.value}")
+        _uiState.update { it.copy(isLoading = true, errorMessageSignup = "") }
+        viewModelScope.launch(dispatcher) {
             try {
-                val currentState = _uiState.value // Obtiene el estado actual una vez
                 val params = RegisterUserParams(
-                    name = currentState.name,
-                    lastname = currentState.lastname,
-                    email = currentState.email,
-                    password = currentState.password
+                    name = _uiState.value.name,
+                    lastname = _uiState.value.lastname,
+                    email = _uiState.value.email,
+                    password = _uiState.value.password
                 )
                 val result = registerUserUseCase(params)
-
+                println("signup: $result")
                 handleRegistrationResult(result)
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
-                        errorMessageSignup = e.message ?: "Error desconocido",
-                        isFormValid = false,
-                        signupSuccess = false,
+                        errorMessageSignup = ERROR_SIGNUP_PREFIX + (e.message ?: "")
                     )
                 }
-            } finally {
-                _uiState.update { it.copy(isLoading = false) }
             }
         }
     }
 
-    private fun validateForm() {
-        val currentState = _uiState.value // Obtiene el estado actual una vez
-        val isNameValid = currentState.name.isNotBlank() && currentState.name.length in 2..20
-        val isLastnameValid =
-            currentState.lastname.isNotBlank() && currentState.lastname.length in 2..20
-        val isEmailValid = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$").matches(currentState.email)
-        val isPasswordValid = currentState.password.length in 8..12
-        val isPasswordConfirmValid =
-            currentState.password == currentState.passwordConfirm && currentState.passwordConfirm.isNotBlank()
-
-        _uiState.update {
-            it.copy(
-                errorMessageName = if (!isNameValid && currentState.name.isNotEmpty()) "El nombre no puede estar vacío" else "",
-                errorMessageLastname = if (!isLastnameValid && currentState.lastname.isNotEmpty()) {
-                    "El apellido no puede estar vacío"
-                } else {
-                    ""
-                },
-                errorMessageEmail = if (!isEmailValid && currentState.email.isNotEmpty()) "Email inválido" else "",
-                errorMessagePassword = if (!isPasswordValid && currentState.password.isNotEmpty()) {
-                    "La contraseña debe tener entre 8 y 12 caracteres"
-                } else {
-                    ""
-                },
-                errorMessagePasswordConfirm = if (!isPasswordConfirmValid && currentState.passwordConfirm.isNotEmpty()) {
-                    "Las contraseñas no coinciden"
-                } else {
-                    ""
-                },
-                isFormValid = isNameValid && isLastnameValid && isEmailValid && isPasswordValid && isPasswordConfirmValid,
-            )
-        }
-    }
-
     private fun handleRegistrationResult(result: AuthResult) {
+        println("handleRegistrationResult: $result")
         when (result) {
             is AuthResult.Success -> {
                 _uiState.update {
@@ -153,17 +117,20 @@ constructor(
                         signupSuccess = true,
                         errorMessageSignup = "", // Limpiar errores previos
                         password = "",
-                        passwordConfirm = ""
+                        passwordConfirm = "",
+                        isLoading = false
                     )
                 }
-                sharedPreferences.edit { putString("user_email", result.user.email) }
+
+                saveUserEmailUseCase(result.user.email)
             }
 
             is AuthResult.Error -> {
                 _uiState.update {
                     it.copy(
                         signupSuccess = false,
-                        errorMessageSignup = result.errorMessage
+                        errorMessageSignup = result.errorMessage,
+                        isLoading = false
                     )
                 }
             }

@@ -1,148 +1,142 @@
 package com.mleon.login.viewmodel
 
-import android.content.SharedPreferences
 import android.util.Log
 import com.mleon.core.data.datasource.remote.model.AuthResult
 import com.mleon.core.model.User
-import com.mleon.login.usecase.LoginUserUseCase
+import com.mleon.login.usecase.SaveUserEmailUseCase
+import io.mockk.coEvery
 import io.mockk.every
+import io.mockk.mockk
 import io.mockk.mockkStatic
-import kotlinx.coroutines.Dispatchers
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
-import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
-
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class LoginViewModelTest {
-
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var loginUserUseCase: LoginUserUseCase
+    private lateinit var sharedPreferences: android.content.SharedPreferences
+    private lateinit var loginUserUseCase: com.mleon.login.usecase.LoginUserUseCase
+    private lateinit var saveUserEmailUseCase: SaveUserEmailUseCase
     private lateinit var viewModel: LoginViewModel
     private val testScheduler = TestCoroutineScheduler()
 
     @Before
     fun setUp() {
-        sharedPreferences = mock()
-        loginUserUseCase = mock()
+        sharedPreferences = mockk(relaxed = true)
+        loginUserUseCase = mockk()
+        saveUserEmailUseCase = mockk(relaxed = true)
         mockkStatic(Log::class)
         every { Log.e(any(), any()) } returns 0
         every { Log.d(any(), any(), any()) } returns 0
     }
 
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
-
     @Test
-    fun `given invalid email when onEmailChange then email validation fails`() {
-        val invalidEmail = "invalid-email"
+    fun `uiState is invalid when email is invalid`() {
         viewModel = LoginViewModel(
-            sharedPreferences,
             loginUserUseCase,
+            saveUserEmailUseCase,
             StandardTestDispatcher(testScheduler)
         )
-        viewModel.onEmailChange(invalidEmail)
-        assertFalse(viewModel.uiState.value.isEmailValid)
-        assertEquals("El email no es válido", viewModel.uiState.value.errorMessageEmail)
-
-
+        viewModel.onEmailChange("invalid-email")
+        thenUiStateIsInvalidEmail(viewModel)
     }
 
     @Test
-    fun `given short password when onPasswordChange then password validation fails`() {
-        val shortPassword = "short"
+    fun `uiState is invalid when password is too short`() {
         viewModel = LoginViewModel(
-            sharedPreferences,
             loginUserUseCase,
+            saveUserEmailUseCase,
             StandardTestDispatcher(testScheduler)
         )
-        viewModel.onPasswordChange(shortPassword)
-        assertFalse(viewModel.uiState.value.isPasswordValid)
-        assertEquals(
-            "La contraseña debe tener entre 8 y 12 caracteres",
-            viewModel.uiState.value.errorMessagePassword
-        )
+        viewModel.onPasswordChange("short")
+        thenUiStateIsInvalidPassword(viewModel)
     }
 
     @Test
-    fun `given valid email and password when both changed then form is valid`() = runTest {
-        val email = "test@example.com"
-        val password = "password1"
+    fun `uiState is valid when email and password are valid`() {
         viewModel = LoginViewModel(
-            sharedPreferences,
             loginUserUseCase,
+            saveUserEmailUseCase,
             StandardTestDispatcher(testScheduler)
         )
-        viewModel.onEmailChange(email)
-        viewModel.onPasswordChange(password)
-        assertTrue(viewModel.uiState.value.isFormValid)
+        viewModel.onEmailChange("test@example.com")
+        viewModel.onPasswordChange("password1")
+        thenUiStateIsFormValid(viewModel)
     }
 
     @Test
-    fun `onLoginClick with invalid credentials updates state with error message`() = runTest {
+    fun `uiState is error when login fails`() = runTest {
         val errorMessage = "Invalid credentials"
         val errorCode = 401
-        val result = AuthResult.Error(errorMessage, errorCode)
-        whenever(loginUserUseCase(any())).thenReturn(result)
+        coEvery { loginUserUseCase(any()) } returns AuthResult.Error(errorMessage, errorCode)
         viewModel = LoginViewModel(
-            sharedPreferences,
             loginUserUseCase,
+            saveUserEmailUseCase,
             StandardTestDispatcher(testScheduler)
         )
         viewModel.onEmailChange("test@example.com")
         viewModel.onPasswordChange("password1")
         viewModel.onLoginClick()
         advanceUntilIdle()
-
-        val state = viewModel.uiState.value
-        assertFalse(state.loginSuccess)
-        assertEquals(errorMessage, state.errorMessageLogin)
-        assertFalse(state.isLoading)
+        thenUiStateIsLoginError(viewModel, errorMessage)
     }
 
     @Test
-    fun `onLoginClick with valid credentials updates state and saves email`() = runTest {
+    fun `uiState is success and email is saved when login succeeds`() = runTest {
         val user = User(email = "test@example.com", name = "Test User", lastname = "User", address = "123 Test St")
-        val result = AuthResult.Success(message = "", user = user)
-        val editor: SharedPreferences.Editor = mock()
-        whenever(sharedPreferences.edit()).thenReturn(editor)
-        whenever(editor.putString(any(), any())).thenReturn(editor)
-        whenever(loginUserUseCase(any())).thenReturn(result)
+        coEvery { loginUserUseCase(any()) } returns AuthResult.Success(message = "", user = user)
+        every { saveUserEmailUseCase.invoke(user.email) } returns Unit
         viewModel = LoginViewModel(
-            sharedPreferences,
             loginUserUseCase,
+            saveUserEmailUseCase,
             StandardTestDispatcher(testScheduler)
         )
         viewModel.onEmailChange(user.email)
         viewModel.onPasswordChange("password1")
         viewModel.onLoginClick()
         advanceUntilIdle()
+        thenUiStateIsLoginSuccess(viewModel, user.email)
+        verify(exactly = 1) { saveUserEmailUseCase.invoke(user.email) }
+    }
 
+    // Helpers
+
+    private fun thenUiStateIsInvalidEmail(viewModel: LoginViewModel) {
+        val state = viewModel.uiState.value
+        assertFalse(state.isEmailValid)
+        assertEquals("El email no es válido", state.errorMessageEmail)
+    }
+
+    private fun thenUiStateIsInvalidPassword(viewModel: LoginViewModel) {
+        val state = viewModel.uiState.value
+        assertFalse(state.isPasswordValid)
+        assertEquals("La contraseña debe tener entre 8 y 12 caracteres", state.errorMessagePassword)
+    }
+
+    private fun thenUiStateIsFormValid(viewModel: LoginViewModel) {
+        val state = viewModel.uiState.value
+        assertTrue(state.isFormValid)
+    }
+
+    private fun thenUiStateIsLoginError(viewModel: LoginViewModel, errorMessage: String) {
+        val state = viewModel.uiState.value
+        assertFalse(state.loginSuccess)
+        assertEquals(errorMessage, state.errorMessageLogin)
+        assertFalse(state.isLoading)
+    }
+
+    private fun thenUiStateIsLoginSuccess(viewModel: LoginViewModel, email: String) {
         val state = viewModel.uiState.value
         assertTrue(state.loginSuccess)
         assertEquals("", state.errorMessageLogin)
         assertEquals("", state.password)
-        verify(editor).putString(eq("user_email"), eq(user.email))
-        verify(editor).apply()
     }
 }
-

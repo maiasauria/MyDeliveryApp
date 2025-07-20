@@ -25,23 +25,60 @@ import com.mleon.utils.ui.ValidatePasswordField
 import com.mleon.utils.ui.ValidateTextField
 import com.mleon.utils.ui.YappLogoLoadingIndicator
 
+data class LoginViewParams(
+    val email: String = "",
+    val isEmailValid: Boolean = true,
+    val errorMessageEmail: String = "",
+    val password: String = "",
+    val passwordVisible: Boolean = false,
+    val isPasswordValid: Boolean = true,
+    val errorMessagePassword: String = "",
+    val isFormValid: Boolean = false,
+    val errorMessageLogin: String = "",
+    val isLoading: Boolean = false,
+)
+
+data class LoginViewActions(
+    val onEmailChange: (String) -> Unit = {},
+    val onPasswordChange: (String) -> Unit = {},
+    val onPasswordVisibilityChange: (Boolean) -> Unit = {},
+    val onLoginClick: () -> Unit = {},
+    val onSignupClick: () -> Unit = {},
+)
+
+@Composable
+private fun ErrorSection(params: LoginViewParams) {
+    if (params.errorMessageLogin.isNotEmpty()) {
+        Text(
+            text = params.errorMessageLogin,
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.login_error_bottom_padding))
+        )
+    }
+}
+
+@Composable
+private fun ActionsSection(params: LoginViewParams, actions: LoginViewActions) {
+    LoginButton(
+        onClick = actions.onLoginClick,
+        isFormValid = params.isFormValid,
+        enabled = !params.isLoading
+    )
+    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.login_spacer_24)))
+    TextButton(
+        onClick = actions.onSignupClick,
+        modifier = Modifier.fillMaxWidth(),
+        enabled = !params.isLoading
+    ) {
+        Text(text = stringResource(id = R.string.login_no_account))
+    }
+}
+
 @Composable
 fun LoginView(
-    email: String = "",
-    onEmailChange: (String) -> Unit = {},
-    isEmailValid: Boolean = true,
-    errorMessageEmail: String = "",
-    password: String = "",
-    onPasswordChange: (String) -> Unit = {},
-    passwordVisible: Boolean = false,
-    onPasswordVisibilityChange: (Boolean) -> Unit = {},
-    isPasswordValid: Boolean = true,
-    errorMessagePassword: String = "",
-    isFormValid: Boolean = false,
-    onLoginClick: () -> Unit = {},
-    onSignupClick: () -> Unit = {},
-    errorMessageLogin: String = "",
-    isLoading: Boolean = false,
+    params: LoginViewParams,
+    actions: LoginViewActions
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -56,49 +93,31 @@ fun LoginView(
         ) {
             LogoImage()
             ValidateTextField(
-                value = email,
-                onValueChange = onEmailChange,
+                value = params.email,
+                onValueChange = actions.onEmailChange,
                 label = stringResource(id = R.string.login_email_label),
-                isError = !isEmailValid,
-                errorMessage = errorMessageEmail,
-                enabled = !isLoading
+                isError = !params.isEmailValid,
+                errorMessage = params.errorMessageEmail,
+                enabled = !params.isLoading
             )
+
             ValidatePasswordField(
-                value = password,
-                onValueChange = onPasswordChange,
+                value = params.password,
+                onValueChange = actions.onPasswordChange,
                 label = stringResource(id = R.string.login_password_label),
-                isError = !isPasswordValid,
-                errorMessage = errorMessagePassword,
-                passwordVisible = passwordVisible,
-                onPasswordVisibilityChange = { onPasswordVisibilityChange(!passwordVisible) },
-                enabled = !isLoading
+                isError = !params.isPasswordValid,
+                errorMessage = params.errorMessagePassword,
+                passwordVisible = params.passwordVisible,
+                onPasswordVisibilityChange = { actions.onPasswordVisibilityChange(!params.passwordVisible) },
+                enabled = !params.isLoading
             )
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.login_spacer_16)))
-            if (errorMessageLogin.isNotEmpty()) {
-                Text(
-                    text = errorMessageLogin,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.login_error_bottom_padding))
-                )
-            }
+            ErrorSection(params)
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.login_spacer_16)))
-            LoginButton(
-                onClick = onLoginClick,
-                isFormValid = isFormValid,
-                enabled = !isLoading
-            )
-            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.login_spacer_24)))
-            TextButton(
-                onClick = onSignupClick,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !isLoading
-            ) {
-                Text(text = stringResource(id = R.string.login_no_account))
-            }
+            ActionsSection(params, actions)
         }
     }
-    if (isLoading) {
+    if (params.isLoading) {
         YappLogoLoadingIndicator()
     }
 }
@@ -125,5 +144,8 @@ fun LoginButton(
 @Preview(showBackground = true)
 @Composable
 fun LoginViewPreview() {
-    LoginView()
+    LoginView(
+        params = LoginViewParams(),
+        actions = LoginViewActions()
+    )
 }

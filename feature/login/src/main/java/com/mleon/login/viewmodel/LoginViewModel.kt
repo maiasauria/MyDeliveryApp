@@ -1,26 +1,27 @@
 package com.mleon.login.viewmodel
 
-import android.content.SharedPreferences
-import android.util.Log
-import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mleon.core.data.datasource.remote.model.AuthResult
 import com.mleon.login.usecase.LoginUserParams
 import com.mleon.login.usecase.LoginUserUseCase
-import com.mleon.core.data.datasource.remote.model.AuthResult
+import com.mleon.login.usecase.SaveUserEmailUseCase
+import com.mleon.utils.UserValidations
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val ERROR_LOGIN_PREFIX = "Error: "
+private const val ERROR_LOGIN = "Error al iniciar sesión. Por favor, inténtalo de nuevo."
+
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val sharedPreferences: SharedPreferences,
     private val loginUserUseCase: LoginUserUseCase,
+    private val saveUserEmailUseCase: SaveUserEmailUseCase,
     private val dispatcher: CoroutineDispatcher
 
     ) : ViewModel() {
@@ -37,44 +38,31 @@ class LoginViewModel @Inject constructor(
         validateForm()
     }
 
-
     fun onLoginClick() {
         validateForm() // Validar el formulario antes de intentar iniciar sesión
 
         if (!_uiState.value.isFormValid) {
-            _uiState.update { it.copy(errorMessageLogin = "Por favor, completa todos los campos correctamente.") }
+            _uiState.update { it.copy(errorMessageLogin = ERROR_LOGIN) }
             return
         }
 
-        _uiState.update { it.copy(isLoading = true, errorMessageLogin = "") }
-
-        viewModelScope.launch(dispatcher + exceptionHandler) {
-            try {
-                val result = loginUserUseCase(LoginUserParams(email = _uiState.value.email, password = _uiState.value.password))
-                handleLoginResult(result)
-            } catch (e: Exception) {
-                _uiState.update { it.copy(errorMessageLogin = "Error: ${e.message}") }
-            } finally {
-                _uiState.update { it.copy(isLoading = false) }
-            }
-        }
+        login()
     }
 
     private fun validateForm() {
-        _uiState.update { currentState ->
+        val state = _uiState.value
 
-            //val isEmailValid = Patterns.EMAIL_ADDRESS.matcher(currentState.email).matches()
-            val isEmailValid = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$").matches(currentState.email)
-            val isPasswordValid = currentState.password.length in 8..12
+        val emailResult = UserValidations.validateEmail(state.email)
+        val passwordResult = UserValidations.validatePassword(state.password)
+        val isFormValid = emailResult.isValid && passwordResult.isValid
 
-            val isFormValid = isEmailValid && isPasswordValid
-
-            currentState.copy(
-                isEmailValid = isEmailValid,
-                isPasswordValid = isPasswordValid,
-                isFormValid = isFormValid,
-                errorMessageEmail = if (!isEmailValid && currentState.email.isNotEmpty()) "El email no es válido" else "",
-                errorMessagePassword = if (!isPasswordValid && currentState.password.isNotEmpty()) "La contraseña debe tener entre 8 y 12 caracteres" else ""
+        _uiState.update {
+            it.copy(
+                isEmailValid = emailResult.isValid,
+                errorMessageEmail = emailResult.errorMessage ?: "",
+                isPasswordValid = passwordResult.isValid,
+                errorMessagePassword = passwordResult.errorMessage ?: "",
+                isFormValid = isFormValid
             )
         }
     }
@@ -90,7 +78,7 @@ class LoginViewModel @Inject constructor(
                         isLoading = false,
                     )
                 }
-                sharedPreferences.edit { putString("user_email", result.user.email) }
+                saveUserEmailUseCase(result.user.email)
             }
             is AuthResult.Error -> {
                 _uiState.update {
@@ -100,19 +88,21 @@ class LoginViewModel @Inject constructor(
                         errorMessageLogin = result.errorMessage
                     )
                 }
-                Log.e("LoginViewModel", "Login failed: ${result.errorMessage} (Code: ${result.errorCode})")
             }
         }
     }
 
-    private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
-        Log.e("LoginViewModel", "Error en coroutine: ${exception.message}", exception)
-        _uiState.update {
-            it.copy(
-                errorMessageLogin = "Ocurrió un error inesperado. Por favor, intenta de nuevo.",
-                isLoading = false,
-                isFormValid = false
-            )
+    private fun login() {
+        _uiState.update { it.copy(isLoading = true, errorMessageLogin = "") }
+        viewModelScope.launch(dispatcher) {
+            try {
+                val result = loginUserUseCase(LoginUserParams(email = _uiState.value.email, password = _uiState.value.password))
+                handleLoginResult(result)
+            } catch (e: Exception) {
+                _uiState.update { it.copy(errorMessageLogin = ERROR_LOGIN_PREFIX + (e.message ?: "")) }
+            } finally {
+                _uiState.update { it.copy(isLoading = false) }
+            }
         }
     }
 

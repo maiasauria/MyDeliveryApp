@@ -10,7 +10,9 @@ import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mleon.core.navigation.NavigationRoutes
+import com.mleon.feature.signup.viewmodel.SignupViewActions
 import com.mleon.feature.signup.viewmodel.SignupViewModel
+import com.mleon.feature.signup.viewmodel.SignupViewParams
 
 @Composable
 fun SignupScreen(
@@ -29,30 +31,37 @@ fun SignupScreen(
         }
     }
 
-    SignupView(
-        navController = navController,
+    val params = SignupViewParams(
         name = uiState.name,
-        onNameChange = { signupViewModel.onNameChange(it) },
         errorMessageName = uiState.errorMessageName,
         lastname = uiState.lastname,
-        onLastnameChange = { signupViewModel.onLastnameChange(it) },
         errorMessageLastname = uiState.errorMessageLastname,
         email = uiState.email,
-        onEmailChange = { signupViewModel.onEmailChange(it) },
         errorMessageEmail = uiState.errorMessageEmail,
         password = uiState.password,
-        onPasswordChange = { signupViewModel.onPasswordChange(it) },
-        errorMessagePassword = uiState.errorMessagePassword,
         passwordVisible = passwordVisible,
-        onPasswordVisibilityChange = { passwordVisible = it },
-        passwordConfirm = uiState.passwordConfirm,
-        onPasswordConfirmChange = { signupViewModel.onConfirmPasswordChange(it) },
-        errorMessagePasswordConfirm = uiState.errorMessagePasswordConfirm,
+        errorMessagePassword = uiState.errorMessagePassword,
+        confirmPassword = uiState.passwordConfirm,
         confirmPasswordVisible = confirmPasswordVisible,
-        onConfirmPasswordVisibilityChange = { confirmPasswordVisible = it },
+        errorMessagePasswordConfirm = uiState.errorMessagePasswordConfirm,
         isFormValid = uiState.isFormValid,
-        onSignupClick = { signupViewModel.onSignupButtonClick() },
-        isLoading = uiState.isLoading,
         errorMessageSignup = uiState.errorMessageSignup,
+        isLoading = uiState.isLoading,
+    )
+    val actions = SignupViewActions(
+        onNameChange = signupViewModel::onNameChange,
+        onLastnameChange = signupViewModel::onLastnameChange,
+        onEmailChange = signupViewModel::onEmailChange,
+        onPasswordChange = signupViewModel::onPasswordChange,
+        onConfirmPasswordChange = signupViewModel::onConfirmPasswordChange,
+        onPasswordVisibilityChange = { passwordVisible = it },
+        onConfirmPasswordVisibilityChange = { confirmPasswordVisible = it },
+        onSignupClick = signupViewModel::onSignupClick,
+        onLoginClick = { navController.navigate(NavigationRoutes.LOGIN) },
+    )
+
+    SignupView(
+        params = params,
+        actions = actions
     )
 }

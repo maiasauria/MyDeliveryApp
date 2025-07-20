@@ -24,28 +24,36 @@ fun LoginScreen(
     LaunchedEffect(uiState.loginSuccess, uiState.errorMessageLogin) {
         if (uiState.loginSuccess && uiState.errorMessageLogin.isEmpty()) {
             navController.navigate(NavigationRoutes.PRODUCTS) {
-                popUpTo(NavigationRoutes.LOGIN) { inclusive = true }
+                popUpTo(NavigationRoutes.LOGIN) {
+                    inclusive = true // elimina la pantalla de login del stack de navegación
+                }
+                launchSingleTop = true
             }
         }
-        uiState.copy(loginSuccess = false) // Resetea el estado del ViewModel después de un login exitoso
     }
 
-    LoginView(
+    val params = LoginViewParams(
         email = uiState.email,
-        onEmailChange = loginViewModel::onEmailChange,
         isEmailValid = uiState.isEmailValid,
         errorMessageEmail = uiState.errorMessageEmail,
         password = uiState.password,
-        onPasswordChange = loginViewModel::onPasswordChange,
         passwordVisible = passwordVisible,
-        onPasswordVisibilityChange = { passwordVisible = it },
         isPasswordValid = uiState.isPasswordValid,
         errorMessagePassword = uiState.errorMessagePassword,
         isFormValid = uiState.isFormValid,
+        errorMessageLogin = uiState.errorMessageLogin,
+        isLoading = uiState.isLoading,
+    )
+    val actions = LoginViewActions(
+        onEmailChange = loginViewModel::onEmailChange,
+        onPasswordChange = loginViewModel::onPasswordChange,
+        onPasswordVisibilityChange = { passwordVisible = it },
         onLoginClick = loginViewModel::onLoginClick,
         onSignupClick = { navController.navigate(NavigationRoutes.SIGNUP) },
-        isLoading = uiState.isLoading,
-        errorMessageLogin = uiState.errorMessageLogin,
+    )
+
+    LoginView(
+        params = params,
+        actions = actions
     )
 }
-

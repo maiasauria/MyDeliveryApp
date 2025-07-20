@@ -18,4 +18,6 @@
     <string name="product_detail_includes_drink_icon">Incluye bebida</string>
     <string name="product_detail_includes_drink">Incluye bebida</string>
     <string name="product_detail_no_drink">No incluye bebida</string>
+    <string name="product_detail_remove">Eliminar</string>
+    <string name="product_detail_add">Agregar</string>
 </resources>
