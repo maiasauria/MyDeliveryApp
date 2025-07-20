@@ -13,7 +13,6 @@ import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -28,7 +27,6 @@ class SignupViewModelTest {
     private lateinit var saveUserEmailUseCase: SaveUserEmailUseCase
     private lateinit var registerUserUseCase: RegisterUserUseCase
     private lateinit var viewModel: SignupViewModel
-    private val testScheduler = TestCoroutineScheduler()
 
     @Before
     fun setUp() {

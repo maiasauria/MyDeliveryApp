@@ -1,4 +1,4 @@
-package com.mleon.core.di
+package com.mleon.core.data.di
 
 import android.content.Context
 import android.content.SharedPreferences

@@ -19,6 +19,9 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
+private const val HTTP_CACHE_SIZE_BYTES = 10 * 1024 * 1024 // 10MB
+private const val HTTP_TIMEOUT_SECONDS = 60L
+
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
@@ -40,15 +43,14 @@ object NetworkModule {
         OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().apply {
                 if (BuildConfig.DEBUG) {
-                    // Solo loguea en modo DEBUG
                     level = HttpLoggingInterceptor.Level.BODY
                 }
             })
-            .retryOnConnectionFailure(true) //Reintenta si falla la conexión
-            .cache(Cache(File(context.cacheDir, "http_cache"), 10 * 1024 * 1024)) //Cache de 10MB
-            .connectTimeout(60, TimeUnit.SECONDS) //Timeout largo por Render
-            .readTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(60, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(true)
+            .cache(Cache(File(context.cacheDir, "http_cache"), HTTP_CACHE_SIZE_BYTES.toLong()))
+            .connectTimeout(HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .readTimeout(HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .writeTimeout(HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .build()
 
     @Provides
@@ -65,5 +67,4 @@ object NetworkModule {
     @Singleton
     fun provideOrderApiService(retrofit: Retrofit): OrderApiService =
         retrofit.create(OrderApiService::class.java)
-
 }

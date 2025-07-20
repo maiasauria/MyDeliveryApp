@@ -142,7 +142,7 @@ fun QuantitySelector(quantity: Int, onQuantityChange: (Int) -> Unit) {
                 }
             },
             enabled = quantity > 1,
-            contentDescription = stringResource(id = com.mleon.feature.cart.R.string.remove),
+            contentDescription = stringResource(id = R.string.product_detail_remove),
             icon = Icons.Filled.Remove
         )
         Text(
@@ -153,7 +153,7 @@ fun QuantitySelector(quantity: Int, onQuantityChange: (Int) -> Unit) {
         )
         QuantityButton(
             onClick = { onQuantityChange(quantity + 1)},
-            contentDescription = stringResource(id = com.mleon.feature.cart.R.string.add),
+            contentDescription = stringResource(id = R.string.product_detail_add),
             icon = Icons.Default.Add
         )
     }

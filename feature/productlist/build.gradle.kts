@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.android.hilt)
+    id("io.gitlab.arturbosch.detekt") version("1.23.8")
 }
 
 android {

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_unknown">Ocurrió un error inesperado</string>
+    <string name="error_retry_button">Reintentar</string>
+</resources>

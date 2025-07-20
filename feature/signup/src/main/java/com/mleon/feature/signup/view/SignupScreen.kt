@@ -26,7 +26,10 @@ fun SignupScreen(
     LaunchedEffect(uiState.signupSuccess, uiState.errorMessageSignup) {
         if (uiState.signupSuccess && uiState.errorMessageSignup.isEmpty()) {
             navController.navigate(NavigationRoutes.PRODUCTS) {
-                popUpTo(NavigationRoutes.LOGIN) { inclusive = true }
+                popUpTo(NavigationRoutes.PRODUCTS) {
+                    inclusive = false
+                }
+                launchSingleTop = true
             }
         }
     }

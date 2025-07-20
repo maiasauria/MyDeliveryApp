@@ -1,7 +1,7 @@
 package com.mleon.mydeliveryapp.navigation
 
-import ProductDetailScreen
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -11,17 +11,11 @@ import com.mleon.core.navigation.NavigationRoutes
 import com.mleon.feature.cart.view.ui.views.CartScreen
 import com.mleon.feature.checkout.view.CheckoutScreen
 import com.mleon.feature.orders.view.OrdersScreen
+import com.mleon.feature.productlist.view.ProductDetailScreen
 import com.mleon.feature.productlist.view.ProductListScreen
 import com.mleon.feature.profile.views.ProfileScreen
 import com.mleon.feature.signup.view.SignupScreen
 import com.mleon.login.view.LoginScreen
-
-/**
- * AppNavigation es la función que define las rutas de navegación de la aplicación.
- * Utiliza NavHost para gestionar las diferentes pantallas y sus transiciones.
- *
- * @param navController El controlador de navegación que se utiliza para navegar entre las diferentes pantallas de la aplicación.
- *  */
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
@@ -55,13 +49,8 @@ fun AppNavigation(navController: NavHostController) {
         composable(route = NavigationRoutes.CHECKOUT) {
             CheckoutScreen(navController)
         }
-        composable("productDetail/{productId}") { backStackEntry ->
-            val productId = backStackEntry.arguments?.getString("productId") ?: ""
-            ProductDetailScreen(
-                productId = productId,
-                onAddToCart = { _, _ -> /* Implementar lógica de agregar al carrito */ },
-                navController = navController,
-            )
+        composable(route = NavigationRoutes.PRODUCT_DETAIL) { backStackEntry ->
+            ProductDetailNav(navController, backStackEntry)
         }
     }
 }
@@ -80,7 +69,8 @@ fun ProductDetailNav(
 // Funcion de extensión para navegar a una ruta específica
     fun NavController.navigateToRoute(route: String) {
     this.navigate(route) {
-        popUpTo(this@navigateToRoute.graph.findStartDestination().id) { // Limpia la pila de navegación hasta el destino inicial
+        // Limpia la pila de navegación hasta el destino inicial
+        popUpTo(this@navigateToRoute.graph.findStartDestination().id) {
             saveState = true // Guarda el estado de la pantalla actual
         }
         launchSingleTop = true // Evita crear múltiples instancias de la misma pantalla

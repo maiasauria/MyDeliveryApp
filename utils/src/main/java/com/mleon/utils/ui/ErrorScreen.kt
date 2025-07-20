@@ -17,13 +17,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.mleon.utils.R
 
 @Composable
 fun ErrorScreen(
-    errorMessage: String,
+    errorMessage: String? = null,
     onRetry: () -> Unit,
 ) {
     Box(
@@ -43,7 +44,7 @@ fun ErrorScreen(
             )
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.error_screen_spacer)))
             Text(
-                text = errorMessage,
+                text = errorMessage ?: stringResource(id = R.string.error_unknown),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onErrorContainer,
                 modifier = Modifier.fillMaxWidth(),
@@ -51,7 +52,7 @@ fun ErrorScreen(
             )
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.error_screen_spacer)))
             Button(onClick = onRetry) {
-                Text("Reintentar")
+                Text(stringResource(id = R.string.error_retry_button))
             }
         }
     }

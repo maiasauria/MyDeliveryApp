@@ -3,9 +3,9 @@ package com.mleon.core.data.datasource.remote
 import com.mleon.core.data.datasource.UserDataSource
 import com.mleon.core.data.datasource.remote.dto.UserDto
 import com.mleon.core.data.datasource.remote.dto.toDomain
-import com.mleon.core.data.datasource.remote.model.LoginResponse
 import com.mleon.core.data.datasource.remote.model.AuthResult
 import com.mleon.core.data.datasource.remote.model.LoginRequest
+import com.mleon.core.data.datasource.remote.model.LoginResponse
 import com.mleon.core.data.datasource.remote.service.UsersApiService
 import com.mleon.core.model.User
 import retrofit2.HttpException
@@ -25,6 +25,11 @@ private const val ERROR_UPDATE_UNKNOWN = "Error al actualizar usuario"
 private const val ERROR_GET_BY_EMAIL_UNKNOWN = "Error al buscar usuario"
 private const val ERROR_UNKNOWN = "Ocurrió un error inesperado"
 private const val ERROR_OFFLINE = "Sin conexión a Internet"
+private const val HTTP_BAD_REQUEST = 400
+private const val HTTP_UNAUTHORIZED = 401
+private const val HTTP_NOT_FOUND = 404
+private const val HTTP_CONFLICT = 409
+private const val HTTP_INTERNAL_SERVER_ERROR = 500
 
 class UserRemoteDataSource(
     private val apiService: UsersApiService,
@@ -112,8 +117,8 @@ class UserRemoteDataSource(
     private fun handleRegisterHttpException(e: HttpException): AuthResult {
         val code = e.code()
         val errorMsg = when (code) {
-            409 -> ERROR_CONFLICT
-            500 -> ERROR_INTERNAL_SERVER
+            HTTP_CONFLICT -> ERROR_CONFLICT
+            HTTP_INTERNAL_SERVER_ERROR -> ERROR_INTERNAL_SERVER
             else -> ERROR_REGISTER_USER
         }
         return AuthResult.Error(errorMsg,code)
@@ -122,9 +127,9 @@ class UserRemoteDataSource(
     private fun handleLoginHttpException(e: HttpException): AuthResult {
         val code = e.code()
         val errorMsg = when (code) {
-            404 -> ERROR_NOT_FOUND
-            401 -> ERROR_INVALID_PASSWORD
-            500 -> ERROR_INTERNAL_SERVER
+            HTTP_NOT_FOUND -> ERROR_NOT_FOUND
+            HTTP_UNAUTHORIZED -> ERROR_INVALID_PASSWORD
+            HTTP_INTERNAL_SERVER_ERROR -> ERROR_INTERNAL_SERVER
             else -> ERROR_LOGIN
         }
         return AuthResult.Error(errorMsg,code)
@@ -133,9 +138,9 @@ class UserRemoteDataSource(
     private fun handleUpdateUserHttpException(e: HttpException): AuthResult {
         val code = e.code()
         val errorMsg = when (code) {
-            400 -> ERROR_UPDATE_BAD_REQUEST
-            404 -> ERROR_NOT_FOUND
-            500 -> ERROR_INTERNAL_SERVER
+            HTTP_BAD_REQUEST -> ERROR_UPDATE_BAD_REQUEST
+            HTTP_NOT_FOUND -> ERROR_NOT_FOUND
+            HTTP_INTERNAL_SERVER_ERROR -> ERROR_INTERNAL_SERVER
             else -> ERROR_UPDATE_UNKNOWN
         }
         return AuthResult.Error(errorMsg,code)
@@ -144,7 +149,7 @@ class UserRemoteDataSource(
     private fun handleGetUserByEmailHttpException(e: HttpException): AuthResult {
         val code = e.code()
         val errorMsg = when (code) {
-            404 -> ERROR_NOT_FOUND
+            HTTP_NOT_FOUND -> ERROR_NOT_FOUND
             500 -> ERROR_INTERNAL_SERVER
             else -> ERROR_GET_BY_EMAIL_UNKNOWN
         }

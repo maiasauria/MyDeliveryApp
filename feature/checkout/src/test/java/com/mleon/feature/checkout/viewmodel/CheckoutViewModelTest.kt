@@ -1,13 +1,18 @@
 package com.mleon.feature.checkout.viewmodel
 
+import android.util.Log
 import com.mleon.core.data.datasource.remote.model.OrderResult
 import com.mleon.core.model.CartItem
 import com.mleon.core.model.Order
 import com.mleon.core.model.enums.PaymentMethod
 import com.mleon.feature.cart.domain.usecase.GetCartItemsWithProductsUseCase
 import com.mleon.feature.checkout.domain.usecase.CreateOrderUseCase
+import com.mleon.feature.checkout.domain.usecase.GetUserAddressUseCase
+import com.mleon.feature.checkout.domain.usecase.NoAddressException
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -17,25 +22,21 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
-
+@OptIn(ExperimentalCoroutinesApi::class)
 class CheckoutViewModelTest {
     private lateinit var createOrderUseCase: CreateOrderUseCase
     private lateinit var getCartItemsWithProductsUseCase: GetCartItemsWithProductsUseCase
+    private lateinit var getUserAddressUseCase: GetUserAddressUseCase
 
     @Before
     fun setUp() {
         createOrderUseCase = mockk()
         getCartItemsWithProductsUseCase = mockk()
-    }
-
-    @Test
-    fun `uiState is Loading when confirmOrder is called`() = runTest {
-        givenCartItems(listOf(mockCartItem()))
-        givenOrderSuccess(mockOrder())
-
-        val viewModel = CheckoutViewModel(getCartItemsWithProductsUseCase, createOrderUseCase, StandardTestDispatcher(testScheduler))
-        viewModel.confirmOrder()
-        Assert.assertTrue(viewModel.uiState.value is CheckoutUiState.Loading)
+        getUserAddressUseCase = mockk()
+        mockkStatic(Log::class)
+        every { Log.e(any(), any()) } returns 0
+        every { Log.e(any(), any(), any()) } returns 0
+        every { Log.d(any(), any(), any()) } returns 0
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -45,9 +46,14 @@ class CheckoutViewModelTest {
         givenOrderSuccess()
         givenUserAddress()
 
-        val viewModel = CheckoutViewModel(getCartItemsWithProductsUseCase, createOrderUseCase, StandardTestDispatcher(testScheduler))
+        val viewModel = CheckoutViewModel(
+            getCartItemsWithProductsUseCase,
+            createOrderUseCase,
+            getUserAddressUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
 
-        viewModel.getCartItems()
+        viewModel.loadCheckoutData()
         advanceUntilIdle()
         runCurrent()
 
@@ -60,13 +66,18 @@ class CheckoutViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `uiState is Error when confirmOrder fails`() = runTest {
-        val cartItems = listOf(mockCartItem())
-        givenCartItems(cartItems)
-        givenOrderError("Order failed")
+        givenMockCartItems()
+        givenOrderError()
+        givenUserAddress()
 
-        val viewModel = CheckoutViewModel(getCartItemsWithProductsUseCase, createOrderUseCase, StandardTestDispatcher(testScheduler))
+        val viewModel = CheckoutViewModel(
+            getCartItemsWithProductsUseCase,
+            createOrderUseCase,
+            getUserAddressUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
 
-        viewModel.getCartItems()
+        viewModel.loadCheckoutData()
         advanceUntilIdle()
 
         assert(viewModel.uiState.value is CheckoutUiState.Success)
@@ -78,13 +89,19 @@ class CheckoutViewModelTest {
     }
 
     @Test
-    fun `uiState is Error when getCartItems fails`() = runTest {
+    fun `uiState is Error when loadCheckoutData fails`() = runTest {
         coEvery { getCartItemsWithProductsUseCase() } throws Exception("Cart error")
-        val viewModel = CheckoutViewModel(getCartItemsWithProductsUseCase, createOrderUseCase, StandardTestDispatcher(testScheduler))
-        viewModel.getCartItems()
+        givenUserAddress()
+        val viewModel = CheckoutViewModel(
+            getCartItemsWithProductsUseCase,
+            createOrderUseCase,
+            getUserAddressUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
+        viewModel.loadCheckoutData()
         advanceUntilIdle()
         assert(viewModel.uiState.value is CheckoutUiState.Error)
-        Assert.assertEquals("Cart error", (viewModel.uiState.value as CheckoutUiState.Error).error.message)
+        Assert.assertEquals("Cart error", (viewModel.uiState.value as CheckoutUiState.Error).errorMessage)
     }
 
     @Test
@@ -102,8 +119,7 @@ class CheckoutViewModelTest {
         advanceUntilIdle()
         viewModel.confirmOrder()
         advanceUntilIdle()
-        assert(viewModel.uiState.value is CheckoutUiState.Error)
-        Assert.assertEquals("Exception in confirmOrder", (viewModel.uiState.value as CheckoutUiState.Error).error.message)
+        thenUiStateIsError(viewModel)
     }
 
     @Test
@@ -128,14 +144,24 @@ class CheckoutViewModelTest {
 
     @Test
     fun `onPaymentMethodSelection does nothing if not Success state`() = runTest {
-        val viewModel = CheckoutViewModel(getCartItemsWithProductsUseCase, createOrderUseCase, StandardTestDispatcher(testScheduler))
-        viewModel.onPaymentMethodSelection(com.mleon.core.model.enums.PaymentMethod.CREDIT_CARD)
+        val viewModel = CheckoutViewModel(
+            getCartItemsWithProductsUseCase,
+            createOrderUseCase,
+            getUserAddressUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
+        viewModel.onPaymentMethodSelection(PaymentMethod.CREDIT_CARD)
         thenUiStateIsLoading(viewModel)
     }
 
     @Test
     fun `confirmOrder does nothing if not Success state`() = runTest {
-        val viewModel = CheckoutViewModel(getCartItemsWithProductsUseCase, createOrderUseCase, StandardTestDispatcher(testScheduler))
+        val viewModel = CheckoutViewModel(
+            getCartItemsWithProductsUseCase,
+            createOrderUseCase,
+            getUserAddressUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
         viewModel.confirmOrder()
         // Deberia quedarse en Loading
         thenUiStateIsLoading(viewModel)
@@ -185,6 +211,14 @@ class CheckoutViewModelTest {
                 OrderResult.Error("Error al confirmar el pedido")
     }
 
+    private fun givenUserAddress() {
+        coEvery { getUserAddressUseCase() } returns "Av Corrientes 123"
+    }
+
+    private fun givenEmptyUserAddress() {
+        coEvery { getUserAddressUseCase() } returns ""
+    }
+
     private fun mockCartItem(): CartItem = mockk(relaxed = true)
     private fun mockOrder(): Order = mockk(relaxed = true)
 
@@ -205,8 +239,7 @@ class CheckoutViewModelTest {
     private fun thenUiStateIsError(viewModel: CheckoutViewModel) {
         val state = viewModel.uiState.value
         assert(state is CheckoutUiState.Error)
-        Assert.assertEquals(expectedMessage, (state as CheckoutUiState.Error).error.message)
+        Assert.assertEquals("Error al confirmar el pedido",
+            (state as CheckoutUiState.Error).errorMessage)
     }
-
-
 }

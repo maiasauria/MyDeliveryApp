@@ -22,20 +22,20 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        val workRequest = OneTimeWorkRequestBuilder<DatabaseSyncWorker>().build()
-//        WorkManager.getInstance(applicationContext).enqueue(workRequest)
         productSyncManager.schedulePeriodicSync()
         productSyncManager.syncNow()
 
 
         enableEdgeToEdge()
         setContent {
-            MyDeliveryAppTheme {
-                val navController = rememberNavController() // preserve state across recompositions
-                val navBackStackEntry by navController.currentBackStackEntryAsState() // get the current back stack entry
-                val currentRoute = navBackStackEntry?.destination?.route // get the current route from the back stack entry
+            YappTheme {
+                val navController = rememberNavController() // mantiene el estado en recomposiciones
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute =
+                    navBackStackEntry?.destination?.route // obtener la ruta actual desde el stack.
                 MainScreen(navController, currentRoute)
             }
         }
     }
 }
+

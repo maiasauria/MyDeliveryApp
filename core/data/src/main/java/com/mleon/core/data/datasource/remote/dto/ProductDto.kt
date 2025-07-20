@@ -1,11 +1,13 @@
 package com.mleon.core.data.datasource.remote.dto
 
+import com.google.gson.annotations.SerializedName
 import com.mleon.core.model.Product
 import com.mleon.core.model.enums.Categories
 
 data class ProductDto(
     val name: String,
-    val _id: String,
+    @SerializedName("_id")
+    val id: String,
     val description: String,
     val imageUrl: String,
     val price: Double,
@@ -18,7 +20,7 @@ data class ProductDto(
 fun ProductDto.toDomain(): Product {
     val safeCategory = categories?.mapNotNull { runCatching { Categories.valueOf(it) }.getOrNull() } ?: emptyList()
     return Product(
-        id = _id,
+        id = id,
         name = name,
         description = description,
         price = price,
