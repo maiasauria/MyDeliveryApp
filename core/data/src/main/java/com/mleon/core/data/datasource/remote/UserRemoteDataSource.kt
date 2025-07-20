@@ -1,5 +1,6 @@
 package com.mleon.core.data.datasource.remote
 
+import android.util.Log
 import com.mleon.core.data.datasource.UserDataSource
 import com.mleon.core.data.datasource.remote.dto.UserDto
 import com.mleon.core.data.datasource.remote.dto.toDomain
@@ -7,6 +8,7 @@ import com.mleon.core.data.datasource.remote.model.AuthResult
 import com.mleon.core.data.datasource.remote.model.LoginRequest
 import com.mleon.core.data.datasource.remote.model.LoginResponse
 import com.mleon.core.data.datasource.remote.service.UsersApiService
+import com.mleon.core.data.datasource.remote.utils.EncryptionUtils
 import com.mleon.core.model.User
 import retrofit2.HttpException
 import java.io.IOException
@@ -41,11 +43,12 @@ class UserRemoteDataSource(
         password: String
     ): AuthResult =
         try {
+            val encryptedPassword = EncryptionUtils.encryptPassword(password)
             val userDto = UserDto(
                 name = name,
                 lastname = lastname,
                 email = email,
-                password = password,
+                password = encryptedPassword,
                 address = "",
                 userImageUrl = null
             )
@@ -59,7 +62,8 @@ class UserRemoteDataSource(
 
     override suspend fun loginUser(email: String, password: String): AuthResult {
         return try {
-            val loginRequest = LoginRequest(email, password)
+            val encryptedPassword = EncryptionUtils.encryptPassword(password)
+            val loginRequest = LoginRequest(email, encryptedPassword)
             val responseBody = apiService.loginUser(loginRequest)
             handleLoginResponse(responseBody)
         } catch (e: IOException) {

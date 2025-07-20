@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mleon.feature.orders.viewmodel.OrdersUiState
 import com.mleon.feature.orders.viewmodel.OrdersViewModel
-import com.mleon.utils.ERROR_UNKNOWN
 import com.mleon.utils.ui.ErrorScreen
 import com.mleon.utils.ui.YappFullScreenLoadingIndicator
 
@@ -39,7 +38,7 @@ fun OrdersScreen(
             OrdersListView(orders = orders)
         }
         is OrdersUiState.Error -> {
-            val errorMessage = (uiState as OrdersUiState.Error).error.message ?: ERROR_UNKNOWN
+            val errorMessage = (uiState as OrdersUiState.Error).error.message
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
