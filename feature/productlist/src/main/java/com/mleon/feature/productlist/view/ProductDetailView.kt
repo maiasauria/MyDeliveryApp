@@ -52,7 +52,7 @@ fun ProductDetailView(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(dimensionResource(id = R.dimen.product_detail_fraction_height).value) // Top 1/3rd
+               .fillMaxHeight(0.33f)
         ) {
             ImageLoader(
                 url = product.imageUrl ?: "",

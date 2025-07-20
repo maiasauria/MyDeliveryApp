@@ -18,7 +18,6 @@
     <dimen name="product_detail_quantity_text_padding">8dp</dimen>
     <dimen name="product_detail_corner_radius">12dp</dimen>
     <dimen name="product_detail_selector_radius">40dp</dimen>
-    <dimen name="product_detail_fraction_height">0.33</dimen>
     <dimen name="product_detail_chip_padding">4dp</dimen>
     <dimen name="product_detail_row_padding">8dp</dimen>
     <dimen name="product_detail_icon_start_padding">8dp</dimen>

@@ -31,13 +31,4 @@
     <string name="profile_cancel">Cancelar</string>
 
     <string name="profile_permission_denied">Permiso denegado</string>
-    <string name="profile_error_update_image">No se puede actualizar la imagen en este momento.</string>
-    <string name="profile_error_edit_profile">No se puede editar el perfil en este momento.</string>
-    <string name="profile_error_logout">Error al cerrar sesión.</string>
-    <string name="profile_error_upload_image">Error al subir la imagen.</string>
-    <string name="profile_error_update_profile">Error al actualizar el perfil.</string>
-    <string name="profile_error_name">El nombre debe tener entre 2 y 50 caracteres</string>
-    <string name="profile_error_lastname">El apellido debe tener entre 2 y 50 caracteres</string>
-    <string name="profile_error_email">El email no es válido</string>
-    <string name="profile_error_address">La dirección no puede estar vacía</string>
 </resources>

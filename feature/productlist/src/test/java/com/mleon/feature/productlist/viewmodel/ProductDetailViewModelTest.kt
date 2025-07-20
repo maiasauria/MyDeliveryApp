@@ -35,7 +35,11 @@ class ProductDetailViewModelTest {
     fun `uiState is Loading when loadProductDetail is called`() = runTest {
         givenProductFound(mockProduct())
         givenProductQuantity(1)
-        val viewModel = ProductDetailViewModel(getProductByIdUseCase, getProductQuantityInCartUseCase, StandardTestDispatcher(testScheduler))
+        val viewModel = ProductDetailViewModel(
+            getProductByIdUseCase,
+            getProductQuantityInCartUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
         viewModel.loadProductDetail("1")
         thenUiStateIsLoading(viewModel)
     }
@@ -45,7 +49,11 @@ class ProductDetailViewModelTest {
         val product = mockProduct()
         givenProductFound(product)
         givenProductQuantity(2)
-        val viewModel = ProductDetailViewModel(getProductByIdUseCase, getProductQuantityInCartUseCase, StandardTestDispatcher(testScheduler))
+        val viewModel = ProductDetailViewModel(
+            getProductByIdUseCase,
+            getProductQuantityInCartUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
         viewModel.loadProductDetail(product.id)
         advanceUntilIdle()
         thenUiStateIsSuccess(viewModel)
@@ -57,7 +65,11 @@ class ProductDetailViewModelTest {
     fun `uiState is Error when product is not found`() = runTest {
         givenProductNotFound()
         givenProductQuantity(0)
-        val viewModel = ProductDetailViewModel(getProductByIdUseCase, getProductQuantityInCartUseCase, StandardTestDispatcher(testScheduler))
+        val viewModel = ProductDetailViewModel(
+            getProductByIdUseCase,
+            getProductQuantityInCartUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
         viewModel.loadProductDetail("999")
         advanceUntilIdle()
         thenUiStateIsError(viewModel)
@@ -67,7 +79,11 @@ class ProductDetailViewModelTest {
     fun `uiState is Error when exception is thrown`() = runTest {
         givenProductThrowsException("Network error")
         givenProductQuantity(0)
-        val viewModel = ProductDetailViewModel(getProductByIdUseCase, getProductQuantityInCartUseCase, StandardTestDispatcher(testScheduler))
+        val viewModel = ProductDetailViewModel(
+            getProductByIdUseCase,
+            getProductQuantityInCartUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
         viewModel.loadProductDetail("1")
         advanceUntilIdle()
         thenUiStateIsError(viewModel)
@@ -78,7 +94,11 @@ class ProductDetailViewModelTest {
         val product = mockProduct()
         givenProductFound(product)
         givenProductQuantity(1)
-        val viewModel = ProductDetailViewModel(getProductByIdUseCase, getProductQuantityInCartUseCase, StandardTestDispatcher(testScheduler))
+        val viewModel = ProductDetailViewModel(
+            getProductByIdUseCase,
+            getProductQuantityInCartUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
         viewModel.loadProductDetail(product.id)
         advanceUntilIdle()
         viewModel.updateQuantity(5)
@@ -90,7 +110,11 @@ class ProductDetailViewModelTest {
         val product = mockProduct()
         givenProductFound(product)
         givenProductQuantity(1)
-        val viewModel = ProductDetailViewModel(getProductByIdUseCase, getProductQuantityInCartUseCase, StandardTestDispatcher(testScheduler))
+        val viewModel = ProductDetailViewModel(
+            getProductByIdUseCase,
+            getProductQuantityInCartUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
         viewModel.loadProductDetail(product.id)
         advanceUntilIdle()
         viewModel.onAddToCart(product)
@@ -102,7 +126,11 @@ class ProductDetailViewModelTest {
         val product = mockProduct()
         givenProductFound(product)
         givenProductQuantity(1)
-        val viewModel = ProductDetailViewModel(getProductByIdUseCase, getProductQuantityInCartUseCase, StandardTestDispatcher(testScheduler))
+        val viewModel = ProductDetailViewModel(
+            getProductByIdUseCase,
+            getProductQuantityInCartUseCase,
+            StandardTestDispatcher(testScheduler)
+        )
         viewModel.loadProductDetail(product.id)
         advanceUntilIdle()
         viewModel.onAddToCart(product)
@@ -123,8 +151,13 @@ class ProductDetailViewModelTest {
     private fun givenProductQuantity(quantity: Int) {
         coEvery { getProductQuantityInCartUseCase(any()) } returns quantity
     }
-    private fun mockProduct(name: String = "Pizza", id: String = "1", price: Double = 10.0, categories: List<Categories> = listOf(Categories.PIZZA)) =
-        Product(id = id, name = name, description = "desc", price = price, imageUrl = null, includesDrink = false, category = categories)
+    private fun mockProduct(
+        name: String = "Pizza",
+        id: String = "1",
+        price: Double = 10.0,
+        categories: List<Categories> = listOf(Categories.PIZZA)) =
+        Product(id, name, "desc", price,  false,  null, categories)
+
     private fun thenUiStateIsSuccess(viewModel: ProductDetailViewModel) {
         val state = viewModel.uiState.value
         assert(state is ProductDetailUiState.Success)

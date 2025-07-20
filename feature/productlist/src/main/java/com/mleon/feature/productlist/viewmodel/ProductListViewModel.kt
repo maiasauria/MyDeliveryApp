@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val PRODUCT_ADDED_TO_CART_SUFFIX = " agregado al carrito"
+
 @HiltViewModel
 class ProductListViewModel
 @Inject
@@ -20,107 +22,90 @@ constructor(
     private val getProductsUseCase: GetProductsUseCase,
     private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
-    //Holdear todos los productos en memoria. Se podria modificar con queries a la DB.
+
     //Variables de estado interno. El State solo se actualiza para notificar a la UI que hubo cambios.
     private var allProducts: List<Product> = emptyList()
-    private var searchQuery: String = ""
-    private var selectedCategory: Categories? = null
-    private var cartMessage: String = ""
 
     private val _uiState = MutableStateFlow<ProductListUiState>(ProductListUiState.Loading)
     val uiState =  _uiState.asStateFlow()
 
     fun loadProducts(refreshData: Boolean = false) {
-        _uiState.value = ProductListUiState.Loading
+        setLoadingState()
         viewModelScope.launch(dispatcher) {
-            when (val result = getProductsUseCase(refreshData)) {
-                is ProductResult.Success -> {
-                    allProducts = result.products
-                    updateSuccessState()
-                }
-                is ProductResult.Error -> {
-                    _uiState.value = ProductListUiState.Error(result.message)
-                }
+            handleProductResult(getProductsUseCase(refreshData))
+        }
+    }
+
+    private fun setLoadingState() {
+        _uiState.value = ProductListUiState.Loading
+    }
+
+    private fun handleProductResult(result: ProductResult) {
+        when (result) {
+            is ProductResult.Success -> {
+                allProducts = result.products
+                _uiState.value = ProductListUiState.Success(products = allProducts)
+            }
+            is ProductResult.Error -> {
+                _uiState.value = ProductListUiState.Error(result.message)
             }
         }
     }
 
     fun onSearchTextChange(query: String) {
-        searchQuery = query
-        updateSuccessState()
+        updateState { state ->
+            val filtered = filterProducts(allProducts, query, state.selectedCategory)
+            state.copy(products = filtered, searchQuery = query)
+        }
     }
 
     fun onCategorySelection(category: Categories?) {
-        selectedCategory = category
-        updateSuccessState()
-    }
-
-    fun onOrderByPriceAscending() {
-        val currentState = _uiState.value
-        if (currentState is ProductListUiState.Success) {
-            val sorted = currentState.products.sortedBy { it.price }
-            _uiState.value = currentState.copy(products = sorted)
+        updateState { state ->
+            val filtered = filterProducts(allProducts, state.searchQuery, category)
+            state.copy(products = filtered, selectedCategory = category)
         }
     }
 
-    fun onOrderByPriceDescending() {
-        val currentState = _uiState.value
-        if (currentState is ProductListUiState.Success) {
-            val sorted = currentState.products.sortedByDescending { it.price }
-            _uiState.value = currentState.copy(products = sorted)
-        }
-    }
-
-    fun onOrderByNameAscending() {
-        val currentState = _uiState.value
-        if (currentState is ProductListUiState.Success) {
-            val sorted = currentState.products.sortedBy { it.name }
-            _uiState.value = currentState.copy(products = sorted)
-        }
-    }
-
-    fun onOrderByNameDescending() {
-        val currentState = _uiState.value
-        if (currentState is ProductListUiState.Success) {
-            val sorted = currentState.products.sortedByDescending { it.name }
-            _uiState.value = currentState.copy(products = sorted)
-        }
-    }
-
-    private fun filterProducts(): List<Product> {
-        return allProducts.filter { product ->
-            // Verifica si el producto pertenece a la categoría seleccionada
-            val matchesCategory = selectedCategory == null || product.category.any { it == selectedCategory }
-            // Verifica si el producto coincide con la consulta de búsqueda
-            val matchesQuery = searchQuery.isBlank() ||
-                    product.name.contains(searchQuery, ignoreCase = true) ||
-                    product.description.contains(searchQuery, ignoreCase = true)
-            // Retorna true (producto se incluye en la lista) si cumple con ambas condiciones
-            matchesCategory && matchesQuery
-        }
-    }
+    fun onOrderByPriceAscending() = sortProducts { it.sortedBy { p -> p.price } }
+    fun onOrderByPriceDescending() = sortProducts { it.sortedByDescending { p -> p.price } }
+    fun onOrderByNameAscending() = sortProducts { it.sortedBy { p -> p.name } }
+    fun onOrderByNameDescending() = sortProducts { it.sortedByDescending { p -> p.name } }
 
     fun onAddToCart(product: Product) {
-        val currentState = _uiState.value
-        if (currentState is ProductListUiState.Success) {
-            _uiState.value = currentState.copy(isAddingToCart = true) // Bloquea la UI mientras se agrega al carrito
+        updateState { state ->
+            state.copy(
+                isAddingToCart = true, // Bloquea la UI mientras se agrega al carrito
+                cartMessage  = "${product.name}$PRODUCT_ADDED_TO_CART_SUFFIX"
+            )
         }
-        cartMessage = "${product.name} agregado al carrito"
-        updateSuccessState()
     }
 
     fun clearCartMessage() {
-        cartMessage = ""
-        updateSuccessState()
+        updateState { state -> state.copy(cartMessage = "", isAddingToCart = false) }
     }
 
-    private fun updateSuccessState() {
-        val filteredProducts = filterProducts()
-        _uiState.value = ProductListUiState.Success(
-            products = filteredProducts,
-            searchQuery = searchQuery,
-            selectedCategory = selectedCategory,
-            cartMessage = cartMessage
-        )
+    private fun sortProducts(sorter: (List<Product>) -> List<Product>) {
+        updateState { state -> state.copy(products = sorter(state.products)) }
+    }
+
+    private fun updateState(transform: (ProductListUiState.Success) -> ProductListUiState.Success) {
+        val currentState = _uiState.value
+        if (currentState is ProductListUiState.Success) {
+            _uiState.value = transform(currentState)
+        }
+    }
+
+    private fun filterProducts(
+        products: List<Product>,
+        query: String,
+        category: Categories?
+    ): List<Product> {
+        return products.filter { product ->
+            val matchesCategory = category == null || product.category.any { it == category }
+            val matchesQuery = query.isBlank() ||
+                    product.name.contains(query, ignoreCase = true) ||
+                    product.description.contains(query, ignoreCase = true)
+            matchesCategory && matchesQuery
+        }
     }
 }
