@@ -22,11 +22,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import com.mleon.core.navigation.NavigationRoutes
 import com.mleon.feature.signup.R
-import com.mleon.utils.ui.FullScreenLoadingIndicator
 import com.mleon.utils.ui.LogoImage
 import com.mleon.utils.ui.ValidateEmailField
 import com.mleon.utils.ui.ValidatePasswordField
 import com.mleon.utils.ui.ValidateTextField
+import com.mleon.utils.ui.YappFullScreenLoadingIndicator
 
 @Composable
 fun SignupView(
@@ -142,7 +142,7 @@ fun SignupView(
         }
     }
     if (isLoading) {
-        FullScreenLoadingIndicator()
+        YappFullScreenLoadingIndicator()
     }
 }
 
