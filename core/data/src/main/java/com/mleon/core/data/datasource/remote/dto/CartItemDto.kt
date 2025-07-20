@@ -60,7 +60,6 @@ fun CartItemDto.toCartItem(): CartItem {
     )
 }
 
-//En realidad es un Order Item DTO, pero la API lo tiene con ese nombre. TODO: Unificar.
 fun OrderItem.toDto(): CartItemDto {
     return CartItemDto(
         name = product.name,

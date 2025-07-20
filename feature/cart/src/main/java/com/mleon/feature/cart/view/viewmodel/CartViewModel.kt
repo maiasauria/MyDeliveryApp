@@ -18,6 +18,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
+private const val DELAY = 500L
+private const val ERROR_UNEXPECTED = "Ocurrió un error inesperado. Intenta nuevamente."
+private const val ERROR_ADD = "Error al agregar el producto al carrito"
+private const val ERROR_EDIT = "Error al editar la cantidad del producto"
+private const val ERROR_REMOVE = "Error al eliminar el producto del carrito"
+private const val ERROR_CLEAR = "Error al limpiar el carrito"
+private const val ERROR_LOAD = "Error al cargar el carrito"
+private const val PRODUCT_ADDED_SUFFIX = " agregado al carrito"
+
+
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val addProductToCartUseCase: AddProductToCartUseCase,
@@ -37,21 +48,20 @@ class CartViewModel @Inject constructor(
             "CoroutineExceptionHandler CAUGHT: Context: $coroutineContext",
             exception
         )
-        _uiState.value = CartUiState.Error(message = "Ocurrió un error inesperado. Intenta nuevamente.")
-
+        _uiState.value = CartUiState.Error(message = ERROR_UNEXPECTED)
     }
 
     fun addToCart(product: Product, quantity: Int = 1) {
         val state = _uiState.value
         if (state is CartUiState.Success) {
-            _uiState.value = state.copy(isProcessing = true) // Cambia el estado a Success con isProcessing = true
+            _uiState.value = state.copy(isProcessing = true)
         }
         viewModelScope.launch(dispatcher + exceptionHandler) {
             try {
                 addProductToCartUseCase(product, quantity)
-                updateCartUiState("${product.name} agregado al carrito")
+                updateCartUiState("${product.name}${PRODUCT_ADDED_SUFFIX}")
             } catch (e: Exception) {
-                _uiState.value = CartUiState.Error(e.message ?: "Error al agregar el producto al carrito")
+                _uiState.value = CartUiState.Error(e.message ?: ERROR_ADD)
             }
         }
     }
@@ -59,14 +69,14 @@ class CartViewModel @Inject constructor(
     fun editQuantity(product: Product, quantity: Int) {
         val state = _uiState.value
         if (state is CartUiState.Success) {
-            _uiState.value = state.copy(isProcessing = true) // Cambia el estado a Success con isProcessing = true
+            _uiState.value = state.copy(isProcessing = true)
         }
         viewModelScope.launch(dispatcher + exceptionHandler) {
             try {
                 editCartItemQuantityUseCase(product, quantity)
                 updateCartUiState()
             } catch (e: Exception) {
-                _uiState.value = CartUiState.Error(e.message ?: "Error al editar la cantidad del producto")
+                _uiState.value = CartUiState.Error(e.message ?: ERROR_EDIT)
             }
         }
     }
@@ -74,14 +84,14 @@ class CartViewModel @Inject constructor(
     fun removeFromCart(product: Product) {
         val state = _uiState.value
         if (state is CartUiState.Success) {
-            _uiState.value = state.copy(isProcessing = true) // Cambia el estado a Success con isProcessing = true
+            _uiState.value = state.copy(isProcessing = true)
         }
         viewModelScope.launch(dispatcher + exceptionHandler) {
             try {
                 removeCartItemUseCase(product.id)
                 updateCartUiState()
             } catch (e: Exception) {
-                _uiState.value = CartUiState.Error(e.message ?: "Error al eliminar el producto del carrito")
+                _uiState.value = CartUiState.Error(e.message ?: ERROR_REMOVE)
             }
         }
     }
@@ -93,7 +103,7 @@ class CartViewModel @Inject constructor(
                 clearCartUseCase()
                 _uiState.value = CartUiState.Success(emptyList(), 0.0)
             } catch (e: Exception) {
-                _uiState.value = CartUiState.Error(e.message ?: "Error al limpiar el carrito")
+                _uiState.value = CartUiState.Error(e.message ?: ERROR_CLEAR)
             }
         }
     }
@@ -114,21 +124,21 @@ class CartViewModel @Inject constructor(
                 val total = items.sumOf { it.product.price * it.quantity }
                 _uiState.value = CartUiState.Success(items, total)
             } catch (e: Exception) {
-                _uiState.value = CartUiState.Error(e.message ?: "Error al cargar el carrito")
+                _uiState.value = CartUiState.Error(e.message ?: ERROR_LOAD)
             }
         }
     }
 
-
     // Actualiza el estado del carrito con los elementos y el precio total
     private suspend fun updateCartUiState(cartMessage: String = "") {
-        delay(500) // Simula un pequeño retraso para mostrar el estado de procesamiento
+        delay(DELAY)
         try {
             val items = getCartItemsWithProductsUseCase()
             val total = items.sumOf { it.product.price * it.quantity }
             _uiState.value = CartUiState.Success(items, total, cartMessage, isProcessing = false)
         } catch (e: Exception) {
-            _uiState.value = CartUiState.Error(e.message ?: "Error al cargar el carrito")
+            _uiState.value = CartUiState.Error(e.message ?: ERROR_LOAD)
         }
     }
 }
+

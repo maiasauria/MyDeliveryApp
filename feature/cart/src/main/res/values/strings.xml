@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="screen_title">"Mi carrito</string>
+    <string name="cart_screen_title">Mi carrito</string>
 
-    <string name="order_summary">Resumen del pedido</string>
+    <string name="cart_order_summary">Resumen del pedido</string>
 
-    <string name="remove">Eliminar</string>
-    <string name="add">Agregar</string>
-    <string name="removing">Eliminando</string>
-    <string name="remove_from_cart">Eliminar del carrito</string>
-    <string name="add_to_cart">Agregar al carrito</string>
+    <string name="cart_remove">Eliminar</string>
+    <string name="cart_add">Agregar</string>
+    <string name="cart_removing">Eliminando</string>
+    <string name="cart_remove_from_cart">Eliminar del carrito</string>
+    <string name="cart_add_to_cart">Agregar al carrito</string>
 
-    <string name="prod_totals">Total de productos </string>
-    <string name="totals">Subtotal </string>
-    <string name="btn_action_cart">Ir a pagar</string>
-    <string name="btn_action_emptycart">Explorar productos</string>
-    <string name="empty_cart">Tu carrito está vacío</string>
+    <string name="cart_prod_totals">Total de productos</string>
+    <string name="cart_totals">Subtotal</string>
+    <string name="cart_btn_action">Ir a pagar</string>
+    <string name="cart_btn_action_emptycart">Explorar productos</string>
+    <string name="cart_empty_cart">Tu carrito está vacío</string>
 
     <string name="cart_product_price_format">%1$s x %2$d = %3$s</string>
 

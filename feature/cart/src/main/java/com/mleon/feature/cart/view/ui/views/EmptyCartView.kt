@@ -36,7 +36,7 @@ fun EmptyCartView(onContinueShoppingClick: () -> Unit) {
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = stringResource(id = R.string.empty_cart),
+                text = stringResource(id = R.string.cart_empty_cart),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(vertical = dimensionResource(id = R.dimen.cart_empty_text_vertical_padding))
             )
@@ -45,7 +45,7 @@ fun EmptyCartView(onContinueShoppingClick: () -> Unit) {
                 onClick = onContinueShoppingClick,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(stringResource(id = R.string.btn_action_emptycart))
+                Text(stringResource(id = R.string.cart_btn_action_emptycart))
             }
         }
     }

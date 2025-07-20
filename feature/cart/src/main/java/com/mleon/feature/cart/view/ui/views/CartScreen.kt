@@ -26,7 +26,6 @@ fun CartScreen(
     val uiState by cartViewModel.uiState.collectAsState()
     val context = LocalContext.current
 
-    // Only launch once when the Composable enters the composition
     LaunchedEffect(Unit) {
         cartViewModel.loadCart()
     }
@@ -78,9 +77,7 @@ fun CartScreen(
                     onRetry = { cartViewModel.loadCart() }
                 )
             }
-//            LaunchedEffect(errorMessage) {
-//                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-//            }
         }
     }
 }
+

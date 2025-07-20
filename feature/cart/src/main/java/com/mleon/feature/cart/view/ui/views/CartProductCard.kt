@@ -36,12 +36,10 @@ import com.mleon.core.model.Product
 import com.mleon.feature.cart.R
 import com.mleon.utils.toCurrencyFormat
 import com.mleon.utils.ui.ImageLoader
-import com.mleon.feature.cart.R as CartR
 
 
 @Composable
 fun CartProductCard(
-    modifier: Modifier = Modifier,
     product: Product,
     isLoading: Boolean,
     quantity: Int,
@@ -49,7 +47,7 @@ fun CartProductCard(
     onRemoveFromCart: () -> Unit = {}
 ) {
     Card(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(CornerSize(dimensionResource(id = R.dimen.cart_card_corner_radius))),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
@@ -123,7 +121,7 @@ fun QuantitySelector(
                 }
             },
             enabled = quantity > 1 && !isLoading,
-            contentDescription = stringResource(id = CartR.string.remove),
+            contentDescription = stringResource(id = R.string.cart_remove),
             icon = Icons.Filled.Remove
         )
         Text(
@@ -133,7 +131,7 @@ fun QuantitySelector(
         QuantityButton(
             onClick = { onQuantityChange(product, quantity + 1) },
             enabled = !isLoading,
-            contentDescription = stringResource(id = CartR.string.add),
+            contentDescription = stringResource(id = R.string.cart_add),
             icon = Icons.Default.Add
         )
     }
@@ -200,7 +198,7 @@ fun RemoveFromCartButton(
     ) {
         Icon(
             imageVector = Icons.Default.Close,
-            contentDescription = stringResource(id = CartR.string.remove_from_cart),
+            contentDescription = stringResource(id = R.string.cart_remove_from_cart),
             tint = if (enabled) MaterialTheme.colorScheme.primary else Color.Gray,
         )
     }

@@ -32,10 +32,9 @@ fun CartView(
     onRemoveFromCart: (product: Product) -> Unit,
     onCheckoutClick: () -> Unit
     ) {
-    val screenPadding = dimensionResource(id = R.dimen.cart_card_padding)
     val buttonStartPadding = dimensionResource(id = R.dimen.cart_remove_button_padding)
-    Column() {
-        ScreenTitle(stringResource(id = R.string.screen_title))
+    Column {
+        ScreenTitle(stringResource(id = R.string.cart_screen_title))
 
         LazyColumn(
             modifier = Modifier
@@ -62,7 +61,7 @@ fun CartView(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "${stringResource(id = R.string.totals)} ${totalPrice.toCurrencyFormat()}",
+                text = "${stringResource(id = R.string.cart_totals)} ${totalPrice.toCurrencyFormat()}",
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.weight(1f)
             )
@@ -71,7 +70,7 @@ fun CartView(
                 modifier = Modifier.padding(start = buttonStartPadding),
                 enabled = cartItems.isNotEmpty() && !isLoading
             ) {
-                Text(stringResource(id = R.string.btn_action_cart))
+                Text(stringResource(id = R.string.cart_btn_action))
             }
         }
     }
