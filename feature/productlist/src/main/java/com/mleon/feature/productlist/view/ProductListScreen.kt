@@ -26,7 +26,7 @@ fun ProductListScreen(
 
     // Solo se ejecuta una vez al cargar la pantalla
     LaunchedEffect(Unit) {
-        productListViewModel.loadProducts(refreshData = true)
+        productListViewModel.loadProducts(refreshData = false)
     }
 
     when (uiState) {

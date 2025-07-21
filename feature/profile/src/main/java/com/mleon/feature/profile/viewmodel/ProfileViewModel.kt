@@ -47,26 +47,32 @@ constructor(
     val uiState = _uiState.asStateFlow()
 
     fun loadProfile() {
-        viewModelScope.launch(dispatcher) {
-            _uiState.value = ProfileUiState.Loading
+        // Solo carga el perfil si no hay un estado de éxito ya cargado
+        if (_uiState.value !is ProfileUiState.Success) {
+            viewModelScope.launch(dispatcher) {
 
-            when (val result = getUserProfileUseCase()) {
-                is AuthResult.Success -> {
-                    val user = result.user
-                    val formState = ProfileFormState()
-                    val userDataState = UserDataState(
-                        name = user.name,
-                        lastname = user.lastname,
-                        email = user.email,
-                        address = user.address ?: "",
-                        userImageUrl = user.userImageUrl ?: "",
-                        userImageUri = (user.userImageUrl ?: "").toUri()
-                    )
-                    _uiState.value = ProfileUiState.Success(formState, userDataState)
+                // Solo muestra el estado de carga si no está ya cargando
+                if (_uiState.value !is ProfileUiState.Loading) {
+                    _uiState.value = ProfileUiState.Loading
                 }
+                when (val result = getUserProfileUseCase()) {
+                    is AuthResult.Success -> {
+                        val user = result.user
+                        val formState = ProfileFormState()
+                        val userDataState = UserDataState(
+                            name = user.name,
+                            lastname = user.lastname,
+                            email = user.email,
+                            address = user.address ?: "",
+                            userImageUrl = user.userImageUrl ?: "",
+                            userImageUri = (user.userImageUrl ?: "").toUri()
+                        )
+                        _uiState.value = ProfileUiState.Success(formState, userDataState)
+                    }
 
-                is AuthResult.Error -> {
-                    _uiState.value = ProfileUiState.Error(result.errorMessage)
+                    is AuthResult.Error -> {
+                        _uiState.value = ProfileUiState.Error(result.errorMessage)
+                    }
                 }
             }
         }
@@ -191,7 +197,12 @@ constructor(
                 updateUserProfileUseCase(user)
                 _uiState.value =
                     ProfileUiState.Success(
-                        currentState.data.copy(isUploading = false, isSaved = true, isImageChanged = false, isFormValid = false),
+                        currentState.data.copy(
+                            isUploading = false,
+                            isSaved = true,
+                            isImageChanged = false,
+                            isFormValid = false
+                        ),
                         currentState.userData.copy(userImageUrl = newImageUrl)
                     )
             } catch (e: Exception) {
