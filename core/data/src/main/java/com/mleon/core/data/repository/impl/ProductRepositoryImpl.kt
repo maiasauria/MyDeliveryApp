@@ -4,7 +4,7 @@ import com.mleon.core.data.datasource.ProductDataSource
 import com.mleon.core.data.datasource.local.dao.ProductDao
 import com.mleon.core.data.datasource.local.entities.toModel
 import com.mleon.core.data.datasource.local.entities.toProductEntity
-import com.mleon.core.data.datasource.remote.model.ProductResult
+import com.mleon.core.model.result.ProductResult
 import com.mleon.core.data.repository.interfaces.ProductRepository
 import com.mleon.core.model.Product
 import kotlinx.coroutines.Dispatchers

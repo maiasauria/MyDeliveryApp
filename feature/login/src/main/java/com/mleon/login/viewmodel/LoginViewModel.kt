@@ -2,10 +2,9 @@ package com.mleon.login.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mleon.core.data.datasource.remote.model.AuthResult
-import com.mleon.login.usecase.LoginUserParams
-import com.mleon.login.usecase.LoginUserUseCase
-import com.mleon.login.usecase.SaveUserEmailUseCase
+import com.mleon.core.domain.usecase.user.LoginUserUseCase
+import com.mleon.core.domain.usecase.user.SaveUserEmailUseCase
+import com.mleon.core.model.result.AuthResult
 import com.mleon.utils.UserValidations
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -96,7 +95,10 @@ class LoginViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true, errorMessageLogin = "") }
         viewModelScope.launch(dispatcher) {
             try {
-                val result = loginUserUseCase(LoginUserParams(email = _uiState.value.email, password = _uiState.value.password))
+                val result = loginUserUseCase(
+                        email = _uiState.value.email,
+                        password = _uiState.value.password
+                )
                 handleLoginResult(result)
             } catch (e: Exception) {
                 _uiState.update { it.copy(errorMessageLogin = ERROR_LOGIN_PREFIX + (e.message ?: "")) }

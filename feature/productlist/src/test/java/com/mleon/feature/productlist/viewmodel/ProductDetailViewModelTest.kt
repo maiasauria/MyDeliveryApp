@@ -1,10 +1,10 @@
 package com.mleon.feature.productlist.viewmodel
 
 import android.util.Log
+import com.mleon.core.domain.usecase.product.GetProductByIdUseCase
+import com.mleon.core.domain.usecase.product.GetProductQuantityInCartUseCase
 import com.mleon.core.model.Product
 import com.mleon.core.model.enums.Categories
-import com.mleon.feature.productlist.usecase.GetProductByIdUseCase
-import com.mleon.feature.productlist.usecase.GetProductQuantityInCartUseCase
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk

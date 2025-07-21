@@ -1,10 +1,10 @@
 package com.mleon.feature.signup.viewmodel
 
 import android.util.Log
-import com.mleon.core.data.datasource.remote.model.AuthResult
+import com.mleon.core.domain.usecase.user.RegisterUserUseCase
+import com.mleon.core.domain.usecase.user.SaveUserEmailUseCase
 import com.mleon.core.model.User
-import com.mleon.feature.signup.usecase.RegisterUserUseCase
-import com.mleon.feature.signup.usecase.SaveUserEmailUseCase
+import com.mleon.core.model.result.AuthResult
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -40,7 +40,7 @@ class SignupViewModelTest {
     @Test
     fun `uiState is success and email is saved when signup succeeds`() = runTest {
         val user = mockk<User>(relaxed = true) { every { email } returns "a@a.com" }
-        coEvery { registerUserUseCase(any()) } returns AuthResult.Success(user = user, message = "User registered successfully")
+        coEvery { registerUserUseCase(any(), any(), any(), any()) } returns AuthResult.Success(user = user, message = "User registered successfully")
         every { saveUserEmailUseCase.invoke(user.email) } returns Unit
         viewModel = SignupViewModel(registerUserUseCase, saveUserEmailUseCase, StandardTestDispatcher(testScheduler))
         givenFillValidForm(viewModel)
@@ -53,7 +53,7 @@ class SignupViewModelTest {
 
     @Test
     fun `uiState is loading while waiting for signup result`() = runTest {
-        coEvery { registerUserUseCase(any()) } coAnswers {
+        coEvery { registerUserUseCase(any(), any(), any(), any()) } coAnswers {
             kotlinx.coroutines.delay(100)
             AuthResult.Error("fail")
         }
@@ -67,7 +67,7 @@ class SignupViewModelTest {
 
     @Test
     fun `uiState is error when signup fails`() = runTest {
-        coEvery { registerUserUseCase(any()) } returns AuthResult.Error("Email already exists")
+        coEvery { registerUserUseCase(any(), any(), any(), any()) } returns AuthResult.Error("Email already exists")
         viewModel = SignupViewModel(registerUserUseCase, saveUserEmailUseCase, StandardTestDispatcher(testScheduler))
         givenFillValidForm(viewModel)
         viewModel.onSignupClick()
@@ -86,12 +86,12 @@ class SignupViewModelTest {
         viewModel.onSignupClick()
         advanceUntilIdle()
         thenUiStateHasValidationErrors(viewModel)
-        coVerify(exactly = 0) { registerUserUseCase(any()) }
+        coVerify(exactly = 0) { registerUserUseCase(any(), any(), any(), any()) }
     }
 
     @Test
     fun `uiState is error when signup throws exception`() = runTest {
-        coEvery { registerUserUseCase(any()) } throws RuntimeException("Network error")
+        coEvery { registerUserUseCase(any(), any(), any(), any()) } throws RuntimeException("Network error")
         viewModel = SignupViewModel(registerUserUseCase, saveUserEmailUseCase, StandardTestDispatcher(testScheduler))
         givenFillValidForm(viewModel)
         viewModel.onSignupClick()

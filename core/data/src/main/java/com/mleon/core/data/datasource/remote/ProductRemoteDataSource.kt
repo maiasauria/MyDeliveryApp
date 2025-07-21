@@ -2,8 +2,8 @@ package com.mleon.core.data.datasource.remote
 
 import com.mleon.core.data.datasource.ProductDataSource
 import com.mleon.core.data.datasource.remote.dto.toDomain
-import com.mleon.core.data.datasource.remote.model.ProductResult
 import com.mleon.core.data.datasource.remote.service.ProductsApiService
+import com.mleon.core.model.result.ProductResult
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject

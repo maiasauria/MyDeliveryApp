@@ -1,11 +1,11 @@
 package com.mleon.feature.productlist.viewmodel
 
 import android.util.Log
-import com.mleon.core.data.datasource.remote.model.ProductResult
+import com.mleon.core.domain.usecase.product.GetProductsUseCase
+import com.mleon.core.model.result.ProductResult
 import com.mleon.core.model.Product
 import com.mleon.core.model.enums.Categories
 import com.mleon.feature.productlist.MainDispatcherRule
-import com.mleon.feature.productlist.usecase.GetProductsUseCase
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk

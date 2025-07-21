@@ -1,12 +1,14 @@
 package com.mleon.feature.cart.view.viewmodel
 
+import com.mleon.core.domain.usecase.cart.AddProductToCartUseCase
+import com.mleon.core.domain.usecase.cart.ClearCartUseCase
+import com.mleon.core.domain.usecase.cart.EditCartItemQuantityUseCase
+import com.mleon.core.domain.usecase.cart.GetCartItemsWithProductsUseCase
+import com.mleon.core.domain.usecase.cart.RemoveCartItemUseCase
 import com.mleon.core.model.CartItem
 import com.mleon.core.model.Product
-import com.mleon.feature.cart.domain.usecase.AddProductToCartUseCase
-import com.mleon.feature.cart.domain.usecase.ClearCartUseCase
-import com.mleon.feature.cart.domain.usecase.EditCartItemQuantityUseCase
-import com.mleon.feature.cart.domain.usecase.GetCartItemsWithProductsUseCase
-import com.mleon.feature.cart.domain.usecase.RemoveCartItemUseCase
+import com.mleon.feature.cart.viewmodel.CartUiState
+import com.mleon.feature.cart.viewmodel.CartViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi

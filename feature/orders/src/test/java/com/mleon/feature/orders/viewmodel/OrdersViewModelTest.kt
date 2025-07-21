@@ -1,9 +1,9 @@
 package com.mleon.feature.orders.viewmodel
 
 import android.util.Log
-import com.mleon.core.data.datasource.remote.model.OrderResult
+import com.mleon.core.domain.usecase.order.GetOrdersUseCase
 import com.mleon.core.model.Order
-import com.mleon.feature.orders.domain.usecase.GetOrdersUseCase
+import com.mleon.core.model.result.OrderResult
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk

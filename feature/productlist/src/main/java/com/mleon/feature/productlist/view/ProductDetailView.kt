@@ -33,7 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.mleon.core.model.Product
 import com.mleon.core.model.enums.Categories
-import com.mleon.feature.cart.view.ui.views.QuantityButton
+import com.mleon.feature.cart.view.QuantityButton
 import com.mleon.feature.productlist.R
 import com.mleon.utils.toCurrencyFormat
 import com.mleon.utils.ui.ImageLoader

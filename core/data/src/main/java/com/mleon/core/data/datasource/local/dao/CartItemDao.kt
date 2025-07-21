@@ -36,7 +36,6 @@ interface CartItemDao {
     @Query("SELECT * FROM cart_items WHERE productId = :productId LIMIT 1")
     suspend fun getCartItemByProductId(productId: String): CartItemEntity?
 
-    // Room will resolve the relation using the data class CartItemWithProductEntity
     @Transaction
     @Query("SELECT * FROM cart_items")
     fun getCartItemsWithProducts(): Flow<List<CartItemWithProductEntity>>

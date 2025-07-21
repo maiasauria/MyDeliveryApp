@@ -2,10 +2,9 @@ package com.mleon.feature.signup.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mleon.core.data.datasource.remote.model.AuthResult
-import com.mleon.feature.signup.usecase.RegisterUserParams
-import com.mleon.feature.signup.usecase.RegisterUserUseCase
-import com.mleon.feature.signup.usecase.SaveUserEmailUseCase
+import com.mleon.core.domain.usecase.user.RegisterUserUseCase
+import com.mleon.core.domain.usecase.user.SaveUserEmailUseCase
+import com.mleon.core.model.result.AuthResult
 import com.mleon.utils.UserValidations
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -89,14 +88,11 @@ class SignupViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true, errorMessageSignup = "") }
         viewModelScope.launch(dispatcher) {
             try {
-                val params = RegisterUserParams(
-                    name = _uiState.value.name,
+                val result = registerUserUseCase(name = _uiState.value.name,
                     lastname = _uiState.value.lastname,
                     email = _uiState.value.email,
-                    password = _uiState.value.password
-                )
-                val result = registerUserUseCase(params)
-                println("signup: $result")
+                    password = _uiState.value.password)
+
                 handleRegistrationResult(result)
             } catch (e: Exception) {
                 _uiState.update {

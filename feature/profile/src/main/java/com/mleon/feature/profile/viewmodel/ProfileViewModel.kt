@@ -5,12 +5,12 @@ import android.net.Uri
 import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.mleon.core.data.datasource.remote.model.AuthResult
+import com.mleon.core.domain.usecase.user.GetUserProfileUseCase
+import com.mleon.core.domain.usecase.user.LogoutUserUseCase
+import com.mleon.core.domain.usecase.user.UpdateUserProfileUseCase
+import com.mleon.core.domain.usecase.user.UploadUserImageUseCase
 import com.mleon.core.model.User
-import com.mleon.feature.profile.usecase.GetUserProfileUseCase
-import com.mleon.feature.profile.usecase.LogoutUserUseCase
-import com.mleon.feature.profile.usecase.UpdateUserProfileUseCase
-import com.mleon.feature.profile.usecase.UploadUserImageUseCase
+import com.mleon.core.model.result.AuthResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow

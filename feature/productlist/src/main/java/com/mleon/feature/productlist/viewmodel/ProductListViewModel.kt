@@ -2,10 +2,10 @@ package com.mleon.feature.productlist.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mleon.core.data.datasource.remote.model.ProductResult
+import com.mleon.core.domain.usecase.product.GetProductsUseCase
+import com.mleon.core.model.result.ProductResult
 import com.mleon.core.model.Product
 import com.mleon.core.model.enums.Categories
-import com.mleon.feature.productlist.usecase.GetProductsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow

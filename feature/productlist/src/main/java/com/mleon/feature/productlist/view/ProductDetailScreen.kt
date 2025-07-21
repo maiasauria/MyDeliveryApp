@@ -10,7 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.mleon.feature.cart.view.viewmodel.CartViewModel
+import com.mleon.feature.cart.viewmodel.CartViewModel
 import com.mleon.feature.productlist.R
 import com.mleon.feature.productlist.viewmodel.ProductDetailUiState
 import com.mleon.feature.productlist.viewmodel.ProductDetailViewModel

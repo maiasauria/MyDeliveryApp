@@ -1,7 +1,7 @@
 package com.mleon.core.data.repository.impl
 
 import com.mleon.core.data.datasource.UserDataSource
-import com.mleon.core.data.datasource.remote.model.AuthResult
+import com.mleon.core.model.result.AuthResult
 import com.mleon.core.data.repository.interfaces.UserRepository
 import com.mleon.core.model.User
 import kotlinx.coroutines.Dispatchers

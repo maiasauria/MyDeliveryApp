@@ -1,9 +1,11 @@
 package com.mleon.login.viewmodel
 
+import android.content.SharedPreferences
 import android.util.Log
-import com.mleon.core.data.datasource.remote.model.AuthResult
+import com.mleon.core.domain.usecase.user.LoginUserUseCase
+import com.mleon.core.domain.usecase.user.SaveUserEmailUseCase
 import com.mleon.core.model.User
-import com.mleon.login.usecase.SaveUserEmailUseCase
+import com.mleon.core.model.result.AuthResult
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -22,8 +24,8 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class LoginViewModelTest {
-    private lateinit var sharedPreferences: android.content.SharedPreferences
-    private lateinit var loginUserUseCase: com.mleon.login.usecase.LoginUserUseCase
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var loginUserUseCase: LoginUserUseCase
     private lateinit var saveUserEmailUseCase: SaveUserEmailUseCase
     private lateinit var viewModel: LoginViewModel
     private val testScheduler = TestCoroutineScheduler()
@@ -76,7 +78,7 @@ class LoginViewModelTest {
     fun `uiState is error when login fails`() = runTest {
         val errorMessage = "Invalid credentials"
         val errorCode = 401
-        coEvery { loginUserUseCase(any()) } returns AuthResult.Error(errorMessage, errorCode)
+        coEvery { loginUserUseCase(any() , any()) } returns AuthResult.Error(errorMessage, errorCode)
         viewModel = LoginViewModel(
             loginUserUseCase,
             saveUserEmailUseCase,
@@ -92,7 +94,7 @@ class LoginViewModelTest {
     @Test
     fun `uiState is success and email is saved when login succeeds`() = runTest {
         val user = User(email = "test@example.com", name = "Test User", lastname = "User", address = "123 Test St")
-        coEvery { loginUserUseCase(any()) } returns AuthResult.Success(message = "", user = user)
+        coEvery { loginUserUseCase(any(), any()) } returns AuthResult.Success(message = "", user = user)
         every { saveUserEmailUseCase.invoke(user.email) } returns Unit
         viewModel = LoginViewModel(
             loginUserUseCase,

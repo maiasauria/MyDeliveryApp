@@ -6,7 +6,7 @@ import com.mleon.core.data.datasource.local.dao.OrderItemDao
 import com.mleon.core.data.datasource.local.entities.toEntity
 import com.mleon.core.data.datasource.local.entities.toOrderItemEntity
 import com.mleon.core.data.datasource.remote.dto.toDto
-import com.mleon.core.data.datasource.remote.model.OrderResult
+import com.mleon.core.model.result.OrderResult
 import com.mleon.core.data.repository.interfaces.OrderRepository
 import com.mleon.core.model.Order
 import kotlinx.coroutines.Dispatchers

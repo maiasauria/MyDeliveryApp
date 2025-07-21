@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.mleon.core.navigation.NavigationRoutes
-import com.mleon.feature.cart.view.viewmodel.CartViewModel
+import com.mleon.feature.cart.viewmodel.CartViewModel
 import com.mleon.feature.checkout.viewmodel.CheckoutUiState
 import com.mleon.feature.checkout.viewmodel.CheckoutViewModel
 import com.mleon.utils.ui.ErrorScreen

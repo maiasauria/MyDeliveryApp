@@ -2,9 +2,9 @@ package com.mleon.feature.productlist.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mleon.core.domain.usecase.product.GetProductByIdUseCase
+import com.mleon.core.domain.usecase.product.GetProductQuantityInCartUseCase
 import com.mleon.core.model.Product
-import com.mleon.feature.productlist.usecase.GetProductByIdUseCase
-import com.mleon.feature.productlist.usecase.GetProductQuantityInCartUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow

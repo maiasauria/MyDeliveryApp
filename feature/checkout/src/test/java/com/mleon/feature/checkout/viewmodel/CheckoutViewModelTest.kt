@@ -1,14 +1,14 @@
 package com.mleon.feature.checkout.viewmodel
 
 import android.util.Log
-import com.mleon.core.data.datasource.remote.model.OrderResult
+import com.mleon.core.domain.exception.NoAddressException
+import com.mleon.core.domain.usecase.cart.GetCartItemsWithProductsUseCase
+import com.mleon.core.domain.usecase.order.CreateOrderUseCase
+import com.mleon.core.domain.usecase.user.GetUserAddressUseCase
 import com.mleon.core.model.CartItem
 import com.mleon.core.model.Order
 import com.mleon.core.model.enums.PaymentMethod
-import com.mleon.feature.cart.domain.usecase.GetCartItemsWithProductsUseCase
-import com.mleon.feature.checkout.domain.usecase.CreateOrderUseCase
-import com.mleon.feature.checkout.domain.usecase.GetUserAddressUseCase
-import com.mleon.feature.checkout.domain.usecase.NoAddressException
+import com.mleon.core.model.result.OrderResult
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk

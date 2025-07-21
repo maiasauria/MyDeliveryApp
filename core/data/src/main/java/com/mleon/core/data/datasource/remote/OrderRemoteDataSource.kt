@@ -3,9 +3,9 @@ package com.mleon.core.data.datasource.remote
 import com.mleon.core.data.datasource.OrderDataSource
 import com.mleon.core.data.datasource.remote.dto.OrderDto
 import com.mleon.core.data.datasource.remote.dto.toDomain
-import com.mleon.core.data.datasource.remote.model.OrderResult
 import com.mleon.core.data.datasource.remote.model.toOrder
 import com.mleon.core.data.datasource.remote.service.OrderApiService
+import com.mleon.core.model.result.OrderResult
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject

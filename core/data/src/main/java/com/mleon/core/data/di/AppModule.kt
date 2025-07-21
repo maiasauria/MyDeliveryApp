@@ -24,4 +24,6 @@ object AppModule {
 
     @Provides
     fun provideCoroutineDispatcher(): CoroutineDispatcher = Dispatchers.IO
+
+
 }

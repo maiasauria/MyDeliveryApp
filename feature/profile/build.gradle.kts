@@ -60,7 +60,7 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose) // Integración de Hilt con Jetpack Compose para la inyección de dependencias en composables.
 
     //Cloudinary
-    implementation("com.cloudinary:cloudinary-android:2.3.1") // Biblioteca para interactuar con Cloudinary, un servicio de gestión de medios en la nube.
+    implementation(libs.cloudinary.android) // Biblioteca para interactuar con Cloudinary, un servicio de gestión de medios en la nube.
 
     //Testing
     testImplementation(libs.junit)
@@ -69,11 +69,11 @@ dependencies {
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation ("io.mockk:mockk:1.13.10")
+    testImplementation (libs.mockk)
 
     // Project Modules
     implementation(project(":utils"))
     implementation(project(":core:model"))
-    implementation(project(":core:data"))
+    implementation(project(":core:domain"))
     implementation(project(":core:navigation"))
 }

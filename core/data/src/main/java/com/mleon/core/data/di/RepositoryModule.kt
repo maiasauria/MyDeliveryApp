@@ -9,11 +9,13 @@ import com.mleon.core.data.datasource.remote.UserRemoteDataSource
 import com.mleon.core.data.datasource.remote.service.OrderApiService
 import com.mleon.core.data.datasource.remote.service.ProductsApiService
 import com.mleon.core.data.datasource.remote.service.UsersApiService
+import com.mleon.core.data.image.CloudinaryImageUploader
 import com.mleon.core.data.repository.impl.CartItemRepositoryImpl
 import com.mleon.core.data.repository.impl.OrderRepositoryImpl
 import com.mleon.core.data.repository.impl.ProductRepositoryImpl
 import com.mleon.core.data.repository.impl.UserRepositoryImpl
 import com.mleon.core.data.repository.interfaces.CartItemRepository
+import com.mleon.core.data.repository.interfaces.ImageUploader
 import com.mleon.core.data.repository.interfaces.OrderRepository
 import com.mleon.core.data.repository.interfaces.ProductRepository
 import com.mleon.core.data.repository.interfaces.UserRepository
@@ -76,4 +78,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindCartItemRepository(impl: CartItemRepositoryImpl): CartItemRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindImageUploader(impl: CloudinaryImageUploader): ImageUploader
 }

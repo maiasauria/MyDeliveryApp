@@ -7,7 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.mleon.feature.cart.view.viewmodel.CartViewModel
+import com.mleon.feature.cart.viewmodel.CartViewModel
 import com.mleon.feature.productlist.viewmodel.ProductListUiState
 import com.mleon.feature.productlist.viewmodel.ProductListViewActions
 import com.mleon.feature.productlist.viewmodel.ProductListViewModel

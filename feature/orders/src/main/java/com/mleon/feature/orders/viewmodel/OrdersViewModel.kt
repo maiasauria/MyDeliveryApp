@@ -2,8 +2,8 @@ package com.mleon.feature.orders.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mleon.core.data.datasource.remote.model.OrderResult
-import com.mleon.feature.orders.domain.usecase.GetOrdersUseCase
+import com.mleon.core.domain.usecase.order.GetOrdersUseCase
+import com.mleon.core.model.result.OrderResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow

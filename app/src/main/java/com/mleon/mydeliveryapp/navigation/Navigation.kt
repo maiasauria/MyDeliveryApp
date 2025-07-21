@@ -8,7 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.mleon.core.navigation.NavigationRoutes
-import com.mleon.feature.cart.view.ui.views.CartScreen
+import com.mleon.feature.cart.view.CartScreen
 import com.mleon.feature.checkout.view.CheckoutScreen
 import com.mleon.feature.orders.view.OrdersScreen
 import com.mleon.feature.productlist.view.ProductDetailScreen

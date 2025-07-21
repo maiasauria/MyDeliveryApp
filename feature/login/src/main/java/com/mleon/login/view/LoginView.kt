@@ -65,7 +65,8 @@ private fun ActionsSection(params: LoginViewParams, actions: LoginViewActions) {
         isFormValid = params.isFormValid,
         enabled = !params.isLoading
     )
-    Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.login_spacer_24)))
+    Spacer(modifier = Modifier.height(
+        dimensionResource(id = R.dimen.login_spacer_24)))
     TextButton(
         onClick = actions.onSignupClick,
         modifier = Modifier.fillMaxWidth(),
