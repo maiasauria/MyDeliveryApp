@@ -3,16 +3,16 @@
 Aplicacion desarrollada en Kotlin para Android, utilizando MVVM, Hilt, Room y Retrofit.
 
 <div>
-  <img src="app/docs/screenshots/Screenshot_20250721_163051_Yapp.jpg" height="300"/>
-  <img src="app/docs/screenshots/Screenshot_20250720_103257_Yapp.jpg" height="300"/>
-  <img src="app/docs/screenshots/Screenshot_20250721_162927_Yapp.jpg" height="300"/>
-  <img src="app/docs/screenshots/Screenshot_20250721_162905_Yapp.jpg" height="300"/>
-
+  <img src="app/docs/screenshots/Yapp_Login.jpg" height="300"/>
+  <img src="app/docs/screenshots/Yapp_ProductList.jpg" height="300"/>
+  <img src="app/docs/screenshots/Yapp_ProductFilter.jpg" height="300"/>
+  <img src="app/docs/screenshots/Yapp_ProductDetail.jpg" height="300"/>
 </div>
 <div>
-  <img src="app/docs/screenshots/Screenshot_20250721_114059_Yapp.jpg" height="300"/>
-  <img src="app/docs/screenshots/Screenshot_20250721_112736_Yapp.jpg" height="300"/>
-  <img src="app/docs/screenshots/Screenshot_20250721_114029_Yapp.jpg" height="300"/>
+  <img src="app/docs/screenshots/Yapp_Cart.jpg" height="300"/>
+  <img src="app/docs/screenshots/Yapp_Checkout.jpg" height="300"/>
+  <img src="app/docs/screenshots/Yapp_Profile.jpg" height="300"/>
+  <img src="app/docs/screenshots/Yapp_UpdateProfile.jpg" height="300"/>
 </div>
 
 ## Funcionalidades principales
