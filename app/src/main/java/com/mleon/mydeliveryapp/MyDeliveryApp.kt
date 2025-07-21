@@ -22,6 +22,7 @@ class MyDeliveryApp : Application(), Configuration.Provider {
             .setWorkerFactory(workerFactory)
             .build()
 
+    // Sincronizamos cuando se abre la aplicación
     override fun onCreate() {
         super.onCreate()
         productSyncManager.schedulePeriodicSync()

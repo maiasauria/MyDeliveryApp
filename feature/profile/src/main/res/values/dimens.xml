@@ -8,4 +8,5 @@
     <dimen name="profile_uploading_dialog_spacing">16dp</dimen>
     <dimen name="profile_user_image_size">128dp</dimen>
     <dimen name="profile_user_icon_padding">24dp</dimen>
+    <dimen name="profile_image_spacer">16dp</dimen>
 </resources>

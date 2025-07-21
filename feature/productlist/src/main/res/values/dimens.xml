@@ -10,6 +10,9 @@
     <dimen name="product_card_pulsate_corner_radius">12dp</dimen>
     <dimen name="product_card_pulsate_padding">16dp</dimen>
 
+    <dimen name="filter_chip_spacing">8dp</dimen>
+    <dimen name="searchbar_vertical_padding">8dp</dimen>
+
     <dimen name="product_detail_back_button_radius">40dp</dimen>
     <dimen name="product_detail_content_padding">16dp</dimen>
     <dimen name="product_detail_padding">8dp</dimen>

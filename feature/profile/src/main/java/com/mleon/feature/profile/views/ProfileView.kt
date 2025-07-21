@@ -1,6 +1,7 @@
 package com.mleon.feature.profile.views
 
 
+import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,14 +12,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,7 +40,7 @@ import com.mleon.utils.ui.ValidateTextField
 
 @Composable
 fun ProfileView(
-    userData : UserDataState,
+    userData: UserDataState,
     formState: ProfileFormState,
     onNameChange: (String) -> Unit = {},
     onLastnameChange: (String) -> Unit = {},
@@ -45,8 +51,13 @@ fun ProfileView(
     onRequestGallery: () -> Unit = {},
     onShowPreview: (User) -> Unit,
 ) {
+
+    val scrollState = rememberScrollState()
+
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.profile_screen_spacing)),
     ) {
         ScreenTitle(stringResource(R.string.profile_title))
@@ -111,23 +122,44 @@ fun ProfileImageSection(
     onRequestCamera: () -> Unit,
     onRequestGallery: () -> Unit,
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        UserImage(userImageUrl)
-    }
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
-        Button(onClick = onRequestCamera) {
-            Text(stringResource(R.string.profile_take_photo))
+    val configuration = LocalConfiguration.current
+    if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            UserImage(userImageUrl)
+            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.profile_image_spacer)))
+            Button(onClick = onRequestCamera) {
+                Text(stringResource(R.string.profile_take_photo))
+            }
+            Spacer(modifier = Modifier.width(dimensionResource(id = R.dimen.profile_image_spacer)))
+            Button(onClick = onRequestGallery) {
+                Text(stringResource(R.string.profile_upload_photo))
+            }
+
         }
-        Button(onClick = onRequestGallery) {
-            Text(stringResource(R.string.profile_upload_photo))
+    } else {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            UserImage(userImageUrl)
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Button(onClick = onRequestCamera) {
+                Text(stringResource(R.string.profile_take_photo))
+            }
+            Button(onClick = onRequestGallery) {
+                Text(stringResource(R.string.profile_upload_photo))
+            }
         }
     }
+
 }
 
 @Composable
@@ -179,7 +211,7 @@ fun UserDataSection(
     onLastnameChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onAddressChange: (String) -> Unit,
-){
+) {
     ValidateTextField(
         value = userData.name,
         onValueChange = onNameChange,

@@ -24,7 +24,7 @@ private fun ProfilePreviewDialogPreview() {
     )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun ProfileViewPreview() {
     ProfileView(
@@ -41,4 +41,14 @@ private fun ProfileViewPreview() {
         ),
         onShowPreview = { },
     )
+}
+
+@Preview(
+    showBackground = true,
+    widthDp = 640,
+    heightDp = 360
+)
+@Composable
+private fun ProfileViewPreviewLandscape() {
+    ProfileViewPreview()
 }

@@ -170,7 +170,7 @@ private fun CategoryChips(
 ) {
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = UtilsR.dimen.filter_chip_spacing)),
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.filter_chip_spacing)),
     ) {
         Categories.entries.sorted().forEach { category ->
             val isSelected = selectedCategory == category
@@ -235,7 +235,7 @@ fun FiltersRow(
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement
-            .spacedBy(dimensionResource(id = UtilsR.dimen.filter_chip_spacing)),
+            .spacedBy(dimensionResource(id = R.dimen.filter_chip_spacing)),
     ) {
         items(Categories.entries.sortedBy { it.getCategoryName() }) { category ->
             val isSelected = selectedCategory == category
@@ -292,7 +292,7 @@ fun SearchAndFiltersBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = dimensionResource(id = UtilsR.dimen.searchbar_vertical_padding)),
+            .padding(vertical = dimensionResource(id = R.dimen.searchbar_vertical_padding)),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         TextField(

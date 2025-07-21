@@ -4,9 +4,9 @@ import com.mleon.core.data.datasource.ProductDataSource
 import com.mleon.core.data.datasource.local.dao.ProductDao
 import com.mleon.core.data.datasource.local.entities.toModel
 import com.mleon.core.data.datasource.local.entities.toProductEntity
-import com.mleon.core.model.result.ProductResult
 import com.mleon.core.data.repository.interfaces.ProductRepository
 import com.mleon.core.model.Product
+import com.mleon.core.model.result.ProductResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -32,11 +32,13 @@ class ProductRepositoryImpl @Inject constructor(
                 when (val result = productDataSource.getProducts()) {
                     is ProductResult.Success -> {
                         val products = result.products
-                        val existingIds = productDao.getAllProducts().map { it.id }.toSet() // Me fijo en Room si ya existen productos con los mismos IDs
+
+                        // Me fijo en Room si ya existen los productos
+                        val existingProducts = productDao.getAllProducts().map { it.toModel() }.toSet()
 
                         // Mapeo solo los nuevos productos que no están en la base de datos
                         val newProductEntities = products
-                            .filter { product -> product.id !in existingIds }
+                            .filter { product -> product !in existingProducts }
                             .map { it.toProductEntity() }
 
                         // Inserto solo los nuevos productos en la base de datos
@@ -49,7 +51,6 @@ class ProductRepositoryImpl @Inject constructor(
                     }
                     is ProductResult.Error -> result // Propaga el error recibido
                 }
-
         }
     }
 
