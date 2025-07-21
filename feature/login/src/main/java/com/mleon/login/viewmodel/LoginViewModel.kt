@@ -58,9 +58,9 @@ class LoginViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 isEmailValid = emailResult.isValid,
-                errorMessageEmail = emailResult.errorMessage ?: "",
+                errorMessageEmail = if (state.email.isNotBlank() && !emailResult.isValid) emailResult.errorMessage ?: "" else "",
                 isPasswordValid = passwordResult.isValid,
-                errorMessagePassword = passwordResult.errorMessage ?: "",
+                errorMessagePassword = if (state.password.isNotBlank() && !passwordResult.isValid) passwordResult.errorMessage ?: "" else "",
                 isFormValid = isFormValid
             )
         }

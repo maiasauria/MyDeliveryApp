@@ -110,8 +110,7 @@ fun YappSmallLoadingIndicator() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(48.dp)
-            .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f)),
+            .height(48.dp),
         contentAlignment = Alignment.Center
     ) {
         YappLoadingDots()

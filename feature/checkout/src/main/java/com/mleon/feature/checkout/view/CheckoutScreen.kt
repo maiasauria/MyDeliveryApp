@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,6 +35,12 @@ fun CheckoutScreen(
     checkoutViewModel: CheckoutViewModel = hiltViewModel(),
 ) {
     val uiState by checkoutViewModel.uiState.collectAsState()
+
+    val showMissingAddressDialog = remember { mutableStateOf(false) }
+
+    LaunchedEffect(uiState) {
+        showMissingAddressDialog.value = uiState is CheckoutUiState.MissingAddress
+    }
 
     LaunchedEffect(Unit) {
         checkoutViewModel.loadCheckoutData()
@@ -81,11 +89,14 @@ fun CheckoutScreen(
         }
         is CheckoutUiState.MissingAddress -> {
             AlertDialog(
-                onDismissRequest = { },
+                onDismissRequest = { showMissingAddressDialog.value = false },
                 title = { Text(TITLE_SHIPPING_ADDRESS) },
                 text = { Text(TEXT_MISSING_ADDRESS) },
                 confirmButton = {
-                    Button(onClick = {navController.navigate(NavigationRoutes.PROFILE)}) {
+                    Button(onClick = {
+                        navController.navigate(NavigationRoutes.PROFILE)
+                        showMissingAddressDialog.value = false
+                    }) {
                         Text(BUTTON_EDIT_PROFILE)
                     }
                 }

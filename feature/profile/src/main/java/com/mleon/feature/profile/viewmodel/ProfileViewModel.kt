@@ -74,14 +74,16 @@ constructor(
 
     fun onImageUriChange(uri: Uri?) {
         val current = _uiState.value
-        if (uri == null || current !is ProfileUiState.Success) {
+        if (current !is ProfileUiState.Success) {
             _uiState.value = ProfileUiState.Error(ERROR_UPDATE_IMAGE)
             return
         }
-        _uiState.value = ProfileUiState.Success(
-            current.data.copy(isImageChanged = true),
-            current.userData.copy(userImageUri = uri, userImageUrl = uri.toString())
-        )
+        if (uri != null) {
+            _uiState.value = ProfileUiState.Success(
+                current.data.copy(isImageChanged = true),
+                current.userData.copy(userImageUri = uri, userImageUrl = uri.toString())
+            )
+        }
     }
 
     fun clearSavedFlag() {
@@ -155,6 +157,8 @@ constructor(
 
         viewModelScope.launch(dispatcher) {
             val currentState = _uiState.value as? ProfileUiState.Success ?: return@launch
+            if (!currentState.data.isFormValid) return@launch
+
             val userData = currentState.userData
 
             var newImageUrl = userData.userImageUrl
@@ -187,7 +191,7 @@ constructor(
                 updateUserProfileUseCase(user)
                 _uiState.value =
                     ProfileUiState.Success(
-                        currentState.data.copy(isUploading = false, isSaved = true, isImageChanged = false),
+                        currentState.data.copy(isUploading = false, isSaved = true, isImageChanged = false, isFormValid = false),
                         currentState.userData.copy(userImageUrl = newImageUrl)
                     )
             } catch (e: Exception) {
