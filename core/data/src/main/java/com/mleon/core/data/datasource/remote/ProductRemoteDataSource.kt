@@ -8,6 +8,11 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
+private const val ERROR_NO_PRODUCTS = "No se encontraron productos"
+private const val ERROR_NO_CONNECTION = "Sin conexión a Internet. Verifica tu conexión e intenta nuevamente"
+private const val ERROR_SERVER = "Error del servidor: "
+private const val ERROR_UNEXPECTED = "Ocurrió un error inesperado"
+
 // Obtiene los datos de los productos desde una fuente remota (API)
 // Mapea los datos del ApiService a los del dominio, porque tenemos otras implementaciones de ProductDataSource que no son remotas
 class ProductRemoteDataSource @Inject constructor( //Inyectamos el ApiService
@@ -19,14 +24,14 @@ class ProductRemoteDataSource @Inject constructor( //Inyectamos el ApiService
             return if (response.isNotEmpty()) {
                 ProductResult.Success(response.map { it.toDomain() })
             } else {
-                ProductResult.Error("No se encontraron productos")
+                ProductResult.Error(ERROR_NO_PRODUCTS)
             }
         } catch (e: IOException) {
-            ProductResult.Error("Sin conexión a Internet. Verifica tu conexión e intenta nuevamente")
+            ProductResult.Error(ERROR_NO_CONNECTION)
         } catch (e: HttpException) {
-            ProductResult.Error("Error del servidor: ${e.code()}")
+            ProductResult.Error("$ERROR_SERVER ${e.code()}")
         } catch (e: Exception) {
-            ProductResult.Error("Ocurrió un error inesperado")
+            ProductResult.Error(ERROR_UNEXPECTED)
         }
     }
 }
