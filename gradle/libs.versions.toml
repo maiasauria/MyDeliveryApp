@@ -17,6 +17,7 @@ material = "1.12.0"
 
 # Navigation
 mockitoCore = "5.11.0"
+mockitoInline = "5.2.0"
 mockitoKotlin = "5.2.1"
 mockk = "1.13.10"
 navigation = "2.9.0"
@@ -52,6 +53,7 @@ espressoCore = "3.6.1"
 ksp = "2.1.21-2.0.1"
 junitJunit = "4.12"
 swiperefreshlayoutVersion = "1.2.0-beta01"
+turbine = "1.0.0"
 workRuntimeKtx = "2.10.2"
 hiltCommon = "1.2.0"
 hiltWork = "1.2.0"
@@ -118,6 +120,7 @@ androidx-media3-common-ktx = { group = "androidx.media3", name = "media3-common-
 
 # Retrofit & Networking
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
@@ -135,6 +138,7 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 junit-junit = { group = "junit", name = "junit", version.ref = "junitJunit" }
 androidx-hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hiltCommon" }
 androidx-hilt-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltWork" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 
 [plugins]

@@ -26,11 +26,27 @@ android {
         consumerProguardFiles("consumer-rules.pro")
 
         defaultConfig {
-            buildConfigField("String", "CLOUDINARY_API_KEY", "\"${secretsProperties["CLOUDINARY_API_KEY"] ?: ""}\"")
-            buildConfigField("String", "CLOUDINARY_API_SECRET", "\"${secretsProperties["CLOUDINARY_API_SECRET"] ?: ""}\"")
-            buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"${secretsProperties["CLOUDINARY_CLOUD_NAME"] ?: ""}\"")
+            buildConfigField(
+                "String",
+                "CLOUDINARY_API_KEY",
+                "\"${secretsProperties["CLOUDINARY_API_KEY"] ?: ""}\""
+            )
+            buildConfigField(
+                "String",
+                "CLOUDINARY_API_SECRET",
+                "\"${secretsProperties["CLOUDINARY_API_SECRET"] ?: ""}\""
+            )
+            buildConfigField(
+                "String",
+                "CLOUDINARY_CLOUD_NAME",
+                "\"${secretsProperties["CLOUDINARY_CLOUD_NAME"] ?: ""}\""
+            )
             buildConfigField("String", "API_URL", "\"${secretsProperties["API_URL"] ?: ""}\"")
-            buildConfigField("String", "API_ENCRYPTION_KEY", "\"${secretsProperties["API_ENCRYPTION_KEY"] ?: ""}\"")
+            buildConfigField(
+                "String",
+                "API_ENCRYPTION_KEY",
+                "\"${secretsProperties["API_ENCRYPTION_KEY"] ?: ""}\""
+            )
         }
     }
 
@@ -76,11 +92,18 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+// Mockito for mocking
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.inline)
+// Kotlin coroutines test
+    testImplementation(libs.kotlinx.coroutines.test)
+// Turbine for Flow testing
+    testImplementation(libs.turbine)
 
     // Room (runtime, compiler, ktx)
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
-    implementation (libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.work.runtime.ktx)
 
     //Cloudinary
     implementation(libs.cloudinary.android) // Biblioteca para interactuar con Cloudinary, un servicio de gestión de medios en la nube.
@@ -88,4 +111,6 @@ dependencies {
     // Project Modules
     implementation(project(":core:model"))
     implementation(project(":utils"))
+
+
 }
