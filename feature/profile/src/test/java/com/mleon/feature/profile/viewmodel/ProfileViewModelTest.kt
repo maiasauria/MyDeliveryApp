@@ -7,8 +7,8 @@ import com.mleon.core.domain.usecase.user.GetUserProfileUseCase
 import com.mleon.core.domain.usecase.user.LogoutUserUseCase
 import com.mleon.core.domain.usecase.user.UpdateUserProfileUseCase
 import com.mleon.core.domain.usecase.user.UploadUserImageUseCase
-import com.mleon.core.model.result.AuthResult
 import com.mleon.core.model.User
+import com.mleon.core.model.result.AuthResult
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -154,7 +154,10 @@ class ProfileViewModelTest {
         advanceUntilIdle()
         thenUiStateIsSuccess(viewModel)
 
-        Assert.assertEquals("imgUrl", (viewModel.uiState.value as ProfileUiState.Success).userData.userImageUrl)
+        Assert.assertEquals(
+            "imgUrl",
+            (viewModel.uiState.value as ProfileUiState.Success).userData.userImageUrl
+        )
     }
 
     @Test
@@ -234,9 +237,8 @@ class ProfileViewModelTest {
     }
 
     @Test
-    fun `given invalid name when updateProfile then uiState is Error`() = runTest {
+    fun `given invalid name when updateProfile then uiState reflects invalid name and error`() = runTest {
         givenUser()
-        val application: Application = mockk(relaxed = true)
         viewModel = ProfileViewModel(
             application,
             getUserProfileUseCase,
@@ -247,17 +249,21 @@ class ProfileViewModelTest {
         )
         viewModel.loadProfile()
         advanceUntilIdle()
-        viewModel.onNameChange("A")
+        viewModel.onNameChange("A") // Invalid name
         advanceUntilIdle()
         viewModel.updateProfile()
         advanceUntilIdle()
-        Assert.assertTrue(viewModel.uiState.value is ProfileUiState.Error)
-        Assert.assertEquals("Error al actualizar el perfil.",
-            (viewModel.uiState.value as ProfileUiState.Error).message)
+        val state = viewModel.uiState.value
+        Assert.assertTrue(state is ProfileUiState.Success)
+        val userData = (state as ProfileUiState.Success).userData
+        Assert.assertEquals("A", userData.name)
+        Assert.assertFalse(userData.isNameValid)
+        Assert.assertEquals("El nombre debe tener entre 2 y 50 caracteres", userData.errorMessageName)
+        Assert.assertFalse(state.data.isFormValid)
     }
 
     @Test
-    fun `given null image uri when onImageUriChange then uiState is Error`() = runTest {
+    fun `given null image uri when onImageUriChange then uiState is unchanged`() = runTest {
         givenUser()
         viewModel = ProfileViewModel(
             application,
@@ -269,11 +275,11 @@ class ProfileViewModelTest {
         )
         viewModel.loadProfile()
         advanceUntilIdle()
+        val beforeState = viewModel.uiState.value
         viewModel.onImageUriChange(null)
         advanceUntilIdle()
-        Assert.assertTrue(viewModel.uiState.value is ProfileUiState.Error)
-        Assert.assertEquals("No se puede actualizar la imagen en este momento.",
-            (viewModel.uiState.value as ProfileUiState.Error).message)
+        Assert.assertTrue(viewModel.uiState.value is ProfileUiState.Success)
+        Assert.assertEquals(beforeState, viewModel.uiState.value)
     }
 
     @Test
@@ -290,11 +296,14 @@ class ProfileViewModelTest {
         viewModel.onLogoutClick()
         advanceUntilIdle()
         Assert.assertTrue(viewModel.uiState.value is ProfileUiState.Error)
-        Assert.assertEquals("Error al cerrar sesión.", (viewModel.uiState.value as ProfileUiState.Error).message)
+        Assert.assertEquals(
+            "Error al cerrar sesión.",
+            (viewModel.uiState.value as ProfileUiState.Error).message
+        )
     }
 
     @Test
-    fun `given invalid lastname when updateProfile then uiState is Error`() = runTest {
+    fun `given invalid lastname when updateProfile then uiState reflects invalid lastname and error`() = runTest {
         givenUser()
         viewModel = ProfileViewModel(
             application,
@@ -310,12 +319,17 @@ class ProfileViewModelTest {
         advanceUntilIdle()
         viewModel.updateProfile()
         advanceUntilIdle()
-        Assert.assertTrue(viewModel.uiState.value is ProfileUiState.Error)
-        Assert.assertEquals("Error al actualizar el perfil.", (viewModel.uiState.value as ProfileUiState.Error).message)
+        val state = viewModel.uiState.value
+        Assert.assertTrue(state is ProfileUiState.Success)
+        val userData = (state as ProfileUiState.Success).userData
+        Assert.assertEquals("A", userData.lastname)
+        Assert.assertFalse(userData.isLastnameValid)
+        Assert.assertEquals("El apellido debe tener entre 2 y 50 caracteres", userData.errorMessageLastname)
+        Assert.assertFalse(state.data.isFormValid)
     }
 
     @Test
-    fun `given invalid email when updateProfile then uiState is Error`() = runTest {
+    fun `given invalid email when updateProfile then uiState reflects invalid email and error`() = runTest {
         givenUser()
         viewModel = ProfileViewModel(
             application,
@@ -331,12 +345,18 @@ class ProfileViewModelTest {
         advanceUntilIdle()
         viewModel.updateProfile()
         advanceUntilIdle()
-        Assert.assertTrue(viewModel.uiState.value is ProfileUiState.Error)
-        Assert.assertEquals("Error al actualizar el perfil.", (viewModel.uiState.value as ProfileUiState.Error).message)
+        val state = viewModel.uiState.value
+        Assert.assertTrue(state is ProfileUiState.Success)
+        val userData = (state as ProfileUiState.Success).userData
+        Assert.assertEquals("invalid-email", userData.email)
+        Assert.assertFalse(userData.isEmailValid)
+        Assert.assertEquals("El email no es válido", userData.errorMessageEmail)
+        Assert.assertFalse(state.data.isFormValid)
     }
 
+
     @Test
-    fun `given empty address when updateProfile then uiState is Error`() = runTest {
+    fun `given empty address when updateProfile then uiState reflects invalid address and error`() = runTest {
         givenUser()
         viewModel = ProfileViewModel(
             application,
@@ -352,10 +372,14 @@ class ProfileViewModelTest {
         advanceUntilIdle()
         viewModel.updateProfile()
         advanceUntilIdle()
-        Assert.assertTrue(viewModel.uiState.value is ProfileUiState.Error)
-        Assert.assertEquals("Error al actualizar el perfil.", (viewModel.uiState.value as ProfileUiState.Error).message)
+        val state = viewModel.uiState.value
+        Assert.assertTrue(state is ProfileUiState.Success)
+        val userData = (state as ProfileUiState.Success).userData
+        Assert.assertEquals("", userData.address)
+        Assert.assertFalse(userData.isAddressValid)
+        Assert.assertEquals("La dirección no puede estar vacía", userData.errorMessageAddress)
+        Assert.assertFalse(state.data.isFormValid)
     }
-
     @Test
     fun `when clearSavedFlag is called then isSaved is false`() = runTest {
         givenUser()
@@ -407,6 +431,7 @@ class ProfileViewModelTest {
     private fun givenLogoutSuccess() {
         coEvery { logoutUserUseCase() } returns Unit
     }
+
     private fun mockUser(name: String): User = mockk(relaxed = true) {
         every { this@mockk.name } returns name
         every { this@mockk.lastname } returns "Apellido"
